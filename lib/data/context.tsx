@@ -34,6 +34,50 @@ export function useEstadoDemo() {
   return useEstadoAplicacao().demo;
 }
 
+// --- Seletores de conveniência — todos dependem de useEstadoAplicacao() para reinscrever o
+// componente em QUALQUER mutação (o motor clona o estado inteiro a cada mutar(), então não há
+// como um seletor mais estreito evitar re-render; a vantagem aqui é só ergonomia de leitura). ---
+
+export function useEquipamentos() {
+  return useEstadoAplicacao().equipamentos;
+}
+
+export function useOperadores() {
+  return useEstadoAplicacao().operadores;
+}
+
+export function useModelosChecklist() {
+  return useEstadoAplicacao().modelosChecklist;
+}
+
+export function useChecklistsPreenchidos() {
+  return useEstadoAplicacao().checklistsPreenchidos;
+}
+
+export function useApontamentos() {
+  return useEstadoAplicacao().apontamentos;
+}
+
+export function useChamados() {
+  return useEstadoAplicacao().chamados;
+}
+
+export function useSessoes() {
+  return useEstadoAplicacao().sessoes;
+}
+
+export function useHistoricoCompleto() {
+  return useEstadoAplicacao().historico;
+}
+
+export function useFilaSincronizacao() {
+  return useEstadoAplicacao().filaSincronizacao;
+}
+
+export function useSincronizacaoPortal() {
+  return useEstadoAplicacao().sincronizacaoPortal;
+}
+
 // --- Ações dos controles de demo — não fazem parte de Repositorio (não são dados de domínio) ---
 
 export function alternarPerfil(perfil: Perfil, operadorAtivoId: Id | null = null): void {
