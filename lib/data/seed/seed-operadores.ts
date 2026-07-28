@@ -1,5 +1,5 @@
 import type { Habilitacao, Operador, TipoEquipamento, Turno } from "@/lib/types";
-import { criarId } from "../id";
+import { criarIdSeed, type RNG } from "./rng";
 import { DIA_MS } from "../regras";
 
 interface OperadorSeedInput {
@@ -27,7 +27,7 @@ const ROSTER: OperadorSeedInput[] = [
   { matricula: "PN-4532", nome: "Sandra Regina Nascimento", turnoPadrao: "tarde", tipos: ["transpaleteira"], scoreConfiabilidade: 87 },
 ];
 
-export function gerarOperadores(agoraBaseMs: number): Operador[] {
+export function gerarOperadores(agoraBaseMs: number, rng: RNG): Operador[] {
   const admissaoEm = new Date(agoraBaseMs - 300 * DIA_MS).toISOString();
 
   return ROSTER.map((entrada) => {
@@ -43,7 +43,7 @@ export function gerarOperadores(agoraBaseMs: number): Operador[] {
     });
 
     const operador: Operador = {
-      id: criarId("oper"),
+      id: criarIdSeed(rng, "oper"),
       matricula: entrada.matricula,
       nome: entrada.nome,
       turnoPadrao: entrada.turnoPadrao,

@@ -19,9 +19,9 @@ const SEED_MESTRE = 20260101;
 export function gerarSeed(agoraBaseMs: number): EstadoAplicacao {
   const rng = mulberry32(SEED_MESTRE);
 
-  const modelosChecklist = gerarModelosChecklist(agoraBaseMs);
-  const equipamentos = gerarEquipamentos(agoraBaseMs, modelosChecklist);
-  const operadores = gerarOperadores(agoraBaseMs);
+  const modelosChecklist = gerarModelosChecklist(agoraBaseMs, rng);
+  const equipamentos = gerarEquipamentos(agoraBaseMs, modelosChecklist, rng);
+  const operadores = gerarOperadores(agoraBaseMs, rng);
 
   const { checklistsPreenchidos, apontamentos, chamados, historico } = gerarHistorico(
     agoraBaseMs,

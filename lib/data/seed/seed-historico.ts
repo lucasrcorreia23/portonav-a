@@ -10,10 +10,9 @@ import type {
   RespostaItemChecklist,
   Turno,
 } from "@/lib/types";
-import { criarId } from "../id";
 import { calcularResultadoChecklist, itensPlanos, type ItemPlano } from "../checklist-logica";
 import { DIA_MS, HORA_MS, TEMPO_MINIMO_SECAO_SEGUNDOS } from "../regras";
-import { chance, embaralhar, inteiroEntre, escolherUm, type RNG } from "./rng";
+import { chance, criarIdSeed, embaralhar, inteiroEntre, escolherUm, type RNG } from "./rng";
 
 const FOTO_PLACEHOLDER =
   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiLz4=";
@@ -100,7 +99,7 @@ function criarPreenchimento(params: ParametrosPreenchimento): ChecklistPreenchid
   }
 
   return {
-    id: criarId("checklist"),
+    id: criarIdSeed(rng, "checklist"),
     modeloChecklistId: modelo.id,
     modeloVersao: modelo.versao,
     equipamentoId: equipamento.id,
@@ -117,25 +116,6 @@ function criarPreenchimento(params: ParametrosPreenchimento): ChecklistPreenchid
     motivosSuspeita,
     scoreConfiabilidadeNoMomento: operador.scoreConfiabilidade,
     preenchidoOffline: false,
-  };
-}
-
-function evento(
-  tipo: HistoricoEvento["tipo"],
-  em: Date,
-  resumo: string,
-  refs: HistoricoEvento["refs"] = {},
-  equipamentoId?: string,
-  operadorId?: string,
-): HistoricoEvento {
-  return {
-    id: criarId("hist"),
-    tipo,
-    em: em.toISOString(),
-    equipamentoId,
-    operadorId,
-    refs,
-    resumo,
   };
 }
 
@@ -159,6 +139,27 @@ export function gerarHistorico(
   const apontamentos: Apontamento[] = [];
   const chamados: ChamadoManutencao[] = [];
   const historico: HistoricoEvento[] = [];
+
+  // Fecha sobre `rng` (definida como parâmetro desta função) para que os ids de
+  // histórico também sejam determinísticos, como todo o resto do seed.
+  function evento(
+    tipo: HistoricoEvento["tipo"],
+    em: Date,
+    resumo: string,
+    refs: HistoricoEvento["refs"] = {},
+    equipamentoId?: string,
+    operadorId?: string,
+  ): HistoricoEvento {
+    return {
+      id: criarIdSeed(rng, "hist"),
+      tipo,
+      em: em.toISOString(),
+      equipamentoId,
+      operadorId,
+      refs,
+      resumo,
+    };
+  }
 
   const buscarEquip = (tag: string) => {
     const eq = equipamentos.find((e) => e.tag === tag);
@@ -241,7 +242,7 @@ export function gerarHistorico(
       if (preenchimento.resultado === "liberado_com_apontamento") {
         const itemDef = plano.find((p) => p.item.id === itemReprovadoId)?.item;
         const apontamento: Apontamento = {
-          id: criarId("apont"),
+          id: criarIdSeed(rng, "apont"),
           equipamentoId: equipamento.id,
           origem: {
             checklistPreenchidoId: preenchimento.id,
@@ -258,7 +259,7 @@ export function gerarHistorico(
           descricao: `${itemDef?.titulo ?? "Item"} reprovado durante checklist de rotina.`,
         };
         const chamado: ChamadoManutencao = {
-          id: criarId("chamado"),
+          id: criarIdSeed(rng, "chamado"),
           equipamentoId: equipamento.id,
           apontamentoIds: [apontamento.id],
           origemAutomatica: true,
@@ -349,7 +350,7 @@ export function gerarHistorico(
     );
 
     const apontamento: Apontamento = {
-      id: criarId("apont"),
+      id: criarIdSeed(rng, "apont"),
       equipamentoId: equipEmp03.id,
       origem: { checklistPreenchidoId: preenchimento.id, itemId: itemBuzina.id, itemTitulo: itemBuzina.titulo },
       modoTratamento: "bloqueia",
@@ -361,7 +362,7 @@ export function gerarHistorico(
       descricao: "Buzina não emite som ao ser acionada — item crítico de segurança.",
     };
     const chamado: ChamadoManutencao = {
-      id: criarId("chamado"),
+      id: criarIdSeed(rng, "chamado"),
       equipamentoId: equipEmp03.id,
       apontamentoIds: [apontamento.id],
       origemAutomatica: true,
@@ -444,7 +445,7 @@ export function gerarHistorico(
     );
 
     const apontamento: Apontamento = {
-      id: criarId("apont"),
+      id: criarIdSeed(rng, "apont"),
       equipamentoId: equipRs01.id,
       origem: { checklistPreenchidoId: preenchimento.id, itemId: itemCamera.id, itemTitulo: itemCamera.titulo },
       modoTratamento: "alerta",
@@ -456,7 +457,7 @@ export function gerarHistorico(
       descricao: "Monitor da câmera lateral esquerda com imagem intermitente.",
     };
     const chamado: ChamadoManutencao = {
-      id: criarId("chamado"),
+      id: criarIdSeed(rng, "chamado"),
       equipamentoId: equipRs01.id,
       apontamentoIds: [apontamento.id],
       origemAutomatica: true,
@@ -504,7 +505,7 @@ export function gerarHistorico(
     const abertoEm = new Date(agoraBaseMs - diaDaManutencaoTp01 * DIA_MS + 8 * HORA_MS);
     const previsaoConclusaoEm = new Date(agoraBaseMs + 4 * DIA_MS);
     const chamado: ChamadoManutencao = {
-      id: criarId("chamado"),
+      id: criarIdSeed(rng, "chamado"),
       equipamentoId: equipTp01.id,
       apontamentoIds: [],
       origemAutomatica: false,

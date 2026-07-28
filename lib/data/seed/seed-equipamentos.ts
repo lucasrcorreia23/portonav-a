@@ -1,5 +1,5 @@
 import type { Equipamento, ModeloChecklist, TipoEquipamento } from "@/lib/types";
-import { criarId } from "../id";
+import { criarIdSeed, type RNG } from "./rng";
 
 interface EquipamentoSeedInput {
   tag: string;
@@ -23,6 +23,7 @@ const ROSTER: EquipamentoSeedInput[] = [
 export function gerarEquipamentos(
   agoraBaseMs: number,
   modelos: ModeloChecklist[],
+  rng: RNG,
 ): Equipamento[] {
   const modeloPorTipo = (tipo: TipoEquipamento): string => {
     const especifico = modelos.find((m) => m.tipoEquipamentoAlvo === tipo);
@@ -35,7 +36,7 @@ export function gerarEquipamentos(
   const criadoEm = new Date(agoraBaseMs - 400 * 24 * 60 * 60 * 1000).toISOString();
 
   return ROSTER.map((entrada) => ({
-    id: criarId("equip"),
+    id: criarIdSeed(rng, "equip"),
     tag: entrada.tag,
     tipo: entrada.tipo,
     categoria: entrada.categoria,

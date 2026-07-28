@@ -36,3 +36,15 @@ export function inteiroEntre(rng: RNG, min: number, max: number): number {
 export function chance(rng: RNG, probabilidade: number): boolean {
   return rng() < probabilidade;
 }
+
+/**
+ * Id determinístico derivado do RNG seedado — usado exclusivamente dentro da geração de
+ * seed (nunca em ações reais do usuário, que devem usar criarId() de lib/data/id.ts).
+ * Essencial para que gerarSeed() seja puro: o mesmo SEED_MESTRE precisa produzir os
+ * mesmos ids sempre, ou o servidor (SSR) e o cliente (primeira carga) geram entidades
+ * com os mesmos dados mas ids diferentes — o que quebra a hidratação do React.
+ */
+export function criarIdSeed(rng: RNG, prefixo: string): string {
+  const parte = Array.from({ length: 4 }, () => Math.floor(rng() * 36 ** 6).toString(36).padStart(6, "0")).join("");
+  return `${prefixo}_${parte}`;
+}
