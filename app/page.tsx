@@ -47,12 +47,14 @@ export default function Home() {
           const Icone = jornada.icone;
           return (
             <Link key={jornada.href} href={jornada.href} className="group">
-              <Card className="h-full transition-shadow group-hover:shadow-elevated">
-                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-control bg-brand-50 text-brand-600">
-                  <Icone size={20} aria-hidden />
+              <Card className="flex h-full items-start gap-4 transition-shadow group-hover:shadow-elevated">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-brand-50 text-brand-600">
+                  <Icone size={22} aria-hidden />
                 </div>
-                <h2 className="mb-1 text-lg font-medium text-neutral-900">{jornada.titulo}</h2>
-                <p className="text-sm text-neutral-600">{jornada.descricao}</p>
+                <div>
+                  <h2 className="mb-1 text-lg font-medium text-neutral-900">{jornada.titulo}</h2>
+                  <p className="text-sm text-neutral-600">{jornada.descricao}</p>
+                </div>
               </Card>
             </Link>
           );

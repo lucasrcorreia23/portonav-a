@@ -34,12 +34,14 @@ export default function AdminHomePage() {
           const Icone = card.icone;
           return (
             <Link key={card.href} href={card.href} className="group">
-              <Card densidade="densa" className="h-full transition-shadow group-hover:shadow-elevated">
-                <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-control bg-brand-50 text-brand-600">
-                  <Icone size={18} aria-hidden />
+              <Card densidade="densa" className="flex h-full items-start gap-4 transition-shadow group-hover:shadow-elevated">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control bg-brand-50 text-brand-600">
+                  <Icone size={20} aria-hidden />
                 </div>
-                <h2 className="mb-1 font-medium text-neutral-900">{card.titulo}</h2>
-                <p className="text-sm text-neutral-600">{card.descricao}</p>
+                <div>
+                  <h2 className="mb-1 font-medium text-neutral-900">{card.titulo}</h2>
+                  <p className="text-sm text-neutral-600">{card.descricao}</p>
+                </div>
               </Card>
             </Link>
           );
