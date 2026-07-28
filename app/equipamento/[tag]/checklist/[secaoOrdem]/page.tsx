@@ -29,6 +29,8 @@ export default function SecaoChecklistPage(props: PageProps<"/equipamento/[tag]/
   const itensDaSecao = itensPorSecao[secao.id].map((itemId) => secao.itens.find((i) => i.id === itemId)!);
 
   const todosRespondidos = itensDaSecao.every((item) => {
+    // Texto livre é sempre opcional — não há "pular sem olhar" a se prevenir aqui.
+    if (item.tipoResposta === "texto") return true;
     const r = respostas[item.id];
     if (!r) return false;
     if (r.reprovado && item.exigeObservacaoAoReprovar && !r.observacao?.trim()) return false;

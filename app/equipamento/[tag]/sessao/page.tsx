@@ -40,25 +40,14 @@ export default function SessaoAbertaPage(props: PageProps<"/equipamento/[tag]/se
     return () => clearInterval(intervalo);
   }, [sessao, encerrada]);
 
+  // Depois de encerrar, a própria sessão deixa de aparecer como "em_andamento" (efeito
+  // esperado do encerramento) — só redireciona se isso acontecer por qualquer OUTRO motivo.
   useEffect(() => {
-    if (!sessao) {
+    if (!sessao && !encerrada) {
       router.replace(`/equipamento/${equipamento.tag}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessao]);
-
-  if (!sessao || !operador) {
-    return null;
-  }
-
-  const duracaoAtualMs = agoraMs - new Date(sessao.iniciadoEm).getTime();
-
-  function aoEncerrar() {
-    if (!sessao) return;
-    const duracaoMs = Date.now() - new Date(sessao.iniciadoEm).getTime();
-    repo.sessoes.encerrar(sessao.id);
-    setEncerrada({ duracaoMs });
-  }
+  }, [sessao, encerrada]);
 
   if (encerrada) {
     return (
@@ -74,6 +63,19 @@ export default function SessaoAbertaPage(props: PageProps<"/equipamento/[tag]/se
         </Card>
       </OperatorShell>
     );
+  }
+
+  if (!sessao || !operador) {
+    return null;
+  }
+
+  const duracaoAtualMs = agoraMs - new Date(sessao.iniciadoEm).getTime();
+
+  function aoEncerrar() {
+    if (!sessao) return;
+    const duracaoMs = Date.now() - new Date(sessao.iniciadoEm).getTime();
+    repo.sessoes.encerrar(sessao.id);
+    setEncerrada({ duracaoMs });
   }
 
   return (
