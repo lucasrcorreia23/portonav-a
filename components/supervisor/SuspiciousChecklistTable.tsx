@@ -7,12 +7,13 @@ import { SuspicionReasonChips } from "@/components/supervisor/SuspicionReasonChi
 import { ReliabilityScoreBadge } from "@/components/operador/ReliabilityScoreBadge";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TAXONOMIA_RESULTADO_CHECKLIST } from "@/components/status/statusTaxonomy";
-import { useEquipamentos, useOperadores } from "@/lib/data/context";
+import { useEquipamentos, useModelosChecklist, useOperadores } from "@/lib/data/context";
 import type { ChecklistPreenchido } from "@/lib/types";
 
 export function SuspiciousChecklistTable({ checklists }: { checklists: ChecklistPreenchido[] }) {
   const equipamentos = useEquipamentos();
   const operadores = useOperadores();
+  const modelos = useModelosChecklist();
   const [emRevisao, setEmRevisao] = useState<ChecklistPreenchido | null>(null);
 
   const colunas: ColunaDataTable<ChecklistPreenchido>[] = [
@@ -41,6 +42,8 @@ export function SuspiciousChecklistTable({ checklists }: { checklists: Checklist
 
   const equipamentoEmRevisao = emRevisao ? equipamentos.find((e) => e.id === emRevisao.equipamentoId) : undefined;
   const operadorEmRevisao = emRevisao ? operadores.find((o) => o.id === emRevisao.operadorId) : undefined;
+  const modeloEmRevisao = emRevisao ? modelos.find((m) => m.id === emRevisao.modeloChecklistId) : undefined;
+  const secoesEmRevisao = modeloEmRevisao?.secoes ?? [];
 
   return (
     <>
@@ -68,7 +71,7 @@ export function SuspiciousChecklistTable({ checklists }: { checklists: Checklist
               <ul className="flex flex-col gap-1 text-sm text-neutral-700">
                 {Object.entries(emRevisao.duracaoPorSecaoSegundos).map(([secaoId, segundos]) => (
                   <li key={secaoId} className="flex justify-between">
-                    <span>Seção {secaoId.slice(-4)}</span>
+                    <span>{secoesEmRevisao.find((s) => s.id === secaoId)?.titulo ?? "Seção removida"}</span>
                     <span className="font-medium">{segundos}s</span>
                   </li>
                 ))}

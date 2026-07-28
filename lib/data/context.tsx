@@ -10,11 +10,39 @@ import { criarSyncRepositorio } from "./local/sync";
 
 const RepositorioContext = createContext<Repositorio | null>(null);
 
+function inscreverSemMudanca() {
+  return () => {};
+}
+
+/**
+ * true só depois que o cliente termina a hidratação — usa o mesmo mecanismo de
+ * getServerSnapshot/getSnapshot do React (não um efeito com setState) porque é
+ * exatamente para isso que a API existe: um valor que precisa divergir entre
+ * servidor e cliente sem virar um mismatch de hidratação.
+ */
+function useMontadoNoCliente(): boolean {
+  return useSyncExternalStore(
+    inscreverSemMudanca,
+    () => true,
+    () => false,
+  );
+}
+
 export function ProvedorDados({ children }: { children: ReactNode }) {
   // Força a inscrição no store para que qualquer mutar() em qualquer lugar do app re-renderize.
   useSyncExternalStore(inscrever, getStore, getServerSnapshot);
   const repositorio = useMemo(() => criarRepositorioLocal(), []);
-  return <RepositorioContext.Provider value={repositorio}>{children}</RepositorioContext.Provider>;
+
+  // O snapshot puro do servidor (ancorado numa época fixa) e os dados reais do
+  // localStorage podem divergir estruturalmente depois que o usuário já usou o app
+  // (contagens diferentes de checklists/eventos, não só valores) — o que quebra a
+  // hidratação do React em telas que derivam listas/gráficos desses dados. Só
+  // renderiza o conteúdo real depois que o cliente termina de hidratar.
+  const montado = useMontadoNoCliente();
+
+  return (
+    <RepositorioContext.Provider value={repositorio}>{montado ? children : null}</RepositorioContext.Provider>
+  );
 }
 
 export function useRepositorio(): Repositorio {
