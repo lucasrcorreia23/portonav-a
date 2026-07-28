@@ -1,16 +1,24 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { QrCode } from "lucide-react";
 import { OperatorShell } from "@/components/layout/OperatorShell";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TAXONOMIA_RESULTADO_CHECKLIST } from "@/components/status/statusTaxonomy";
-import { useChecklistsPreenchidos, useEquipamentos, useEstadoDemo } from "@/lib/data/context";
+import { alternarPerfil, useChecklistsPreenchidos, useEquipamentos, useEstadoDemo } from "@/lib/data/context";
 
 export default function OperadorHomePage() {
   const demo = useEstadoDemo();
   const checklists = useChecklistsPreenchidos();
   const equipamentos = useEquipamentos();
+
+  useEffect(() => {
+    if (demo.perfilAtivo !== "operador") {
+      alternarPerfil("operador", demo.operadorAtivoId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [demo.perfilAtivo]);
 
   const recentes = checklists
     .filter((c) => c.operadorId === demo.operadorAtivoId)

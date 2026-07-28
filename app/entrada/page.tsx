@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Camera, Keyboard, MapPin } from "lucide-react";
 import { OperatorShell } from "@/components/layout/OperatorShell";
 import { ScanFakeCamera } from "@/components/qr-entry/ScanFakeCamera";
 import { NearbyEquipmentList } from "@/components/qr-entry/NearbyEquipmentList";
 import { ManualTagEntry } from "@/components/qr-entry/ManualTagEntry";
-import { useEquipamentos, useRepositorio } from "@/lib/data/context";
+import { alternarPerfil, useEquipamentos, useEstadoDemo, useRepositorio } from "@/lib/data/context";
 
 type Aba = "camera" | "proximos" | "digitar";
 
@@ -23,6 +23,16 @@ export default function EntradaPage() {
   const equipamentos = useEquipamentos();
   const repo = useRepositorio();
   const router = useRouter();
+  const demo = useEstadoDemo();
+
+  // Garante que o perfil ativo seja "operador" ao entrar por aqui — a ficha do
+  // equipamento (porta única) ramifica pelo perfil ativo, não pela URL visitada.
+  useEffect(() => {
+    if (demo.perfilAtivo !== "operador") {
+      alternarPerfil("operador", demo.operadorAtivoId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [demo.perfilAtivo]);
 
   const equipamentoAlvoCamera = equipamentos.find((eq) => eq.status === "disponivel") ?? equipamentos[0];
 
