@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import { notFound } from "next/navigation";
 import { FichaAdmin } from "@/components/equipamento/FichaAdmin";
 import { FichaGestao } from "@/components/equipamento/FichaGestao";
@@ -23,6 +23,9 @@ export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag
   const historicoCompleto = useHistoricoCompleto();
   const chamados = useChamados();
   const modelos = useModelosChecklist();
+  // Real, capturado uma única vez — somado ao deslocamento do "avançar o tempo" para
+  // decidir se uma previsão de manutenção está atrasada, sem chamar Date.now() no render.
+  const [agoraRealMs] = useState(() => Date.now());
 
   const equipamento = equipamentos.find((e) => e.tag.toLowerCase() === tag.toLowerCase());
   if (!equipamento) {
@@ -35,7 +38,18 @@ export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag
 
   if (demo.perfilAtivo === "admin") {
     const modeloChecklist = modelos.find((m) => m.id === equipamento.modeloChecklistIdPadrao);
-    return <FichaAdmin equipamento={equipamento} historico={historico} modeloChecklist={modeloChecklist} />;
+    const previsaoAtrasada = Boolean(
+      equipamento.previsaoManutencao &&
+        agoraRealMs + demo.deslocamentoTempoMs > new Date(equipamento.previsaoManutencao.previsaoConclusaoEm).getTime(),
+    );
+    return (
+      <FichaAdmin
+        equipamento={equipamento}
+        historico={historico}
+        modeloChecklist={modeloChecklist}
+        previsaoAtrasada={previsaoAtrasada}
+      />
+    );
   }
 
   if (demo.perfilAtivo === "supervisor" || demo.perfilAtivo === "manutencao") {

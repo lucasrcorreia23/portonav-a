@@ -14,10 +14,12 @@ export function FichaAdmin({
   equipamento,
   historico,
   modeloChecklist,
+  previsaoAtrasada = false,
 }: {
   equipamento: Equipamento;
   historico: HistoricoEvento[];
   modeloChecklist: ModeloChecklist | undefined;
+  previsaoAtrasada?: boolean;
 }) {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-8">
@@ -73,6 +75,11 @@ export function FichaAdmin({
           <p className="mt-1 text-xs text-neutral-600">
             Previsão: {new Date(equipamento.previsaoManutencao.previsaoConclusaoEm).toLocaleDateString("pt-BR")}
           </p>
+          {previsaoAtrasada && (
+            <p className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-status-avariado">
+              Peça atrasada — previsão já vencida
+            </p>
+          )}
         </Card>
       )}
 
