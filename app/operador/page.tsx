@@ -6,22 +6,24 @@ import { QrCode } from "lucide-react";
 import { OperatorShell } from "@/components/layout/OperatorShell";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TAXONOMIA_RESULTADO_CHECKLIST } from "@/components/status/statusTaxonomy";
-import { alternarPerfil, useChecklistsPreenchidos, useEquipamentos, useEstadoDemo } from "@/lib/data/context";
+import { alternarPerfil, useChecklistsPreenchidos, useEquipamentos, useEstadoDemo, useOperadores } from "@/lib/data/context";
 
 export default function OperadorHomePage() {
   const demo = useEstadoDemo();
   const checklists = useChecklistsPreenchidos();
   const equipamentos = useEquipamentos();
+  const operadores = useOperadores();
+  const operadorAtivoId = demo.operadorAtivoId ?? operadores[0]?.id ?? null;
 
   useEffect(() => {
-    if (demo.perfilAtivo !== "operador") {
-      alternarPerfil("operador", demo.operadorAtivoId);
+    if (demo.perfilAtivo !== "operador" || demo.operadorAtivoId !== operadorAtivoId) {
+      alternarPerfil("operador", operadorAtivoId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demo.perfilAtivo]);
+  }, [demo.perfilAtivo, demo.operadorAtivoId, operadorAtivoId]);
 
   const recentes = checklists
-    .filter((c) => c.operadorId === demo.operadorAtivoId)
+    .filter((c) => c.operadorId === operadorAtivoId)
     .sort((a, b) => b.concluidoEm.localeCompare(a.concluidoEm))
     .slice(0, 5);
 

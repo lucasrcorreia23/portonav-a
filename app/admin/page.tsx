@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ClipboardList, Truck, Users } from "lucide-react";
+import { ClipboardList, ShieldCheck, Truck, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -8,27 +8,33 @@ const CARDS: { href: string; titulo: string; descricao: string; icone: LucideIco
   {
     href: "/admin/equipamentos",
     titulo: "Equipamentos",
-    descricao: "Lista, ficha individual, QR e histórico de cada equipamento.",
+    descricao: "Cadastro com tag e QR, lista, ficha individual e histórico de cada equipamento.",
     icone: Truck,
   },
   {
     href: "/admin/checklists",
     titulo: "Modelos de checklist",
-    descricao: "Construtor de seções e itens por tipo de operação.",
+    descricao: "Construtor de seções e itens por tipo de equipamento e tipo de operação.",
     icone: ClipboardList,
   },
   {
     href: "/admin/operadores",
     titulo: "Operadores",
-    descricao: "Sincronizados do portal corporativo — habilitações e score.",
+    descricao: "Sincronizados do portal corporativo via SSO/API — habilitações (somente leitura) e score.",
     icone: Users,
+  },
+  {
+    href: "/admin/regras",
+    titulo: "Regras",
+    descricao: "Modos de tratamento de checklist e quem pode liberar um equipamento após reparo.",
+    icone: ShieldCheck,
   },
 ];
 
 export default function AdminHomePage() {
   return (
     <div>
-      <PageHeader titulo="Cadastros e regras" subtitulo="Administração do sistema de checklist de pré-operação." />
+      <PageHeader titulo="Portal Portonav" subtitulo="Cadastros e regras do checklist de pré-operação." />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {CARDS.map((card) => {
           const Icone = card.icone;

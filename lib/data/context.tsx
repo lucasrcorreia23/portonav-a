@@ -4,7 +4,7 @@ import { createContext, useContext, useMemo, useSyncExternalStore, type ReactNod
 import type { Id, Perfil } from "@/lib/types";
 import type { Repositorio } from "./repository";
 import type { EstadoAplicacao } from "./store";
-import { getServerSnapshot, getStore, inscrever, mutar, resetar } from "./store";
+import { agora, getServerSnapshot, getStore, inscrever, mutar, resetar } from "./store";
 import { criarRepositorioLocal } from "./local/create-local-repositorio";
 import { criarSyncRepositorio } from "./local/sync";
 
@@ -105,6 +105,9 @@ export function useFilaSincronizacao() {
 export function useSincronizacaoPortal() {
   return useEstadoAplicacao().sincronizacaoPortal;
 }
+
+/** "Agora" simulado (tempo real + "avançar o tempo") — único jeito correto de carimbar escritas na UI. */
+export { agora };
 
 // --- Ações dos controles de demo — não fazem parte de Repositorio (não são dados de domínio) ---
 

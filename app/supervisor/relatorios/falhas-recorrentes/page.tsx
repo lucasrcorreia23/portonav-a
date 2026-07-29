@@ -3,7 +3,9 @@
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { BarChart } from "@/components/charts/BarChart";
+import { DataTable, type ColunaDataTable } from "@/components/ui/DataTable";
 import { useChecklistsPreenchidos, useEquipamentos, useModelosChecklist } from "@/lib/data/context";
+import { calcularFalhasRecorrentes, type FalhaRecorrente } from "@/lib/data/falhas-recorrentes";
 import type { TipoEquipamento } from "@/lib/types";
 
 const ROTULO_TIPO: Record<TipoEquipamento, string> = {
@@ -43,6 +45,23 @@ export default function FalhasRecorrentesPage() {
     .slice(0, 8)
     .map(([rotulo, valor]) => ({ rotulo, valor }));
 
+  const falhasRecorrentes = calcularFalhasRecorrentes(checklists, modelos);
+
+  const colunasRecorrencia: ColunaDataTable<FalhaRecorrente>[] = [
+    {
+      chave: "equipamento",
+      cabecalho: "Equipamento",
+      renderizar: (f) => <span className="font-medium">{equipamentos.find((e) => e.id === f.equipamentoId)?.tag ?? "—"}</span>,
+    },
+    { chave: "item", cabecalho: "Item", renderizar: (f) => f.itemTitulo },
+    { chave: "ocorrencias", cabecalho: "Reprovações", renderizar: (f) => f.ocorrencias },
+    {
+      chave: "ultimaOcorrencia",
+      cabecalho: "Última ocorrência",
+      renderizar: (f) => new Date(f.ultimaOcorrenciaEm).toLocaleDateString("pt-BR"),
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-6">
       <PageHeader titulo="Falhas mais recorrentes" subtitulo="Itens de checklist reprovados no histórico de 45 dias." />
@@ -59,6 +78,17 @@ export default function FalhasRecorrentesPage() {
         ) : (
           <BarChart dados={dadosPorItem} />
         )}
+      </Card>
+
+      <Card densidade="densa">
+        <h2 className="mb-1 font-medium text-neutral-900">Falha recorrente por equipamento</h2>
+        <p className="mb-4 text-sm text-neutral-600">O mesmo item reprovado 2 vezes ou mais no mesmo equipamento.</p>
+        <DataTable
+          colunas={colunasRecorrencia}
+          linhas={falhasRecorrentes}
+          chaveLinha={(f) => `${f.equipamentoId}::${f.itemId}`}
+          legendaVazia="Nenhuma reincidência registrada ainda."
+        />
       </Card>
     </div>
   );

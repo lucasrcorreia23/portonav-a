@@ -142,4 +142,14 @@ h4 {
   .no-print {
     display: none !important;
   }
+
+  /* O app shell usa altura fixa (h-dvh/overflow-hidden) com rolagem interna para a
+     navegação lateral ficar fixa na tela. Na impressão isso cortaria o conteúdo na
+     primeira página — força tudo de volta a fluxo normal e altura automática. */
+  html,
+  body,
+  * {
+    height: auto !important;
+    overflow: visible !important;
+  }
 }

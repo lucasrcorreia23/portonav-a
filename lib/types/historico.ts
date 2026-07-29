@@ -1,6 +1,7 @@
 import type { Id, ISODateString } from "./common";
 
 export type TipoEventoHistorico =
+  | "equipamento_cadastrado"
   | "checklist_preenchido"
   | "equipamento_liberado_uso"
   | "equipamento_bloqueado"

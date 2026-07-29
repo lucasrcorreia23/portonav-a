@@ -11,7 +11,10 @@ export const TEMPO_MINIMO_SECAO_SEGUNDOS = 10;
 /** Duração total mínima esperada para um checklist inteiro, independente do número de seções. */
 export const TEMPO_MINIMO_TOTAL_SEGUNDOS = 25;
 
-/** Quem pode liberar um equipamento a partir de um chamado concluído — configurável pelo admin. */
+/**
+ * Quem pode liberar um equipamento a partir de um chamado concluído. Manutenção registra
+ * o reparo, mas não libera — a liberação exige aprovação de supervisor (ou admin).
+ */
 export const REGRA_LIBERACAO_PADRAO: RegraLiberacaoEquipamento = {
-  perfisPermitidos: ["supervisor", "manutencao", "admin"],
+  perfisPermitidos: ["supervisor", "admin"],
 };

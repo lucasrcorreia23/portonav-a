@@ -12,7 +12,8 @@ import type {
 } from "../repository";
 import { getStore, mutar } from "../store";
 import { criarId } from "../id";
-import { calcularResultadoChecklist, itensPlanos } from "../checklist-logica";
+import { calcularResultadoChecklist, itensPlanos, resolverModeloChecklistPadrao } from "../checklist-logica";
+import { bloquearEquipamento } from "./equipamentos";
 import { TEMPO_MINIMO_SECAO_SEGUNDOS, TEMPO_MINIMO_TOTAL_SEGUNDOS } from "../regras";
 import { adicionarEventoHistorico } from "./historico";
 import { enfileirarSeOffline } from "./sync";
@@ -25,9 +26,8 @@ export function criarChecklistsRepositorio(): ChecklistsRepositorio {
     buscarModeloPorId(id) {
       return getStore().modelosChecklist.find((m) => m.id === id);
     },
-    buscarModeloPorTipo(tipo) {
-      const modelos = getStore().modelosChecklist;
-      return modelos.find((m) => m.tipoEquipamentoAlvo === tipo) ?? modelos.find((m) => m.tipoEquipamentoAlvo === "todos");
+    buscarModeloPorTipo(tipo, tipoOperacao) {
+      return resolverModeloChecklistPadrao(tipo, tipoOperacao, getStore().modelosChecklist);
     },
     salvarModelo(modelo) {
       mutar((rascunho) => {
@@ -171,14 +171,13 @@ export function criarChecklistsRepositorio(): ChecklistsRepositorio {
         let sessao: SessaoOperacao | null = null;
         if (resultado === "bloqueado") {
           const apontamentoCritico = apontamentosGerados.find((a) => a.criticidade === "critica")!;
-          equipamento.status = "bloqueado";
-          equipamento.bloqueio = {
+          bloquearEquipamento(rascunho, equipamento.id, {
             motivo: apontamentoCritico.descricao,
             origemItemChecklistId: apontamentoCritico.origem.itemId,
             bloqueadoPor: { perfil: "sistema", nome: "Sistema (bloqueio automático)" },
             bloqueadoEm: checklist.concluidoEm,
             apontamentoId: apontamentoCritico.id,
-          };
+          });
           equipamento.chamadoAtivoId = chamadoGerado!.id;
           adicionarEventoHistorico(rascunho, {
             tipo: "equipamento_bloqueado",

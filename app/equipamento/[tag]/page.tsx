@@ -8,12 +8,14 @@ import { FluxoOperador } from "@/components/equipamento/FluxoOperador";
 import { OperatorShell } from "@/components/layout/OperatorShell";
 import {
   useChamados,
+  useChecklistsPreenchidos,
   useEquipamentos,
   useEstadoDemo,
   useHistoricoCompleto,
   useModelosChecklist,
   useOperadores,
 } from "@/lib/data/context";
+import { calcularFalhasRecorrentes } from "@/lib/data/falhas-recorrentes";
 
 export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag]">) {
   const { tag } = use(props.params);
@@ -23,6 +25,7 @@ export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag
   const historicoCompleto = useHistoricoCompleto();
   const chamados = useChamados();
   const modelos = useModelosChecklist();
+  const checklists = useChecklistsPreenchidos();
   // Real, capturado uma única vez — somado ao deslocamento do "avançar o tempo" para
   // decidir se uma previsão de manutenção está atrasada, sem chamar Date.now() no render.
   const [agoraRealMs] = useState(() => Date.now());
@@ -36,6 +39,10 @@ export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag
     .filter((h) => h.equipamentoId === equipamento.id)
     .sort((a, b) => b.em.localeCompare(a.em));
 
+  const falhasRecorrentes = calcularFalhasRecorrentes(checklists, modelos).filter(
+    (f) => f.equipamentoId === equipamento.id,
+  );
+
   if (demo.perfilAtivo === "admin") {
     const modeloChecklist = modelos.find((m) => m.id === equipamento.modeloChecklistIdPadrao);
     const previsaoAtrasada = Boolean(
@@ -48,13 +55,21 @@ export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag
         historico={historico}
         modeloChecklist={modeloChecklist}
         previsaoAtrasada={previsaoAtrasada}
+        falhasRecorrentes={falhasRecorrentes}
       />
     );
   }
 
   if (demo.perfilAtivo === "supervisor" || demo.perfilAtivo === "manutencao") {
     const chamadoAtivo = equipamento.chamadoAtivoId ? chamados.find((c) => c.id === equipamento.chamadoAtivoId) : undefined;
-    return <FichaGestao equipamento={equipamento} historico={historico} chamadoAtivo={chamadoAtivo} />;
+    return (
+      <FichaGestao
+        equipamento={equipamento}
+        historico={historico}
+        chamadoAtivo={chamadoAtivo}
+        falhasRecorrentes={falhasRecorrentes}
+      />
+    );
   }
 
   // perfil "operador"
@@ -65,7 +80,7 @@ export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag
 
   return (
     <OperatorShell>
-      <FluxoOperador equipamento={equipamento} operador={operador} />
+      <FluxoOperador equipamento={equipamento} operador={operador} ultimoEventoHistorico={historico[0]} />
     </OperatorShell>
   );
 }

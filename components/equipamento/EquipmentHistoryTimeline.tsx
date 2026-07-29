@@ -3,6 +3,7 @@ import {
   Ban,
   CheckCircle2,
   ClipboardCheck,
+  PlusCircle,
   RefreshCw,
   ShieldCheck,
   Square,
@@ -12,6 +13,7 @@ import {
 import type { HistoricoEvento, TipoEventoHistorico } from "@/lib/types";
 
 const ICONE_POR_TIPO: Record<TipoEventoHistorico, LucideIcon> = {
+  equipamento_cadastrado: PlusCircle,
   checklist_preenchido: ClipboardCheck,
   equipamento_liberado_uso: CheckCircle2,
   equipamento_bloqueado: Ban,

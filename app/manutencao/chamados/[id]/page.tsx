@@ -5,18 +5,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TAXONOMIA_STATUS_CHAMADO } from "@/components/status/statusTaxonomy";
 import { RegistrarReparoForm } from "@/components/chamados/RegistrarReparoForm";
-import { REGRA_LIBERACAO_PADRAO } from "@/lib/data/regras";
-import {
-  useApontamentos,
-  useChamados,
-  useEquipamentos,
-  useEstadoDemo,
-  useRepositorio,
-} from "@/lib/data/context";
+import { useApontamentos, useChamados, useEquipamentos, useEstadoDemo } from "@/lib/data/context";
 
 export default function ChamadoDetailPage(props: PageProps<"/manutencao/chamados/[id]">) {
   const { id } = use(props.params);
@@ -24,22 +16,12 @@ export default function ChamadoDetailPage(props: PageProps<"/manutencao/chamados
   const equipamentos = useEquipamentos();
   const apontamentos = useApontamentos();
   const demo = useEstadoDemo();
-  const repo = useRepositorio();
 
   const chamado = chamados.find((c) => c.id === id);
   if (!chamado) notFound();
 
   const equipamento = equipamentos.find((e) => e.id === chamado.equipamentoId);
   const apontamentosDoChamado = apontamentos.filter((a) => chamado.apontamentoIds.includes(a.id));
-  const podeLiberar = REGRA_LIBERACAO_PADRAO.perfisPermitidos.includes(demo.perfilAtivo);
-  const chamadoId = chamado.id;
-
-  function aoLiberar() {
-    repo.manutencao.liberarChamado(chamadoId, {
-      liberadoPor: { perfil: demo.perfilAtivo, nome: "Você" },
-      liberadoEm: new Date().toISOString(),
-    });
-  }
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -94,14 +76,14 @@ export default function ChamadoDetailPage(props: PageProps<"/manutencao/chamados
 
       {chamado.status === "aguardando_liberacao" && (
         <Card densidade="densa">
-          <h2 className="mb-2 font-medium text-neutral-900">Liberar equipamento</h2>
-          {podeLiberar ? (
-            <Button onClick={aoLiberar}>Liberar equipamento</Button>
-          ) : (
-            <p className="text-sm text-neutral-600">
-              Apenas os perfis {REGRA_LIBERACAO_PADRAO.perfisPermitidos.join(", ")} podem liberar este equipamento.
-            </p>
-          )}
+          <h2 className="mb-2 font-medium text-neutral-900">Aguardando aprovação do supervisor</h2>
+          <p className="text-sm text-neutral-600">
+            Reparo registrado — a liberação do equipamento exige aprovação de supervisor (ou admin) em{" "}
+            <Link href="/supervisor/liberacoes" className="font-medium text-brand-600 hover:underline">
+              Supervisor → Liberações
+            </Link>
+            .
+          </p>
         </Card>
       )}
 

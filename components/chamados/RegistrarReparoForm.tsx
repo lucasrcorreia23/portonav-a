@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
-import { useRepositorio } from "@/lib/data/context";
+import { agora, useRepositorio } from "@/lib/data/context";
 import type { Perfil } from "@/lib/types";
 
 export function RegistrarReparoForm({ chamadoId, perfilAtivo }: { chamadoId: string; perfilAtivo: Perfil }) {
@@ -20,7 +20,7 @@ export function RegistrarReparoForm({ chamadoId, perfilAtivo }: { chamadoId: str
         .map((p) => p.trim())
         .filter(Boolean),
       registradoPor: { perfil: perfilAtivo, nome: "Equipe de manutenção" },
-      registradoEm: new Date().toISOString(),
+      registradoEm: agora().toISOString(),
     });
     setDescricao("");
     setPecas("");

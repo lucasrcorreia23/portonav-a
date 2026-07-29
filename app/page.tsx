@@ -24,8 +24,8 @@ const JORNADAS: { href: string; titulo: string; descricao: string; icone: Lucide
   },
   {
     href: "/admin",
-    titulo: "Admin",
-    descricao: "Cadastro de equipamentos, modelos de checklist e operadores.",
+    titulo: "Portal Portonav",
+    descricao: "Cadastro de equipamentos, modelos de checklist, operadores e regras.",
     icone: ClipboardCheck,
   },
 ];

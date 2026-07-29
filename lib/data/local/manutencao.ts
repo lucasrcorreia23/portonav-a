@@ -1,7 +1,9 @@
 import type { Id, LiberacaoEquipamento, RegistroReparo, StatusChamado } from "@/lib/types";
 import type { ManutencaoRepositorio } from "../repository";
+import { REGRA_LIBERACAO_PADRAO } from "../regras";
 import { agora, getStore, mutar } from "../store";
 import { adicionarEventoHistorico } from "./historico";
+import { liberarEquipamentoParaUso, marcarEquipamentoEmManutencao } from "./equipamentos";
 
 export function criarManutencaoRepositorio(): ManutencaoRepositorio {
   return {
@@ -21,6 +23,12 @@ export function criarManutencaoRepositorio(): ManutencaoRepositorio {
         const em = agora().toISOString();
         chamado.status = status;
         chamado.historicoStatus.push({ status, em });
+        // Só equipamento avariado (bloqueado) vira "em manutenção" ao iniciar o atendimento —
+        // um chamado não crítico (modo alerta) não deve tirar de serviço um equipamento em uso.
+        const equipamentoDoChamado = rascunho.equipamentos.find((e) => e.id === chamado.equipamentoId);
+        if (status === "em_atendimento" && equipamentoDoChamado?.status === "bloqueado") {
+          marcarEquipamentoEmManutencao(rascunho, chamado.equipamentoId, chamado.id);
+        }
         adicionarEventoHistorico(rascunho, {
           tipo: "chamado_status_alterado",
           em,
@@ -49,6 +57,9 @@ export function criarManutencaoRepositorio(): ManutencaoRepositorio {
       });
     },
     liberarChamado(id: Id, liberacao: LiberacaoEquipamento) {
+      if (!REGRA_LIBERACAO_PADRAO.perfisPermitidos.includes(liberacao.liberadoPor.perfil)) {
+        throw new Error(`Perfil "${liberacao.liberadoPor.perfil}" não tem permissão para liberar este equipamento.`);
+      }
       mutar((rascunho) => {
         const chamado = rascunho.chamados.find((c) => c.id === id);
         if (!chamado) return;
@@ -65,13 +76,7 @@ export function criarManutencaoRepositorio(): ManutencaoRepositorio {
           }
         }
 
-        const equipamento = rascunho.equipamentos.find((e) => e.id === chamado.equipamentoId);
-        if (equipamento) {
-          equipamento.status = "disponivel";
-          equipamento.bloqueio = null;
-          equipamento.chamadoAtivoId = null;
-          equipamento.previsaoManutencao = undefined;
-        }
+        liberarEquipamentoParaUso(rascunho, chamado.equipamentoId);
 
         adicionarEventoHistorico(rascunho, {
           tipo: "chamado_concluido_liberacao",

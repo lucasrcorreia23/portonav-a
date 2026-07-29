@@ -1,27 +1,29 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import { notFound } from "next/navigation";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ReliabilityScoreBadge } from "@/components/operador/ReliabilityScoreBadge";
 import { TAXONOMIA_RESULTADO_CHECKLIST } from "@/components/status/statusTaxonomy";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { useChecklistsPreenchidos, useEquipamentos, useOperadores } from "@/lib/data/context";
+import { ROTULO_TIPO_EQUIPAMENTO } from "@/components/equipamento/rotulos";
+import { useChecklistsPreenchidos, useEquipamentos, useEstadoDemo, useOperadores } from "@/lib/data/context";
 
-const ROTULO_TIPO: Record<string, string> = {
-  empilhadeira: "Empilhadeira",
-  reach_stacker: "Reach stacker",
-  transpaleteira: "Transpaleteira",
-};
+const SETE_DIAS_MS = 7 * 24 * 60 * 60 * 1000;
 
 export default function FichaOperadorPage(props: PageProps<"/admin/operadores/[operadorId]">) {
   const { operadorId } = use(props.params);
   const operadores = useOperadores();
   const checklists = useChecklistsPreenchidos();
   const equipamentos = useEquipamentos();
+  const demo = useEstadoDemo();
+  // Real, capturado uma única vez — somado ao deslocamento do "avançar o tempo" para
+  // decidir vencimento de habilitação sem chamar Date.now() no render.
+  const [agoraRealMs] = useState(() => Date.now());
+  const agoraSimuladoMs = agoraRealMs + demo.deslocamentoTempoMs;
   const operador = operadores.find((o) => o.id === operadorId);
 
   if (!operador) {
@@ -38,14 +40,50 @@ export default function FichaOperadorPage(props: PageProps<"/admin/operadores/[o
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Card densidade="densa">
-          <h2 className="mb-3 font-medium text-neutral-900">Habilitações</h2>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h2 className="font-medium text-neutral-900">Habilitações</h2>
+            <span className="text-xs text-neutral-500">Somente leitura — sincronizado do portal</span>
+          </div>
           <ul className="flex flex-col gap-2">
-            {operador.habilitacoes.map((h) => (
-              <li key={h.tipoEquipamento} className="flex items-center justify-between text-sm">
-                <span>{ROTULO_TIPO[h.tipoEquipamento]}</span>
-                <span className="text-neutral-500">{h.numeroCertificado}</span>
-              </li>
-            ))}
+            {operador.habilitacoes.map((h) => {
+              const vencimentoMs = h.validoAte ? new Date(h.validoAte).getTime() : null;
+              const vencida = vencimentoMs !== null && vencimentoMs < agoraSimuladoMs;
+              const venceEmBreve = vencimentoMs !== null && !vencida && vencimentoMs - agoraSimuladoMs < SETE_DIAS_MS;
+              return (
+                <li
+                  key={h.tipoEquipamento}
+                  className="flex flex-col gap-1 border-b border-neutral-100 pb-2 text-sm last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="flex items-center gap-2">
+                    <span>{ROTULO_TIPO_EQUIPAMENTO[h.tipoEquipamento]}</span>
+                    <span className="text-neutral-500">{h.numeroCertificado}</span>
+                  </div>
+                  {h.validoAte ? (
+                    <Badge
+                      texto={
+                        vencida
+                          ? `Vencida em ${new Date(h.validoAte).toLocaleDateString("pt-BR")}`
+                          : `Válida até ${new Date(h.validoAte).toLocaleDateString("pt-BR")}`
+                      }
+                      icone={<AlertTriangle size={12} aria-hidden />}
+                      classeCor={
+                        vencida || venceEmBreve
+                          ? "text-status-avariado bg-status-avariado-surface"
+                          : "text-neutral-600 bg-neutral-100"
+                      }
+                      tamanho="sm"
+                    />
+                  ) : (
+                    <Badge
+                      texto="Sem validade"
+                      icone={<CheckCircle2 size={12} aria-hidden />}
+                      classeCor="text-status-disponivel bg-status-disponivel-surface"
+                      tamanho="sm"
+                    />
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </Card>
         <Card densidade="densa">

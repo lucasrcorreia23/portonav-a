@@ -35,12 +35,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${kumbhSans.variable} ${fraunces.variable} h-full`}>
-      <body className="flex min-h-full flex-col antialiased">
+      <body className="flex h-dvh flex-col overflow-hidden antialiased">
         <ProvedorDados>
-          <div className="no-print sticky top-0 z-30 border-b border-neutral-100 bg-white">
+          <div className="no-print z-30 shrink-0 border-b border-neutral-100 bg-white">
             <OfflineIndicator />
           </div>
-          <div className="flex-1">{children}</div>
+          <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
           <DemoControlBar />
         </ProvedorDados>
       </body>

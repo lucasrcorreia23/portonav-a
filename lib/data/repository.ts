@@ -16,12 +16,23 @@ import type {
   StatusChamado,
   SyncQueueItem,
   TipoEquipamento,
+  TipoOperacao,
 } from "@/lib/types";
+
+/** Entrada crua vinda da UI — id, status inicial e checklist padrão são resolvidos pelo repositório. */
+export interface NovoEquipamento {
+  tag: string;
+  tipo: TipoEquipamento;
+  tipoOperacao: TipoOperacao;
+  modelo: string;
+  localizacaoAtual: string;
+}
 
 export interface EquipamentosRepositorio {
   listar(): Equipamento[];
   buscarPorId(id: Id): Equipamento | undefined;
   buscarPorTag(tag: string): Equipamento | undefined;
+  criar(entrada: NovoEquipamento): Equipamento;
   bloquear(id: Id, bloqueio: BloqueioAtivo): void;
   liberarParaUso(id: Id): void;
   marcarEmManutencao(id: Id, chamadoId: Id): void;
@@ -53,7 +64,7 @@ export interface ResultadoRegistroChecklist {
 export interface ChecklistsRepositorio {
   listarModelos(): ModeloChecklist[];
   buscarModeloPorId(id: Id): ModeloChecklist | undefined;
-  buscarModeloPorTipo(tipo: TipoEquipamento): ModeloChecklist | undefined;
+  buscarModeloPorTipo(tipo: TipoEquipamento, tipoOperacao: TipoOperacao): ModeloChecklist;
   salvarModelo(modelo: ModeloChecklist): void;
   listarPreenchimentosPorEquipamento(equipamentoId: Id): ChecklistPreenchido[];
   listarPreenchimentosPorOperador(operadorId: Id): ChecklistPreenchido[];

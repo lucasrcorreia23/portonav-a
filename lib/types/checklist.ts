@@ -1,5 +1,5 @@
 import type { Id, ISODateString } from "./common";
-import type { TipoEquipamento } from "./equipamento";
+import type { TipoEquipamento, TipoOperacao } from "./equipamento";
 
 export type TipoRespostaItem = "ok_nao_ok" | "numerico" | "texto";
 
@@ -28,6 +28,7 @@ export interface ModeloChecklist {
   id: Id;
   nome: string;
   tipoEquipamentoAlvo: TipoEquipamento | "todos";
+  tipoOperacaoAlvo: TipoOperacao | "todas";
   versao: number;
   secoes: SecaoChecklist[];
   ativo: boolean;

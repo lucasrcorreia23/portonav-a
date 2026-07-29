@@ -7,7 +7,7 @@ import { OperatorShell } from "@/components/layout/OperatorShell";
 import { ScanFakeCamera } from "@/components/qr-entry/ScanFakeCamera";
 import { NearbyEquipmentList } from "@/components/qr-entry/NearbyEquipmentList";
 import { ManualTagEntry } from "@/components/qr-entry/ManualTagEntry";
-import { alternarPerfil, useEquipamentos, useEstadoDemo, useRepositorio } from "@/lib/data/context";
+import { alternarPerfil, useEquipamentos, useEstadoDemo, useOperadores, useRepositorio } from "@/lib/data/context";
 
 type Aba = "camera" | "proximos" | "digitar";
 
@@ -21,18 +21,19 @@ export default function EntradaPage() {
   const [aba, setAba] = useState<Aba>("camera");
   const [erro, setErro] = useState<string | null>(null);
   const equipamentos = useEquipamentos();
+  const operadores = useOperadores();
   const repo = useRepositorio();
   const router = useRouter();
   const demo = useEstadoDemo();
 
-  // Garante que o perfil ativo seja "operador" ao entrar por aqui — a ficha do
-  // equipamento (porta única) ramifica pelo perfil ativo, não pela URL visitada.
+  // Garante perfil operador e um operador ativo — sem id, o checklist rejeitava o início.
   useEffect(() => {
-    if (demo.perfilAtivo !== "operador") {
-      alternarPerfil("operador", demo.operadorAtivoId);
+    const operadorId = demo.operadorAtivoId ?? operadores[0]?.id ?? null;
+    if (demo.perfilAtivo !== "operador" || demo.operadorAtivoId !== operadorId) {
+      alternarPerfil("operador", operadorId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demo.perfilAtivo]);
+  }, [demo.perfilAtivo, demo.operadorAtivoId, operadores]);
 
   const equipamentoAlvoCamera = equipamentos.find((eq) => eq.status === "disponivel") ?? equipamentos[0];
 

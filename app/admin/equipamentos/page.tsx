@@ -2,19 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { DataTable, type ColunaDataTable } from "@/components/ui/DataTable";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { useEquipamentos } from "@/lib/data/context";
 import { TAXONOMIA_STATUS_EQUIPAMENTO } from "@/components/status/statusTaxonomy";
+import { ROTULO_TIPO_EQUIPAMENTO, ROTULO_TIPO_OPERACAO } from "@/components/equipamento/rotulos";
 import type { Equipamento } from "@/lib/types";
-
-const ROTULO_TIPO: Record<Equipamento["tipo"], string> = {
-  empilhadeira: "Empilhadeira",
-  reach_stacker: "Reach stacker",
-  transpaleteira: "Transpaleteira",
-};
 
 export default function AdminEquipamentosPage() {
   const equipamentos = useEquipamentos();
@@ -27,15 +24,15 @@ export default function AdminEquipamentosPage() {
     return equipamentos.filter(
       (eq) =>
         eq.tag.toLowerCase().includes(termo) ||
-        eq.categoria.toLowerCase().includes(termo) ||
+        ROTULO_TIPO_OPERACAO[eq.tipoOperacao].toLowerCase().includes(termo) ||
         eq.localizacaoAtual.toLowerCase().includes(termo),
     );
   }, [equipamentos, busca]);
 
   const colunas: ColunaDataTable<Equipamento>[] = [
     { chave: "tag", cabecalho: "Tag", renderizar: (eq) => <span className="font-medium">{eq.tag}</span> },
-    { chave: "tipo", cabecalho: "Tipo", renderizar: (eq) => ROTULO_TIPO[eq.tipo] },
-    { chave: "categoria", cabecalho: "Categoria", renderizar: (eq) => eq.categoria },
+    { chave: "tipo", cabecalho: "Tipo", renderizar: (eq) => ROTULO_TIPO_EQUIPAMENTO[eq.tipo] },
+    { chave: "tipoOperacao", cabecalho: "Tipo de operação", renderizar: (eq) => ROTULO_TIPO_OPERACAO[eq.tipoOperacao] },
     { chave: "localizacao", cabecalho: "Localização", renderizar: (eq) => eq.localizacaoAtual },
     {
       chave: "status",
@@ -46,11 +43,19 @@ export default function AdminEquipamentosPage() {
 
   return (
     <div>
-      <PageHeader titulo="Equipamentos" subtitulo={`${equipamentos.length} equipamentos cadastrados.`} />
+      <PageHeader
+        titulo="Equipamentos"
+        subtitulo={`${equipamentos.length} equipamentos cadastrados.`}
+        acoes={
+          <Button iconeEsquerda={<Plus size={16} aria-hidden />} onClick={() => router.push("/admin/equipamentos/novo")}>
+            Novo equipamento
+          </Button>
+        }
+      />
       <div className="mb-4 max-w-xs">
         <Input
           rotulo="Buscar"
-          placeholder="Tag, categoria ou localização"
+          placeholder="Tag, tipo de operação ou localização"
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
         />

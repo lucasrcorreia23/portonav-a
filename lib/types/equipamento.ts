@@ -2,6 +2,9 @@ import type { Id, ISODateString, Perfil } from "./common";
 
 export type TipoEquipamento = "empilhadeira" | "reach_stacker" | "transpaleteira";
 
+/** Classificação operacional do equipamento — distinta de `tipo` (classe física da máquina). */
+export type TipoOperacao = "carga_geral" | "conteineres" | "graneis" | "armazem";
+
 export type StatusOperacionalEquipamento =
   | "disponivel"
   | "em_uso"
@@ -26,7 +29,7 @@ export interface Equipamento {
   id: Id;
   tag: string;
   tipo: TipoEquipamento;
-  categoria: string;
+  tipoOperacao: TipoOperacao;
   modelo: string;
   localizacaoAtual: string;
   status: StatusOperacionalEquipamento;

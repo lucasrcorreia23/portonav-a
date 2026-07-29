@@ -20,7 +20,8 @@ export default function ChecklistLayout({ children, params }: LayoutProps<"/equi
     notFound();
   }
 
-  const operador = operadores.find((o) => o.id === demo.operadorAtivoId);
+  // Mesmo fallback da ficha do equipamento: sem operador ativo no demo, usa o primeiro.
+  const operador = operadores.find((o) => o.id === demo.operadorAtivoId) ?? operadores[0];
   const modelo = modelos.find((m) => m.id === equipamento.modeloChecklistIdPadrao);
 
   const podeIniciar = Boolean(

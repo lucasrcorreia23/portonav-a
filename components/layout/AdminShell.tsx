@@ -22,8 +22,8 @@ export function AdminShell({ titulo, itensNav, children }: AdminShellProps) {
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-full w-full">
-      <aside className="hidden w-60 shrink-0 border-r border-neutral-100 bg-neutral-50 px-3 py-6 md:block">
+    <div className="flex h-full w-full">
+      <aside className="hidden h-full w-60 shrink-0 overflow-y-auto border-r border-neutral-100 bg-neutral-50 px-3 py-6 md:block">
         <p className="mb-4 px-3 text-sm font-medium text-neutral-500">{titulo}</p>
         <nav aria-label={titulo}>
           <ul className="flex flex-col gap-1">
@@ -48,7 +48,8 @@ export function AdminShell({ titulo, itensNav, children }: AdminShellProps) {
           </ul>
         </nav>
       </aside>
-      <main className="min-w-0 flex-1 px-5 py-6 md:px-8">{children}</main>
+      {/* pb-24 evita que botões no canto inferior direito fiquem embaixo da pílula fixa "Modo demonstração". */}
+      <main className="h-full min-w-0 flex-1 overflow-y-auto px-5 py-6 pb-24 md:px-8">{children}</main>
     </div>
   );
 }

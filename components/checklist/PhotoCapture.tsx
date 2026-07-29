@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Camera, ImageDown, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { agora } from "@/lib/data/context";
 import type { FotoEvidencia } from "@/lib/types";
 
 const EXEMPLOS_SVG = [
@@ -15,7 +16,7 @@ function fotoDeExemplo(): FotoEvidencia {
   const svg = EXEMPLOS_SVG[Math.floor(Math.random() * EXEMPLOS_SVG.length)];
   return {
     dataUrl: `data:image/svg+xml,${svg}`,
-    timestamp: new Date().toISOString(),
+    timestamp: agora().toISOString(),
     origemSimulada: true,
   };
 }
@@ -40,7 +41,7 @@ export function PhotoCapture({
     leitor.onload = () => {
       onCapturar({
         dataUrl: String(leitor.result),
-        timestamp: new Date().toISOString(),
+        timestamp: agora().toISOString(),
         origemSimulada: false,
       });
       setCarregando(false);

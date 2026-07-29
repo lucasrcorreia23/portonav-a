@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { useRepositorio, useEstadoDemo } from "@/lib/data/context";
+import { agora, useRepositorio, useEstadoDemo } from "@/lib/data/context";
 import { mulberry32, embaralhar } from "@/lib/data/seed/rng";
 import type {
   Equipamento,
@@ -54,7 +54,7 @@ function criarEstadoInicial(modelo: ModeloChecklist): EstadoRascunho {
     itensPorSecao,
     respostas: {},
     duracaoPorSecaoSegundos: {},
-    iniciadoEm: new Date().toISOString(),
+    iniciadoEm: agora().toISOString(),
     seedEmbaralhamento: seed,
   };
 }
@@ -89,7 +89,7 @@ export function DraftChecklistProvider({
     }
 
     // Última seção: monta o preenchimento completo e registra.
-    const concluidoEm = new Date().toISOString();
+    const concluidoEm = agora().toISOString();
     const ordemItensEmbaralhada = modelo.secoes.flatMap((s) => rascunho.itensPorSecao[s.id]);
     const respostas: RespostaItemChecklist[] = ordemItensEmbaralhada.map((itemId) => {
       const r = rascunho.respostas[itemId];

@@ -6,7 +6,9 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
-import { useRepositorio } from "@/lib/data/context";
+import { Select } from "@/components/ui/Select";
+import { ROTULO_TIPO_EQUIPAMENTO, ROTULO_TIPO_OPERACAO } from "@/components/equipamento/rotulos";
+import { agora, useRepositorio } from "@/lib/data/context";
 import { criarId } from "@/lib/data/id";
 import type {
   ItemChecklistDefinicao,
@@ -14,14 +16,23 @@ import type {
   ModoTratamentoItem,
   SecaoChecklist,
   TipoEquipamento,
+  TipoOperacao,
   TipoRespostaItem,
 } from "@/lib/types";
 
 const OPCOES_TIPO_ALVO: { valor: TipoEquipamento | "todos"; label: string }[] = [
   { valor: "todos", label: "Todos os equipamentos (EPI)" },
-  { valor: "empilhadeira", label: "Empilhadeira" },
-  { valor: "reach_stacker", label: "Reach stacker" },
-  { valor: "transpaleteira", label: "Transpaleteira" },
+  { valor: "empilhadeira", label: ROTULO_TIPO_EQUIPAMENTO.empilhadeira },
+  { valor: "reach_stacker", label: ROTULO_TIPO_EQUIPAMENTO.reach_stacker },
+  { valor: "transpaleteira", label: ROTULO_TIPO_EQUIPAMENTO.transpaleteira },
+];
+
+const OPCOES_OPERACAO_ALVO: { valor: TipoOperacao | "todas"; label: string }[] = [
+  { valor: "todas", label: "Todas as operações" },
+  { valor: "carga_geral", label: ROTULO_TIPO_OPERACAO.carga_geral },
+  { valor: "conteineres", label: ROTULO_TIPO_OPERACAO.conteineres },
+  { valor: "graneis", label: ROTULO_TIPO_OPERACAO.graneis },
+  { valor: "armazem", label: ROTULO_TIPO_OPERACAO.armazem },
 ];
 
 const OPCOES_TIPO_RESPOSTA: { valor: TipoRespostaItem; label: string }[] = [
@@ -47,15 +58,16 @@ function novaSecao(): SecaoChecklist {
 }
 
 function modeloEmBranco(): ModeloChecklist {
-  const agora = new Date().toISOString();
+  const agoraIso = agora().toISOString();
   return {
     id: criarId("modelo"),
     nome: "",
     tipoEquipamentoAlvo: "empilhadeira",
+    tipoOperacaoAlvo: "todas",
     versao: 1,
     ativo: true,
-    criadoEm: agora,
-    atualizadoEm: agora,
+    criadoEm: agoraIso,
+    atualizadoEm: agoraIso,
     secoes: [novaSecao()],
   };
 }
@@ -109,11 +121,10 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
   }
 
   function salvar() {
-    const agora = new Date().toISOString();
     repo.checklists.salvarModelo({
       ...modelo,
       versao: ehEdicao ? modelo.versao + 1 : 1,
-      atualizadoEm: agora,
+      atualizadoEm: agora().toISOString(),
     });
     router.push("/admin/checklists");
   }
@@ -124,20 +135,31 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
     <div className="flex flex-col gap-6">
       <Card densidade="densa" className="flex flex-col gap-4">
         <Input rotulo="Nome do modelo" value={modelo.nome} onChange={(e) => setModelo((m) => ({ ...m, nome: e.target.value }))} required />
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-neutral-800">
-          Aplicável a
-          <select
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Select
+            rotulo="Tipo de equipamento"
             value={modelo.tipoEquipamentoAlvo}
             onChange={(e) => setModelo((m) => ({ ...m, tipoEquipamentoAlvo: e.target.value as TipoEquipamento | "todos" }))}
-            className="h-11 rounded-control border border-neutral-300 px-3 text-base text-neutral-900"
           >
             {OPCOES_TIPO_ALVO.map((opcao) => (
               <option key={opcao.valor} value={opcao.valor}>
                 {opcao.label}
               </option>
             ))}
-          </select>
-        </label>
+          </Select>
+          <Select
+            rotulo="Tipo de operação"
+            dica="Restringe o modelo a uma operação específica desse tipo de equipamento."
+            value={modelo.tipoOperacaoAlvo}
+            onChange={(e) => setModelo((m) => ({ ...m, tipoOperacaoAlvo: e.target.value as TipoOperacao | "todas" }))}
+          >
+            {OPCOES_OPERACAO_ALVO.map((opcao) => (
+              <option key={opcao.valor} value={opcao.valor}>
+                {opcao.label}
+              </option>
+            ))}
+          </Select>
+        </div>
       </Card>
 
       {modelo.secoes.map((secao) => (

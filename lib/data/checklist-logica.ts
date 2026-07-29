@@ -3,6 +3,8 @@ import type {
   ModeloChecklist,
   RespostaItemChecklist,
   StatusChecklistPreenchido,
+  TipoEquipamento,
+  TipoOperacao,
 } from "@/lib/types";
 
 export interface ItemPlano {
@@ -30,4 +32,24 @@ export function calcularResultadoChecklist(
     return def?.modoTratamento === "bloqueia";
   });
   return algumBloqueia ? "bloqueado" : "liberado_com_apontamento";
+}
+
+/**
+ * Resolve o modelo de checklist padrão de um equipamento — precedência
+ * tipo+operação > tipo (todas as operações) > universal ("todos" os tipos).
+ * Usada tanto no seed quanto no cadastro de equipamento em runtime, para que as
+ * duas origens de dados apliquem exatamente a mesma regra de negócio.
+ */
+export function resolverModeloChecklistPadrao(
+  tipo: TipoEquipamento,
+  tipoOperacao: TipoOperacao,
+  modelos: ModeloChecklist[],
+): ModeloChecklist {
+  const exato = modelos.find((m) => m.tipoEquipamentoAlvo === tipo && m.tipoOperacaoAlvo === tipoOperacao);
+  if (exato) return exato;
+  const porTipo = modelos.find((m) => m.tipoEquipamentoAlvo === tipo && m.tipoOperacaoAlvo === "todas");
+  if (porTipo) return porTipo;
+  const universal = modelos.find((m) => m.tipoEquipamentoAlvo === "todos");
+  if (!universal) throw new Error("Nenhum modelo de checklist universal encontrado.");
+  return universal;
 }

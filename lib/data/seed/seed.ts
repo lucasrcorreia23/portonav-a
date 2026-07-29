@@ -5,7 +5,7 @@ import { gerarEquipamentos } from "./seed-equipamentos";
 import { gerarOperadores } from "./seed-operadores";
 import { gerarHistorico } from "./seed-historico";
 
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 3;
 
 /** Seed mestre fixa — a mesma sequência de "aleatoriedade" sempre, nunca Math.random(). */
 const SEED_MESTRE = 20260101;
@@ -49,7 +49,7 @@ export function gerarSeed(agoraBaseMs: number): EstadoAplicacao {
     },
     demo: {
       perfilAtivo: "operador",
-      operadorAtivoId: null,
+      operadorAtivoId: operadores[0]?.id ?? null,
       offline: false,
       deslocamentoTempoMs: 0,
     },

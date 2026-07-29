@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { ClipboardList, Truck, Users } from "lucide-react";
+import { ClipboardList, ShieldCheck, Truck, Users } from "lucide-react";
 import { AdminShell } from "@/components/layout/AdminShell";
 import { alternarPerfil, useEstadoDemo } from "@/lib/data/context";
 
@@ -10,6 +10,7 @@ const ITENS_NAV = [
   { href: "/admin/equipamentos", label: "Equipamentos", icone: Truck },
   { href: "/admin/checklists", label: "Modelos de checklist", icone: ClipboardList },
   { href: "/admin/operadores", label: "Operadores", icone: Users },
+  { href: "/admin/regras", label: "Regras", icone: ShieldCheck },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -26,7 +27,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [demo.perfilAtivo]);
 
   return (
-    <AdminShell titulo="Admin" itensNav={ITENS_NAV}>
+    <AdminShell titulo="Portal Portonav" itensNav={ITENS_NAV}>
       {children}
     </AdminShell>
   );

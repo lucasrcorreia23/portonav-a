@@ -6,6 +6,8 @@ O cliente-alvo (Portonave, terminal portuário em Navegantes/SC) precisa ver, em
 
 Este documento cobre a fundação completa (tipos de domínio, camada de dados, seed determinístico, sistema de design a partir da identidade visual real da Portonave, mapa de rotas das três jornadas, mecânicas de antifraude/offline) e a ordem de implementação até a entrega.
 
+Ver `docs/conformidade-fluxos.md` para a matriz de rastreabilidade entre este protótipo e o diagrama de fluxo de negócio do cliente ("Projeto A", raias A1/A2/A3) — inclui as decisões tomadas para os dois pontos que o diagrama deixava em aberto (onde vive a habilitação; quem pode liberar um equipamento após reparo).
+
 ---
 
 ## O que já existe no repositório (não reconfigurar)
@@ -116,10 +118,10 @@ app/
 
 Entidades centrais e o ciclo fechado que elas implementam (reprovação → apontamento → chamado → liberação → histórico):
 
-- **Equipamento**: tag, tipo (`empilhadeira|reach_stacker|transpaleteira`), categoria, localização, `status` (`disponivel|em_uso|bloqueado|em_manutencao`), `bloqueio: {motivo, bloqueadoPor, bloqueadoEm, apontamentoId} | null`, `chamadoAtivoId`, `modeloChecklistIdPadrao`.
-- **ModeloChecklist**: seções → itens; cada item tem `tipoResposta` (`ok_nao_ok|numerico|texto`), `modoTratamento` (`bloqueia|alerta`), `exigeFotoAoReprovar`, `exigeObservacaoAoReprovar`.
+- **Equipamento**: tag, tipo (`empilhadeira|reach_stacker|transpaleteira`), `tipoOperacao` (`carga_geral|conteineres|graneis|armazem` — classificação operacional, distinta de `tipo`), localização, `status` (`disponivel|em_uso|bloqueado|em_manutencao`), `bloqueio: {motivo, bloqueadoPor, bloqueadoEm, apontamentoId} | null`, `chamadoAtivoId`, `modeloChecklistIdPadrao`.
+- **ModeloChecklist**: seções → itens; cada item tem `tipoResposta` (`ok_nao_ok|numerico|texto`), `modoTratamento` (`bloqueia|alerta`), `exigeFotoAoReprovar`, `exigeObservacaoAoReprovar`; o modelo é escopado por `tipoEquipamentoAlvo` **e** `tipoOperacaoAlvo`, resolvidos com precedência tipo+operação > tipo > universal (`resolverModeloChecklistPadrao` em `lib/data/checklist-logica.ts`).
 - **ChecklistPreenchido** (registro central de antifraude): `ordemItensEmbaralhada` + `seedEmbaralhamento` (auditável), `duracaoPorSecaoSegundos`, `resultado` (`liberado|liberado_com_apontamento|bloqueado`), `suspeito` + `motivosSuspeita[]` tipados (tempo mínimo não atingido, preenchimento recorde, padrão idêntico ao histórico).
-- **Apontamento** → **ChamadoManutencao** (`aberto|em_atendimento|aguardando_liberacao|concluido`, com `registroReparo` e `liberacao` configurável por perfil) → **HistoricoEvento** (linha do tempo por equipamento).
+- **Apontamento** → **ChamadoManutencao** (`aberto|em_atendimento|aguardando_liberacao|concluido`, com `registroReparo` e `liberacao` restrita a `supervisor`/`admin` — `lib/data/regras.ts`) → **HistoricoEvento** (linha do tempo por equipamento).
 - **Operador**: habilitações por tipo de equipamento, `scoreConfiabilidade`, `SincronizacaoPortal` mockada.
 - **SessaoOperacao**, **SyncQueueItem** (fila offline), **EstadoDemo** (`perfilAtivo`, `offline`, `deslocamentoTempoMs` — "agora" = `Date.now() + deslocamentoTempoMs`, nunca reescreve timestamps existentes).
 
@@ -171,10 +173,12 @@ Todo apontamento (crítico ou não) vira chamado automaticamente — leitura lit
 - Fonte de títulos: **Fraunces** no lugar de "Margem" (licenciada/indisponível).
 - Dark mode do scaffold removido.
 - Rota de ficha de equipamento **unificada** (`/equipamento/[tag]`) para os 4 perfis.
-- `categoria` do equipamento = classificação operacional (distinta do `tipo`, classe física da máquina).
+- `tipoOperacao` do equipamento = classificação operacional (distinta do `tipo`, classe física da máquina) — renomeado de `categoria` para alinhar ao vocabulário do fluxo do cliente (ver `docs/conformidade-fluxos.md`).
 - Todo apontamento (crítico ou não) abre chamado automaticamente.
 - Fila de offline escopada só à jornada operador (pátio); admin/supervisor/manutenção sempre online.
 - QR codifica URL absoluta calculada no cliente.
+- Habilitação do operador é somente leitura no app, sincronizada do portal corporativo — cadastro/regularização não fazem parte deste protótipo.
+- Liberação de equipamento após reparo exige aprovação de `supervisor` ou `admin` (`lib/data/regras.ts`) — manutenção registra o reparo mas não libera; a aprovação vive em `/supervisor/liberacoes`, não na tela do chamado.
 - 5 commits (fundação → design system → admin → operador → supervisor/manutenção+docs) em vez de exatamente 3.
 
 ---

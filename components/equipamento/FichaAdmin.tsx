@@ -1,25 +1,24 @@
 import { EquipmentStatusHero } from "@/components/equipamento/EquipmentStatusHero";
 import { EquipmentHistoryTimeline } from "@/components/equipamento/EquipmentHistoryTimeline";
 import { QRDisplay } from "@/components/equipamento/QRDisplay";
+import { RecurringFailureNotice } from "@/components/equipamento/RecurringFailureNotice";
+import { ROTULO_TIPO_EQUIPAMENTO, ROTULO_TIPO_OPERACAO } from "@/components/equipamento/rotulos";
 import { Card } from "@/components/ui/Card";
+import type { FalhaRecorrente } from "@/lib/data/falhas-recorrentes";
 import type { Equipamento, HistoricoEvento, ModeloChecklist } from "@/lib/types";
-
-const ROTULO_TIPO: Record<string, string> = {
-  empilhadeira: "Empilhadeira",
-  reach_stacker: "Reach stacker",
-  transpaleteira: "Transpaleteira",
-};
 
 export function FichaAdmin({
   equipamento,
   historico,
   modeloChecklist,
   previsaoAtrasada = false,
+  falhasRecorrentes,
 }: {
   equipamento: Equipamento;
   historico: HistoricoEvento[];
   modeloChecklist: ModeloChecklist | undefined;
   previsaoAtrasada?: boolean;
+  falhasRecorrentes?: FalhaRecorrente[];
 }) {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-8">
@@ -30,11 +29,11 @@ export function FichaAdmin({
         <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
           <div>
             <dt className="text-neutral-500">Tipo</dt>
-            <dd className="font-medium text-neutral-800">{ROTULO_TIPO[equipamento.tipo]}</dd>
+            <dd className="font-medium text-neutral-800">{ROTULO_TIPO_EQUIPAMENTO[equipamento.tipo]}</dd>
           </div>
           <div>
-            <dt className="text-neutral-500">Categoria</dt>
-            <dd className="font-medium text-neutral-800">{equipamento.categoria}</dd>
+            <dt className="text-neutral-500">Tipo de operação</dt>
+            <dd className="font-medium text-neutral-800">{ROTULO_TIPO_OPERACAO[equipamento.tipoOperacao]}</dd>
           </div>
           <div>
             <dt className="text-neutral-500">Modelo</dt>
@@ -67,6 +66,8 @@ export function FichaAdmin({
           </p>
         </Card>
       )}
+
+      <RecurringFailureNotice falhasRecorrentes={falhasRecorrentes} />
 
       {equipamento.previsaoManutencao && (
         <Card densidade="densa" className="border-status-manutencao/30 bg-status-manutencao-surface">

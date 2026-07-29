@@ -52,11 +52,11 @@ export default function AdminOperadoresPage() {
 
   return (
     <div>
-      <PageHeader titulo="Operadores" subtitulo={`${operadores.length} operadores sincronizados do portal corporativo.`} />
+      <PageHeader titulo="Operadores" subtitulo={`${operadores.length} operadores sincronizados do portal corporativo via SSO/API.`} />
 
       <div className="mb-4 flex flex-wrap items-center gap-3 rounded-card border border-neutral-100 bg-neutral-50 p-4">
         <div className="flex-1">
-          <p className="text-sm font-medium text-neutral-800">Sincronizado do portal corporativo</p>
+          <p className="text-sm font-medium text-neutral-800">Sincronizado do portal corporativo via SSO/API</p>
           <p className="text-sm text-neutral-600">
             {sincronizando
               ? "Sincronizando…"
@@ -65,6 +65,10 @@ export default function AdminOperadoresPage() {
                 : "Nunca sincronizado"}
           </p>
           {sincronizacao.ultimoResumo && !sincronizando && <p className="text-xs text-neutral-500">{sincronizacao.ultimoResumo}</p>}
+          <p className="mt-1 text-xs text-neutral-500">
+            Status: {sincronizando ? "sincronizando" : sincronizacao.status.replace(/_/g, " ")}. Pessoas e habilitações são somente
+            leitura aqui — o cadastro vive no portal corporativo.
+          </p>
         </div>
         <Button
           variante="secondary"
