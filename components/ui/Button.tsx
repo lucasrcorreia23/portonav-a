@@ -2,8 +2,11 @@ import { forwardRef } from "react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { Spinner } from "./Spinner";
 
-type VarianteBotao = "primary" | "secondary" | "danger" | "ghost";
-type TamanhoBotao = "sm" | "md" | "lg";
+type VarianteBotao = "primary" | "secondary" | "danger" | "ghost" | "ia";
+// "touch" preserva o alvo de toque de 56px da jornada de operador/QR-entry/
+// checklist (uso em pátio/externo) — não faz parte da escala densa do
+// design system, é uma extensão de domínio (ver AGENTS.md).
+type TamanhoBotao = "sm" | "md" | "lg" | "touch";
 
 interface BotaoProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variante?: VarianteBotao;
@@ -20,14 +23,18 @@ const CLASSES_VARIANTE: Record<VarianteBotao, string> = {
   secondary: "border border-border bg-background text-foreground hover:bg-surface-2",
   danger: "bg-error text-white hover:bg-error/90",
   ghost: "bg-transparent text-foreground-muted hover:bg-surface-2",
+  // Ação de IA (simulada) — única exceção reservada para gradiente fora do primário
+  // (ver docs/design-system/DESIGN.md §8). Chamador deve passar iconeEsquerda={<Sparkles/>}.
+  ia: "text-white shadow-sm hover:brightness-110 [background:var(--gradient-brand)]",
 };
 
 // Altura FIXA por tamanho (box-border, shrink-0) — nunca sobrescrever via className.
-// sm 32px · md 40px (padrão, igual aos inputs) · lg 44px.
+// sm 32px · md 40px (padrão, igual aos inputs) · lg 44px · touch 56px (operador/campo).
 const CLASSES_TAMANHO: Record<TamanhoBotao, string> = {
   sm: "h-8 gap-1.5 px-4 text-xs",
   md: "h-10 gap-2 px-5 text-sm",
   lg: "h-11 gap-2.5 px-6 text-sm",
+  touch: "h-14 gap-2.5 px-6 text-base",
 };
 
 const REGEX_ACAO_CRIACAO = /^(Criar|Adicionar|Nova|Novo)\b/;

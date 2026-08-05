@@ -23,7 +23,7 @@ export function ManualTagEntry({ onConfirmar }: { onConfirmar: (tag: string) => 
         autoFocus
         required
       />
-      <Button type="submit" tamanho="lg" larguraTotal disabled={!tag.trim()}>
+      <Button type="submit" tamanho="touch" larguraTotal disabled={!tag.trim()}>
         Continuar
       </Button>
     </form>

@@ -68,7 +68,7 @@ export default function SecaoChecklistPage(props: PageProps<"/equipamento/[tag]/
         ))}
       </div>
 
-      <Button tamanho="lg" larguraTotal disabled={!todosRespondidos} onClick={aoConfirmar}>
+      <Button tamanho="touch" larguraTotal disabled={!todosRespondidos} onClick={aoConfirmar}>
         {ultimaSecao ? "Concluir verificação" : "Confirmar seção"}
       </Button>
     </div>

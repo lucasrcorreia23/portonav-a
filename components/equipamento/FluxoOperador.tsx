@@ -47,7 +47,7 @@ export function FluxoOperador({
             </p>
           )}
         </Card>
-        <Button variante="secondary" tamanho="lg" onClick={() => router.push("/entrada")}>
+        <Button variante="secondary" tamanho="touch" onClick={() => router.push("/entrada")}>
           Voltar
         </Button>
       </div>
@@ -65,7 +65,7 @@ export function FluxoOperador({
           <h2 className="mb-2 font-medium text-status-em-uso">Equipamento em uso</h2>
           <p className="text-sm text-neutral-800">Este equipamento já está em operação por outro operador no momento.</p>
         </Card>
-        <Button variante="secondary" tamanho="lg" onClick={() => router.push("/entrada")}>
+        <Button variante="secondary" tamanho="touch" onClick={() => router.push("/entrada")}>
           Voltar
         </Button>
       </div>
@@ -78,7 +78,7 @@ export function FluxoOperador({
       <div className="flex flex-col gap-4">
         <EquipmentStatusHero equipamento={equipamento} />
         <OrigemStatusNota ultimoEvento={ultimoEventoHistorico} />
-        <Button tamanho="lg" larguraTotal onClick={() => router.push(`/equipamento/${equipamento.tag}/sessao`)}>
+        <Button tamanho="touch" larguraTotal onClick={() => router.push(`/equipamento/${equipamento.tag}/sessao`)}>
           Voltar para a operação em andamento
         </Button>
       </div>
@@ -109,11 +109,11 @@ export function FluxoOperador({
             <CheckCircle2 size={16} aria-hidden /> Supervisor notificado.
           </p>
         ) : (
-          <Button variante="secondary" tamanho="lg" onClick={() => setSupervisorNotificado(true)}>
+          <Button variante="secondary" tamanho="touch" onClick={() => setSupervisorNotificado(true)}>
             Notificar supervisor
           </Button>
         )}
-        <Button variante="ghost" tamanho="lg" onClick={() => router.push("/entrada")}>
+        <Button variante="ghost" tamanho="touch" onClick={() => router.push("/entrada")}>
           Voltar
         </Button>
       </div>
@@ -125,7 +125,7 @@ export function FluxoOperador({
     <div className="flex flex-col gap-4">
       <EquipmentStatusHero equipamento={equipamento} />
       <OrigemStatusNota ultimoEvento={ultimoEventoHistorico} />
-      <Button tamanho="lg" larguraTotal onClick={() => router.push(`/equipamento/${equipamento.tag}/checklist/1`)}>
+      <Button tamanho="touch" larguraTotal onClick={() => router.push(`/equipamento/${equipamento.tag}/checklist/1`)}>
         Iniciar verificação de pré-operação
       </Button>
     </div>

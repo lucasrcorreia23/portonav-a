@@ -103,11 +103,11 @@ export default function ResultadoChecklistPage(props: PageProps<"/equipamento/[t
 
         <div className="flex flex-col gap-2">
           {checklist.resultado !== "bloqueado" && sessao ? (
-            <Button tamanho="lg" larguraTotal onClick={() => router.push(`/equipamento/${equipamento.tag}/sessao`)}>
+            <Button tamanho="touch" larguraTotal onClick={() => router.push(`/equipamento/${equipamento.tag}/sessao`)}>
               Iniciar operação
             </Button>
           ) : (
-            <Button tamanho="lg" larguraTotal onClick={() => router.push("/operador")}>
+            <Button tamanho="touch" larguraTotal onClick={() => router.push("/operador")}>
               Voltar ao início
             </Button>
           )}

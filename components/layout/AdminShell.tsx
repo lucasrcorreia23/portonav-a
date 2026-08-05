@@ -23,8 +23,8 @@ export function AdminShell({ titulo, itensNav, children }: AdminShellProps) {
 
   return (
     <div className="flex h-full w-full">
-      <aside className="hidden h-full w-60 shrink-0 overflow-y-auto border-r border-neutral-100 bg-neutral-50 px-3 py-6 md:block">
-        <p className="mb-4 px-3 text-sm font-medium text-neutral-500">{titulo}</p>
+      <aside className="hidden h-full w-72 shrink-0 overflow-y-auto border-r border-sidebar-border bg-sidebar-bg px-3 py-6 md:block">
+        <p className="mb-4 px-3 text-sm font-semibold text-foreground-subtle">{titulo}</p>
         <nav aria-label={titulo}>
           <ul className="flex flex-col gap-1">
             {itensNav.map((item) => {
@@ -35,8 +35,10 @@ export function AdminShell({ titulo, itensNav, children }: AdminShellProps) {
                   <Link
                     href={item.href}
                     aria-current={ativo ? "page" : undefined}
-                    className={`flex items-center gap-2.5 rounded-control px-3 py-2 text-sm font-medium transition-colors ${
-                      ativo ? "bg-brand-50 text-brand-700" : "text-neutral-700 hover:bg-neutral-100"
+                    className={`flex items-center gap-2.5 rounded-sm px-3 py-2 text-sm font-medium transition-colors ${
+                      ativo
+                        ? "bg-sidebar-item-active-bg text-sidebar-item-active-text"
+                        : "text-sidebar-item hover:bg-sidebar-item-hover-bg hover:text-sidebar-item-hover-text"
                     }`}
                   >
                     <Icone size={18} aria-hidden />

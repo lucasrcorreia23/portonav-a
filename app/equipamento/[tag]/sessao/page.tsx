@@ -57,7 +57,7 @@ export default function SessaoAbertaPage(props: PageProps<"/equipamento/[tag]/se
           <p className="text-sm text-neutral-600">
             Duração: {formatarDuracao(encerrada.duracaoMs)} · registrado no histórico do equipamento.
           </p>
-          <Button tamanho="lg" onClick={() => router.push("/operador")}>
+          <Button tamanho="touch" onClick={() => router.push("/operador")}>
             Voltar ao início
           </Button>
         </Card>
@@ -91,7 +91,7 @@ export default function SessaoAbertaPage(props: PageProps<"/equipamento/[tag]/se
           <Badge texto="Apontamento pendente" classeCor="text-status-apontamento bg-status-apontamento-surface" />
         )}
       </div>
-      <Button variante="danger" tamanho="lg" larguraTotal iconeEsquerda={<Square size={16} aria-hidden />} onClick={aoEncerrar}>
+      <Button variante="danger" tamanho="touch" larguraTotal iconeEsquerda={<Square size={16} aria-hidden />} onClick={aoEncerrar}>
         Encerrar operação
       </Button>
     </OperatorShell>
