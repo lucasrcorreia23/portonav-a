@@ -2,7 +2,7 @@ import { forwardRef, useId } from "react";
 import type { TextareaHTMLAttributes } from "react";
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  rotulo: string;
+  rotulo?: string;
   erro?: string;
 }
 
@@ -16,10 +16,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={inputId} className="text-sm font-medium text-neutral-800">
-        {rotulo} {required && <span aria-hidden="true">*</span>}
-        {required && <span className="sr-only"> (obrigatório)</span>}
-      </label>
+      {rotulo && (
+        <label htmlFor={inputId} className="text-xs font-semibold text-foreground-muted">
+          {rotulo} {required && <span aria-hidden="true">*</span>}
+          {required && <span className="sr-only"> (obrigatório)</span>}
+        </label>
+      )}
       <textarea
         ref={ref}
         id={inputId}
@@ -27,13 +29,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
         rows={rows}
         aria-describedby={erroId}
         aria-invalid={erro ? true : undefined}
-        className={`rounded-control border px-3 py-2 text-base text-neutral-900 placeholder:text-neutral-400 ${
-          erro ? "border-status-avariado" : "border-neutral-300"
+        className={`w-full rounded-xl border bg-background px-3 py-2 text-sm text-foreground transition-colors placeholder:text-foreground-subtle hover:bg-surface-2 focus:bg-background focus:border-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+          erro ? "border-error" : "border-border"
         } ${className}`}
         {...resto}
       />
       {erro && (
-        <p id={erroId} className="text-sm text-status-avariado">
+        <p id={erroId} className="text-xs text-error" role="alert">
           {erro}
         </p>
       )}

@@ -36,6 +36,14 @@
     var(--brand-magenta) 78%,
     var(--brand-orange) 100%;
   --gradient-brand: linear-gradient(90deg, var(--gradient-brand-stops));
+  /* Botão primário: stops deslocados p/ mostrar mais magenta/laranja. */
+  --gradient-brand-button: linear-gradient(
+    130deg,
+    var(--brand-indigo) -10%,
+    var(--brand-purple) 20%,
+    var(--brand-magenta) 50%,
+    var(--brand-orange) 100%
+  );
 
   /* ---------- Ação primária (UI) — preto/foreground sólido, sem gradiente ---------- */
   --primary: #0c0d10;
@@ -89,16 +97,19 @@
   --text-display-lg: 2.75rem;
   --text-display-lg--line-height: 1.1;
 
-  /* ---------- Raio — denso: pill nos controles, 8px em cards/dropdowns ---------- */
+  /* ---------- Raio — denso, mas por-componente (ver componentes reais do DS,
+     não a prosa geral do DESIGN.md: card = rounded-lg, popover = rounded-lg,
+     modal/drawer/confirm-dialog = rounded-xl, trigger de select = 10px fixo,
+     chip/badge/menu-item = rounded-sm/[4px], botão = pill). ---------- */
   --radius-sm: 0.25rem;   /* 4px — chips, badges, menu items */
-  --radius-md: 0.5rem;    /* 8px — cards, dropdowns, popovers */
-  --radius-lg: 0.75rem;   /* 12px — modais */
-  --radius-xl: 1rem;      /* 16px */
+  --radius-md: 0.5rem;    /* 8px — elementos pequenos (tooltip, drawer close) */
+  --radius-lg: 0.75rem;   /* 12px — cards, popovers/dropdowns */
+  --radius-xl: 1rem;      /* 16px — modal, drawer, confirm-dialog */
   --radius-2xl: 1.25rem;  /* 20px */
-  --radius-full: 9999px;  /* pill — botões, inputs, selects, filtros */
+  --radius-full: 9999px;  /* pill — botões */
 
   --radius-control: var(--radius-full);
-  --radius-card: var(--radius-md);
+  --radius-card: var(--radius-lg);
   --radius-card-hero: var(--radius-xl);
   --radius-pill: var(--radius-full);
 
@@ -300,6 +311,13 @@
   --shadow-elevated: var(--shadow-elevated);
   --shadow-card: var(--shadow-card);
 
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-full: var(--radius-full);
+
   --radius-control: var(--radius-control);
   --radius-card: var(--radius-card);
   --radius-card-hero: var(--radius-card-hero);
@@ -461,6 +479,28 @@ input[type="checkbox"]:disabled {
 thead th {
   letter-spacing: 0;
   border-bottom: 1px solid var(--color-border);
+}
+
+/* Skeleton shimmer — faixa clara varrendo o cinza, usada quando um valor
+   específico está sendo buscado (ver components/ui/Skeleton.tsx). */
+.skeleton-shimmer {
+  background: linear-gradient(
+    100deg,
+    var(--color-surface-3) 35%,
+    color-mix(in srgb, var(--color-surface-3) 82%, white) 50%,
+    var(--color-surface-3) 65%
+  );
+  background-size: 250% 100%;
+  animation: shimmer-sweep 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer-sweep {
+  from {
+    background-position: 125% 0;
+  }
+  to {
+    background-position: -125% 0;
+  }
 }
 
 @media print {

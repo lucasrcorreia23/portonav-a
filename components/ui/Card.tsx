@@ -9,7 +9,7 @@ export function Card({ elevado = false, densidade = "espacada", className = "", 
   const preenchimento = densidade === "densa" ? "p-4" : "p-6";
   return (
     <div
-      className={`rounded-card border border-neutral-100 bg-white ${preenchimento} ${elevado ? "shadow-elevated" : "shadow-card"} ${className}`}
+      className={`rounded-card border border-border bg-surface ${preenchimento} ${elevado ? "shadow-md" : "shadow-sm"} ${className}`}
       {...resto}
     >
       {children}

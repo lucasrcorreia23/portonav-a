@@ -138,27 +138,17 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Select
             rotulo="Tipo de equipamento"
-            value={modelo.tipoEquipamentoAlvo}
-            onChange={(e) => setModelo((m) => ({ ...m, tipoEquipamentoAlvo: e.target.value as TipoEquipamento | "todos" }))}
-          >
-            {OPCOES_TIPO_ALVO.map((opcao) => (
-              <option key={opcao.valor} value={opcao.valor}>
-                {opcao.label}
-              </option>
-            ))}
-          </Select>
+            opcoes={OPCOES_TIPO_ALVO.map((opcao) => ({ valor: opcao.valor, rotulo: opcao.label }))}
+            valor={modelo.tipoEquipamentoAlvo}
+            aoAlterar={(valor) => setModelo((m) => ({ ...m, tipoEquipamentoAlvo: valor as TipoEquipamento | "todos" }))}
+          />
           <Select
             rotulo="Tipo de operação"
             dica="Restringe o modelo a uma operação específica desse tipo de equipamento."
-            value={modelo.tipoOperacaoAlvo}
-            onChange={(e) => setModelo((m) => ({ ...m, tipoOperacaoAlvo: e.target.value as TipoOperacao | "todas" }))}
-          >
-            {OPCOES_OPERACAO_ALVO.map((opcao) => (
-              <option key={opcao.valor} value={opcao.valor}>
-                {opcao.label}
-              </option>
-            ))}
-          </Select>
+            opcoes={OPCOES_OPERACAO_ALVO.map((opcao) => ({ valor: opcao.valor, rotulo: opcao.label }))}
+            valor={modelo.tipoOperacaoAlvo}
+            aoAlterar={(valor) => setModelo((m) => ({ ...m, tipoOperacaoAlvo: valor as TipoOperacao | "todas" }))}
+          />
         </div>
       </Card>
 
@@ -185,7 +175,7 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
 
           <div className="flex flex-col gap-3">
             {secao.itens.map((item) => (
-              <div key={item.id} className="rounded-control border border-neutral-200 p-3">
+              <div key={item.id} className="rounded-card border border-border p-3">
                 <div className="mb-3 flex items-center gap-2">
                   <Input
                     rotulo="Item"
@@ -205,20 +195,13 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
                   </Button>
                 </div>
                 <div className="flex flex-wrap items-end gap-3">
-                  <label className="flex flex-col gap-1 text-xs font-medium text-neutral-700">
-                    Tipo de resposta
-                    <select
-                      value={item.tipoResposta}
-                      onChange={(e) => atualizarItem(secao.id, item.id, { tipoResposta: e.target.value as TipoRespostaItem })}
-                      className="h-9 rounded-control border border-neutral-300 px-2 text-sm text-neutral-900"
-                    >
-                      {OPCOES_TIPO_RESPOSTA.map((opcao) => (
-                        <option key={opcao.valor} value={opcao.valor}>
-                          {opcao.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <Select
+                    rotulo="Tipo de resposta"
+                    opcoes={OPCOES_TIPO_RESPOSTA.map((opcao) => ({ valor: opcao.valor, rotulo: opcao.label }))}
+                    valor={item.tipoResposta}
+                    aoAlterar={(valor) => atualizarItem(secao.id, item.id, { tipoResposta: valor as TipoRespostaItem })}
+                    className="w-48"
+                  />
 
                   <div className="flex flex-col gap-1 text-xs font-medium text-neutral-700">
                     Modo de tratamento

@@ -22,11 +22,11 @@ export function StatusBadge({ entrada, tamanho = "md", comDescricao = false }: S
   const classes = CLASSES_TAMANHO[tamanho];
   return (
     <div className="inline-flex flex-col items-start gap-1">
-      <span className={`inline-flex items-center rounded-pill font-medium ${entrada.classeCor} ${classes.pill}`}>
+      <span className={`inline-flex items-center rounded-sm font-semibold ${entrada.classeCor} ${classes.pill}`}>
         <Icone size={classes.icone} aria-hidden />
         {entrada.label}
       </span>
-      {comDescricao && <p className="text-sm text-neutral-700">{entrada.descricao}</p>}
+      {comDescricao && <p className="text-sm text-foreground-muted">{entrada.descricao}</p>}
     </div>
   );
 }

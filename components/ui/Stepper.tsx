@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Fragment } from "react";
 
 interface StepperProps {
   etapas: string[];
@@ -8,28 +8,45 @@ interface StepperProps {
 /** Linha de segmentos no topo do checklist — mostra a posição seção a seção. */
 export function Stepper({ etapas, etapaAtualIndice }: StepperProps) {
   return (
-    <ol className="flex w-full items-center gap-2" aria-label="Progresso do checklist">
-      {etapas.map((etapa, indice) => {
-        const concluida = indice < etapaAtualIndice;
-        const atual = indice === etapaAtualIndice;
-        return (
-          <li key={etapa} className="flex flex-1 flex-col items-center gap-1.5">
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-pill text-sm font-medium ${
-                concluida
-                  ? "bg-status-disponivel text-white"
-                  : atual
-                    ? "bg-status-em-uso text-white"
-                    : "bg-neutral-100 text-neutral-500"
-              }`}
-              aria-current={atual ? "step" : undefined}
-            >
-              {concluida ? <Check size={16} aria-hidden /> : indice + 1}
-            </div>
-            <span className="hidden text-center text-xs text-neutral-600 sm:block">{etapa}</span>
+    <div className="flex w-full flex-col gap-2">
+      <ol className="flex w-full items-center" aria-label="Progresso do checklist">
+        {etapas.map((etapa, indice) => {
+          const concluida = indice < etapaAtualIndice;
+          const atual = indice === etapaAtualIndice;
+          return (
+            <Fragment key={etapa}>
+              {indice > 0 && (
+                <div className={`h-px flex-1 transition-colors ${indice <= etapaAtualIndice ? "bg-foreground" : "bg-border"}`} />
+              )}
+              <li className="flex flex-col items-center gap-1.5">
+                <span
+                  aria-current={atual ? "step" : undefined}
+                  aria-label={etapa}
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-bold transition-colors ${
+                    concluida
+                      ? "border-foreground bg-foreground text-background"
+                      : atual
+                        ? "border-foreground bg-transparent text-foreground"
+                        : "border-border bg-transparent text-foreground-subtle"
+                  }`}
+                >
+                  {indice + 1}
+                </span>
+              </li>
+            </Fragment>
+          );
+        })}
+      </ol>
+      <ol className="flex w-full" aria-hidden>
+        {etapas.map((etapa, indice) => (
+          <li
+            key={etapa}
+            className={`flex-1 text-center text-xs ${indice === etapaAtualIndice ? "font-semibold text-foreground" : "text-foreground-subtle"} hidden sm:block`}
+          >
+            {etapa}
           </li>
-        );
-      })}
-    </ol>
+        ))}
+      </ol>
+    </div>
   );
 }

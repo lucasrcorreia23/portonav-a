@@ -9,7 +9,7 @@ export function ProgressBar({ valorAtual, valorMaximo, rotulo }: ProgressBarProp
   return (
     <div className="w-full">
       {rotulo && (
-        <p className="mb-1.5 text-sm font-medium text-neutral-700" id="progress-label">
+        <p className="mb-1.5 text-sm font-semibold text-foreground-muted" id="progress-label">
           {rotulo}
         </p>
       )}
@@ -19,10 +19,10 @@ export function ProgressBar({ valorAtual, valorMaximo, rotulo }: ProgressBarProp
         aria-valuemin={0}
         aria-valuemax={valorMaximo}
         aria-labelledby={rotulo ? "progress-label" : undefined}
-        className="h-2 w-full overflow-hidden rounded-pill bg-neutral-100"
+        className="h-2 w-full overflow-hidden rounded-pill bg-surface-3"
       >
         <div
-          className="h-full rounded-pill bg-status-em-uso transition-[width] duration-300"
+          className="h-full rounded-pill bg-primary transition-[width] duration-300"
           style={{ width: `${percentual}%` }}
         />
       </div>

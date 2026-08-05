@@ -64,23 +64,23 @@ export function Modal({ aberto, titulo, onFechar, children, largura = "md" }: Mo
   if (!aberto) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/50 p-4">
+    <div className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center bg-black/40 p-4">
       <div
         ref={containerRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-titulo"
-        className={`w-full ${CLASSES_LARGURA[largura]} rounded-card bg-white p-6 shadow-elevated`}
+        className={`w-full ${CLASSES_LARGURA[largura]} rounded-card-hero border border-border bg-surface p-6 shadow-lg`}
       >
         <div className="mb-4 flex items-start justify-between gap-4">
-          <h2 id="modal-titulo" className="text-lg font-medium text-neutral-900">
+          <h2 id="modal-titulo" className="text-lg font-bold text-foreground">
             {titulo}
           </h2>
           <button
             type="button"
             onClick={onFechar}
             aria-label="Fechar"
-            className="rounded-control p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800"
+            className="rounded-md p-1.5 text-foreground-subtle hover:bg-surface-2 hover:text-foreground"
           >
             <X size={20} aria-hidden />
           </button>

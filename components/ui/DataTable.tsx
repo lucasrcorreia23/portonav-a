@@ -15,7 +15,10 @@ interface DataTableProps<T> {
   legendaVazia?: string;
 }
 
-/** Tabela densa de admin — cabeçalho fixo visualmente, linha inteira clicável quando aplicável. */
+/**
+ * Tabela densa de admin — sem borda no container, um único divider sob o
+ * cabeçalho, sem dividers entre linhas, hover sutil (ver docs/design-system).
+ */
 export function DataTable<T>({
   colunas,
   linhas,
@@ -24,12 +27,15 @@ export function DataTable<T>({
   legendaVazia = "Nenhum registro encontrado.",
 }: DataTableProps<T>) {
   return (
-    <div className="w-full overflow-x-auto rounded-card border border-neutral-100">
-      <table className="w-full min-w-max border-collapse text-left text-sm">
+    <div className="w-full overflow-x-auto">
+      <table className="w-full min-w-max border-separate border-spacing-0 text-left text-sm">
         <thead>
-          <tr className="border-b border-neutral-100 bg-neutral-50">
+          <tr className="bg-background">
             {colunas.map((coluna) => (
-              <th key={coluna.chave} className={`px-4 py-3 font-medium text-neutral-700 ${coluna.className ?? ""}`}>
+              <th
+                key={coluna.chave}
+                className={`border-b border-border px-3 py-3 text-[13px] font-semibold text-foreground ${coluna.className ?? ""}`}
+              >
                 {coluna.cabecalho}
               </th>
             ))}
@@ -38,7 +44,7 @@ export function DataTable<T>({
         <tbody>
           {linhas.length === 0 ? (
             <tr>
-              <td colSpan={colunas.length} className="px-4 py-8 text-center text-neutral-500">
+              <td colSpan={colunas.length} className="px-3 py-8 text-center text-foreground-muted">
                 {legendaVazia}
               </td>
             </tr>
@@ -58,12 +64,10 @@ export function DataTable<T>({
                       }
                     : undefined
                 }
-                className={`border-b border-neutral-100 last:border-0 ${
-                  aoClicarLinha ? "cursor-pointer hover:bg-neutral-50" : ""
-                }`}
+                className={`group/row ${aoClicarLinha ? "cursor-pointer hover:bg-surface-2" : ""}`}
               >
                 {colunas.map((coluna) => (
-                  <td key={coluna.chave} className={`px-4 py-3 text-neutral-800 ${coluna.className ?? ""}`}>
+                  <td key={coluna.chave} className={`px-3 py-3 text-foreground ${coluna.className ?? ""}`}>
                     {coluna.renderizar(linha)}
                   </td>
                 ))}

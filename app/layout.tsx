@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { ProvedorDados } from "@/lib/data/context";
 import { OfflineIndicator } from "@/components/demo/OfflineIndicator";
 import { DemoControlBar } from "@/components/demo/DemoControlBar";
+import { TooltipLayer } from "@/components/ui/Tooltip";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
           <DemoControlBar />
+          <TooltipLayer />
         </ProvedorDados>
       </body>
     </html>

@@ -52,24 +52,18 @@ export default function NovoEquipamentoPage() {
           required
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Select rotulo="Tipo de equipamento" value={tipo} onChange={(e) => setTipo(e.target.value as TipoEquipamento)}>
-            {OPCOES_TIPO.map((valor) => (
-              <option key={valor} value={valor}>
-                {ROTULO_TIPO_EQUIPAMENTO[valor]}
-              </option>
-            ))}
-          </Select>
+          <Select
+            rotulo="Tipo de equipamento"
+            opcoes={OPCOES_TIPO.map((valor) => ({ valor, rotulo: ROTULO_TIPO_EQUIPAMENTO[valor] }))}
+            valor={tipo}
+            aoAlterar={(valor) => setTipo(valor as TipoEquipamento)}
+          />
           <Select
             rotulo="Tipo de operação"
-            value={tipoOperacao}
-            onChange={(e) => setTipoOperacao(e.target.value as TipoOperacao)}
-          >
-            {OPCOES_OPERACAO.map((valor) => (
-              <option key={valor} value={valor}>
-                {ROTULO_TIPO_OPERACAO[valor]}
-              </option>
-            ))}
-          </Select>
+            opcoes={OPCOES_OPERACAO.map((valor) => ({ valor, rotulo: ROTULO_TIPO_OPERACAO[valor] }))}
+            valor={tipoOperacao}
+            aoAlterar={(valor) => setTipoOperacao(valor as TipoOperacao)}
+          />
         </div>
         <Input rotulo="Modelo" placeholder="Ex.: Toyota 8FD25" value={modelo} onChange={(e) => setModelo(e.target.value)} required />
         <Input
