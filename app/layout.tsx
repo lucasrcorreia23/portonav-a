@@ -1,22 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Kumbh_Sans } from "next/font/google";
 import { ProvedorDados } from "@/lib/data/context";
 import { OfflineIndicator } from "@/components/demo/OfflineIndicator";
 import { DemoControlBar } from "@/components/demo/DemoControlBar";
 import "./globals.css";
-
-const kumbhSans = Kumbh_Sans({
-  subsets: ["latin"],
-  variable: "--font-kumbh-sans",
-  display: "swap",
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Portonave — Checklist de Pré-Operação",
@@ -34,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${kumbhSans.variable} ${fraunces.variable} h-full`}>
+    <html lang="pt-BR" className="h-full">
       <body className="flex h-dvh flex-col overflow-hidden antialiased">
         <ProvedorDados>
           <div className="no-print z-30 shrink-0 border-b border-neutral-100 bg-white">

@@ -1,7 +1,143 @@
 @import "tailwindcss";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
 
+/* ============================================================
+   Atomsix Design System — tokens (docs/design-system/DESIGN.md)
+   Light = padrão. Dark existe como tokens prontos ([data-theme="dark"])
+   mas não há toggle de tema nesta fase — o app roda no light.
+   ============================================================ */
 :root {
-  /* Vermelho da marca — #DD1337 extraído de portonave.com.br (classe primary-portonave) */
+  /* ---------- Superfícies / texto (semântico, estilo Atomsix) ---------- */
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f7f8fa;
+  --surface-3: #f0f1f4;
+  --border: #e8eaed;
+  --border-strong: #d4d7dd;
+
+  --foreground: #0c0d10;
+  --foreground-muted: #5b6068;
+  --foreground-subtle: #8b909a;
+
+  /* ---------- Gradiente-assinatura (reservado à marca/IA, nunca em botão de produto) ---------- */
+  --brand-cyan: #00c4d6;
+  --brand-blue: #0a8ad6;
+  --brand-indigo: #2846f6;
+  --brand-purple: #8536ac;
+  --brand-magenta: #b92a90;
+  --brand-orange: #fb784e;
+  --gradient-brand-stops:
+    var(--brand-cyan) 0%,
+    var(--brand-blue) 22%,
+    var(--brand-indigo) 40%,
+    var(--brand-purple) 60%,
+    var(--brand-magenta) 78%,
+    var(--brand-orange) 100%;
+  --gradient-brand: linear-gradient(90deg, var(--gradient-brand-stops));
+
+  /* ---------- Ação primária (UI) — preto/foreground sólido, sem gradiente ---------- */
+  --primary: #0c0d10;
+  --primary-hover: #27282d;
+  --primary-foreground: #ffffff;
+
+  /* ---------- Sidebar (neutra, nunca azul) ---------- */
+  --sidebar-bg: #f8f8fa;
+  --sidebar-border: #e5e7eb;
+  --sidebar-item: #5b6068;
+  --sidebar-item-hover-bg: rgba(0, 0, 0, 0.1);
+  --sidebar-item-hover-text: #0c0d10;
+  --sidebar-item-active-bg: #0c0d10;
+  --sidebar-item-active-text: #ffffff;
+
+  /* ---------- Semânticos ---------- */
+  --success: #16a34a;
+  --success-foreground: #14532d;
+  --error: #dc2626;
+  --error-foreground: #7f1d1d;
+  --warning: #d97706;
+  --warning-foreground: #78350f;
+  --info: var(--brand-blue);
+
+  /* ---------- Taxonomia de status do equipamento ----------
+     Camada de tokens de domínio por cima do core (mesmo padrão do DS
+     pra --temp-hot/warm/cold). Única fonte de cor pro status — ícone +
+     texto sempre acompanham (ver components/status/statusTaxonomy.ts). */
+  --color-status-disponivel: #1e7a46;
+  --color-status-disponivel-surface: #e7f6ec;
+  --color-status-em-uso: var(--brand-blue);
+  --color-status-em-uso-surface: #e8f2fa;
+  --color-status-apontamento: var(--warning);
+  --color-status-apontamento-surface: #fef3c7;
+  --color-status-avariado: var(--error);
+  --color-status-avariado-surface: #fde8ea;
+  --color-status-manutencao: #6d28d9;
+  --color-status-manutencao-surface: #f1e9fc;
+
+  /* ---------- Tipografia ----------
+     UI = Averta (stylistic alternate). Corpo = Inter. Averta self-hosted
+     só tem 300/400/600/700/800 — não existe 500 ("medium" usa 600). */
+  --font-ui: "Averta", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Averta", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-ui-features: "ss01" 1, "cv01" 1;
+
+  --text-display-sm: 1.5rem;
+  --text-display-sm--line-height: 1.1;
+  --text-display-md: 2rem;
+  --text-display-md--line-height: 1.1;
+  --text-display-lg: 2.75rem;
+  --text-display-lg--line-height: 1.1;
+
+  /* ---------- Raio — denso: pill nos controles, 8px em cards/dropdowns ---------- */
+  --radius-sm: 0.25rem;   /* 4px — chips, badges, menu items */
+  --radius-md: 0.5rem;    /* 8px — cards, dropdowns, popovers */
+  --radius-lg: 0.75rem;   /* 12px — modais */
+  --radius-xl: 1rem;      /* 16px */
+  --radius-2xl: 1.25rem;  /* 20px */
+  --radius-full: 9999px;  /* pill — botões, inputs, selects, filtros */
+
+  --radius-control: var(--radius-full);
+  --radius-card: var(--radius-md);
+  --radius-card-hero: var(--radius-xl);
+  --radius-pill: var(--radius-full);
+
+  /* ---------- Sombras (light clean — quase imperceptíveis) ---------- */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 2px 8px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 8px 24px rgba(16, 24, 40, 0.08);
+  --shadow-glow: 0 0 0 1px var(--border), 0 4px 16px rgba(10, 138, 214, 0.06);
+  /* Nomes legados (ainda referenciados em vários componentes) apontando pro novo sistema. */
+  --shadow-elevated: var(--shadow-lg);
+  --shadow-card: var(--shadow-sm);
+
+  /* ---------- Foco (anti-halo): borda neutra, nunca azul ---------- */
+  --focus-ring: 0 0 0 1px var(--foreground);
+  --color-focus-ring: var(--foreground);
+
+  /* ---------- Altura de controle — densidade desktop (Attio/Clay) ---------- */
+  --control-h-sm: 2rem;     /* 32px */
+  --control-h-md: 2.5rem;   /* 40px */
+  --control-h-lg: 2.75rem;  /* 44px */
+
+  /* Alvo de toque da jornada de operador/QR-entry/checklist (uso em pátio,
+     possivelmente com luvas) — maior que a densidade desktop de propósito,
+     mesmo padrão do DS de estender tokens por domínio. NÃO usar
+     --control-h-* nessas telas, usar este token. */
+  --size-touch-min: 3rem; /* 48px */
+
+  /* ---------- Z-index ---------- */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-tooltip: 1200;
+  --z-modal: 1300;
+  --z-toast: 1400;
+
+  /* ============================================================
+     Tokens legados — pré-Atomsix DS. Mantidos até a migração
+     componente-a-componente (Fases B/C/E) terminar; não usar em
+     código novo. Ver docs/design-system/UI-PRIMITIVES.md.
+     ============================================================ */
   --color-brand-50: #fdecef;
   --color-brand-100: #fbd2d9;
   --color-brand-200: #f5a7b3;
@@ -13,7 +149,6 @@
   --color-brand-800: #7a0a1f;
   --color-brand-900: #5c0818;
 
-  /* Escala neutra — 50/100/300/400/700/800 extraídos de verdade; resto interpolado */
   --color-neutral-50: #f2f2f2;
   --color-neutral-100: #e2e2e2;
   --color-neutral-200: #cccccc;
@@ -26,39 +161,162 @@
   --color-neutral-900: #171717;
   --color-neutral-950: #0d0d0d;
 
-  /* Acento suave extraído (uso decorativo pontual, nunca semântico de status) */
   --color-aqua: #b9e8df;
   --color-aqua-ink: #0f5c4e;
+}
 
-  /* Taxonomia de status — única fonte de cor; ícone + texto sempre acompanham (ver statusTaxonomy.ts) */
-  --color-status-disponivel: #1e7a46;
-  --color-status-disponivel-surface: #e7f6ec;
-  --color-status-em-uso: #0b5fa5;
-  --color-status-em-uso-surface: #e8f2fa;
-  --color-status-apontamento: #92400e;
-  --color-status-apontamento-surface: #fef3c7;
-  --color-status-avariado: #dd1337;
-  --color-status-avariado-surface: #fde8ea;
-  --color-status-manutencao: #6d28d9;
-  --color-status-manutencao-surface: #f1e9fc;
+/* ============================================================
+   DARK MODE — tokens prontos, sem toggle de tema nesta fase.
+   ============================================================ */
+:root[data-theme="dark"] {
+  --background: #000000;
+  --surface: #0a0a0c;
+  --surface-2: #141418;
+  --surface-3: #1c1c22;
+  --border: #26262e;
+  --border-strong: #3a3a44;
 
-  --background: #ffffff;
-  --foreground: var(--color-neutral-900);
-  --foreground-muted: var(--color-neutral-700);
-  --color-focus-ring: var(--color-status-em-uso);
+  --foreground: #ffffff;
+  --foreground-muted: #a1a1aa;
+  --foreground-subtle: #6b6b75;
 
-  --shadow-elevated: 27px 19.5px 150px rgba(0, 0, 0, 0.07);
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --brand-cyan: #00e9fe;
+  --brand-blue: #0a9cf3;
 
-  /* Piso mínimo de toque em telas de operador (pátio) */
-  --size-touch-min: 3rem;
+  --primary: #e4e5e9;
+  --primary-hover: #ccced4;
+  --primary-foreground: #0c0d10;
+
+  --sidebar-bg: #1a1b1f;
+  --sidebar-border: #2e2f34;
+  --sidebar-item: #9ca0a8;
+  --sidebar-item-hover-bg: rgba(255, 255, 255, 0.1);
+  --sidebar-item-hover-text: #e4e5e9;
+  --sidebar-item-active-bg: #e4e5e9;
+  --sidebar-item-active-text: #0c0d10;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 0 1px var(--border), 0 8px 30px rgba(10, 156, 243, 0.1);
+  --shadow-elevated: var(--shadow-lg);
+  --shadow-card: var(--shadow-sm);
+}
+
+/* ============================================================
+   Averta — self-host (docs/design-system/DESIGN.md §3)
+   ============================================================ */
+@font-face {
+  font-family: "Averta";
+  src: url("/fonts/Averta-300.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Averta";
+  src: url("/fonts/Averta-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Averta";
+  src: url("/fonts/Averta-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Averta";
+  src: url("/fonts/Averta-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Averta";
+  src: url("/fonts/Averta-800.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: block;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-foreground: var(--foreground);
   --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
 
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-item: var(--sidebar-item);
+  --color-sidebar-item-hover-bg: var(--sidebar-item-hover-bg);
+  --color-sidebar-item-hover-text: var(--sidebar-item-hover-text);
+  --color-sidebar-item-active-bg: var(--sidebar-item-active-bg);
+  --color-sidebar-item-active-text: var(--sidebar-item-active-text);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+
+  --color-brand-cyan: var(--brand-cyan);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-indigo: var(--brand-indigo);
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-magenta: var(--brand-magenta);
+  --color-brand-orange: var(--brand-orange);
+
+  --color-status-disponivel: var(--color-status-disponivel);
+  --color-status-disponivel-surface: var(--color-status-disponivel-surface);
+  --color-status-em-uso: var(--color-status-em-uso);
+  --color-status-em-uso-surface: var(--color-status-em-uso-surface);
+  --color-status-apontamento: var(--color-status-apontamento);
+  --color-status-apontamento-surface: var(--color-status-apontamento-surface);
+  --color-status-avariado: var(--color-status-avariado);
+  --color-status-avariado-surface: var(--color-status-avariado-surface);
+  --color-status-manutencao: var(--color-status-manutencao);
+  --color-status-manutencao-surface: var(--color-status-manutencao-surface);
+
+  --color-focus-ring: var(--color-focus-ring);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-glow: var(--shadow-glow);
+  --shadow-elevated: var(--shadow-elevated);
+  --shadow-card: var(--shadow-card);
+
+  --radius-control: var(--radius-control);
+  --radius-card: var(--radius-card);
+  --radius-card-hero: var(--radius-card-hero);
+  --radius-pill: var(--radius-pill);
+
+  --font-sans: var(--font-ui);
+  --font-ui: var(--font-ui);
+  --font-body: var(--font-body);
+
+  --text-display-sm: var(--text-display-sm);
+  --text-display-sm--line-height: var(--text-display-sm--line-height);
+  --text-display-md: var(--text-display-md);
+  --text-display-md--line-height: var(--text-display-md--line-height);
+  --text-display-lg: var(--text-display-lg);
+  --text-display-lg--line-height: var(--text-display-lg--line-height);
+
+  /* ---------- Legados (ver bloco :root acima) ---------- */
   --color-brand-50: var(--color-brand-50);
   --color-brand-100: var(--color-brand-100);
   --color-brand-200: var(--color-brand-200);
@@ -84,58 +342,125 @@
 
   --color-aqua: var(--color-aqua);
   --color-aqua-ink: var(--color-aqua-ink);
-
-  --color-status-disponivel: var(--color-status-disponivel);
-  --color-status-disponivel-surface: var(--color-status-disponivel-surface);
-  --color-status-em-uso: var(--color-status-em-uso);
-  --color-status-em-uso-surface: var(--color-status-em-uso-surface);
-  --color-status-apontamento: var(--color-status-apontamento);
-  --color-status-apontamento-surface: var(--color-status-apontamento-surface);
-  --color-status-avariado: var(--color-status-avariado);
-  --color-status-avariado-surface: var(--color-status-avariado-surface);
-  --color-status-manutencao: var(--color-status-manutencao);
-  --color-status-manutencao-surface: var(--color-status-manutencao-surface);
-
-  --color-focus-ring: var(--color-focus-ring);
-
-  --shadow-elevated: var(--shadow-elevated);
-  --shadow-card: var(--shadow-card);
-
-  --radius-control: var(--radius-lg);
-  --radius-card: var(--radius-xl);
-  --radius-card-hero: var(--radius-2xl);
-  --radius-pill: var(--radius-full);
-
-  --font-sans: var(--font-kumbh-sans);
-  --font-display: var(--font-fraunces);
-
-  --text-display-sm: 1.5rem;
-  --text-display-sm--line-height: 1.1;
-  --text-display-md: 2rem;
-  --text-display-md--line-height: 1.1;
-  --text-display-lg: 2.75rem;
-  --text-display-lg--line-height: 1.1;
 }
 
+/* Base ----------------------------------------------------- */
 body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: var(--font-ui-features);
+}
+
+/* UI = Averta com stylistic alternate. Títulos usam bold (Averta não tem
+   peso 500 — nada de font-weight: 500 em heading). */
+h1,
+h2,
+h3,
+h4,
+button,
+label,
+input,
+textarea,
+select,
+th,
+.chip,
+.badge {
+  font-family: var(--font-ui);
+  font-feature-settings: var(--font-ui-features);
 }
 
 h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-display), ui-serif, serif;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.1;
+  letter-spacing: -0.01em;
 }
 
+/* Foco neutro e sutil (anti-halo): borda preta/branca de 1px, nunca ring
+   azul. Uma única indicação por elemento — inputs/botões com foco próprio
+   usam border/ring; o resto cai neste outline. */
 :focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-  border-radius: var(--radius-control);
+  outline: 1px solid var(--color-focus-ring);
+  outline-offset: 1px;
+  border-radius: var(--radius-sm);
+}
+
+/* Scrollbars ocultas em toda a app (scroll continua funcionando). */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+.show-scrollbar-x {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+.show-scrollbar-x::-webkit-scrollbar {
+  display: block;
+  height: 8px;
+}
+.show-scrollbar-x::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 9999px;
+}
+.show-scrollbar-x::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Checkbox custom — appearance: none, check fino (stroke 1.5). */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: none;
+  margin: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-background);
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.34rem;
+  height: 0.6rem;
+  margin-top: -2px;
+  border: solid var(--color-background);
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.12s ease;
+}
+input[type="checkbox"]:hover {
+  border-color: var(--color-foreground);
+}
+input[type="checkbox"]:checked {
+  background-color: var(--color-foreground);
+  border-color: var(--color-foreground);
+}
+input[type="checkbox"]:checked::before {
+  transform: rotate(45deg) scale(1);
+}
+input[type="checkbox"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Tabelas — sem borda no container, um divider sob o header. */
+thead th {
+  letter-spacing: 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 @media print {
