@@ -24,9 +24,13 @@ export default function ChecklistLayout({ children, params }: LayoutProps<"/equi
   const operador = operadores.find((o) => o.id === demo.operadorAtivoId) ?? operadores[0];
   const modelo = modelos.find((m) => m.id === equipamento.modeloChecklistIdPadrao);
 
+  // Mesmas condições do gate em FluxoOperador, na ordem em que ele as aplica — inclusive a
+  // solicitação aprovada, primeira etapa da jornada. Sem isso, a URL direta do checklist
+  // pula o gate 0 e o operador consegue verificar um equipamento sem tarefa aprovada.
   const podeIniciar = Boolean(
     operador &&
       modelo &&
+      repo.tarefas.buscarAprovadaAtiva(operador.id, equipamento.id) &&
       equipamento.status !== "bloqueado" &&
       equipamento.status !== "em_manutencao" &&
       repo.operadores.possuiHabilitacaoValida(operador.id, equipamento.tipo),

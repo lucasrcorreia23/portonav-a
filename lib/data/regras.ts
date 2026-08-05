@@ -1,4 +1,4 @@
-import type { RegraLiberacaoEquipamento } from "@/lib/types";
+import type { Perfil, RegraLiberacaoEquipamento } from "@/lib/types";
 
 export const SEGUNDO_MS = 1000;
 export const MINUTO_MS = 60 * SEGUNDO_MS;
@@ -17,4 +17,14 @@ export const TEMPO_MINIMO_TOTAL_SEGUNDOS = 25;
  */
 export const REGRA_LIBERACAO_PADRAO: RegraLiberacaoEquipamento = {
   perfisPermitidos: ["supervisor", "admin"],
+};
+
+/** Quem pode aprovar/rejeitar uma solicitação de tarefa criada pelo operador. */
+export const REGRA_APROVACAO_TAREFA_PADRAO: { perfisPermitidos: Perfil[] } = {
+  perfisPermitidos: ["supervisor", "admin"],
+};
+
+/** Só admin registra a análise administrativa (com apoio de IA simulada) de um chamado. */
+export const REGRA_ANALISE_ADMIN_PADRAO: { perfisPermitidos: Perfil[] } = {
+  perfisPermitidos: ["admin"],
 };

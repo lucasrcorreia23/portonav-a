@@ -11,7 +11,7 @@ export function ResetButton() {
   if (confirmando) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-sm text-neutral-700">Tem certeza?</span>
+        <span className="text-sm text-foreground-muted">Tem certeza?</span>
         <button
           type="button"
           onClick={() => {
@@ -25,7 +25,7 @@ export function ResetButton() {
         <button
           type="button"
           onClick={() => setConfirmando(false)}
-          className="rounded-control px-2.5 py-1.5 text-sm text-neutral-600 hover:bg-neutral-100"
+          className="rounded-control px-2.5 py-1.5 text-sm text-foreground-muted hover:bg-surface-2"
         >
           Cancelar
         </button>
@@ -37,7 +37,7 @@ export function ResetButton() {
     <button
       type="button"
       onClick={() => setConfirmando(true)}
-      className="inline-flex items-center gap-1.5 rounded-control px-2.5 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+      className="inline-flex items-center gap-1.5 rounded-control px-2.5 py-1.5 text-sm font-medium text-foreground-muted hover:bg-surface-2"
     >
       <RotateCcw size={14} aria-hidden />
       Resetar dados

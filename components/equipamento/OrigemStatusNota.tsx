@@ -13,7 +13,7 @@ export function OrigemStatusNota({ ultimoEvento }: { ultimoEvento: HistoricoEven
 
   if (!demo.offline) {
     return (
-      <p className="inline-flex items-center gap-1.5 text-xs text-neutral-500">
+      <p className="inline-flex items-center gap-1.5 text-xs text-foreground-subtle">
         <Wifi size={12} aria-hidden /> Status verificado agora.
       </p>
     );

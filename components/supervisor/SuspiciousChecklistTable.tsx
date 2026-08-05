@@ -60,15 +60,15 @@ export function SuspiciousChecklistTable({ checklists }: { checklists: Checklist
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-neutral-900">{equipamentoEmRevisao?.tag}</p>
-                <p className="text-sm text-neutral-600">{operadorEmRevisao?.nome}</p>
+                <p className="font-medium text-foreground">{equipamentoEmRevisao?.tag}</p>
+                <p className="text-sm text-foreground-muted">{operadorEmRevisao?.nome}</p>
               </div>
               <StatusBadge entrada={TAXONOMIA_RESULTADO_CHECKLIST[emRevisao.resultado]} tamanho="sm" />
             </div>
             <SuspicionReasonChips motivos={emRevisao.motivosSuspeita} />
             <div>
-              <p className="mb-2 text-sm font-medium text-neutral-800">Duração por seção</p>
-              <ul className="flex flex-col gap-1 text-sm text-neutral-700">
+              <p className="mb-2 text-sm font-medium text-foreground">Duração por seção</p>
+              <ul className="flex flex-col gap-1 text-sm text-foreground-muted">
                 {Object.entries(emRevisao.duracaoPorSecaoSegundos).map(([secaoId, segundos]) => (
                   <li key={secaoId} className="flex justify-between">
                     <span>{secoesEmRevisao.find((s) => s.id === secaoId)?.titulo ?? "Seção removida"}</span>
@@ -76,7 +76,7 @@ export function SuspiciousChecklistTable({ checklists }: { checklists: Checklist
                   </li>
                 ))}
               </ul>
-              <p className="mt-2 text-sm text-neutral-600">Duração total: {emRevisao.duracaoTotalSegundos}s</p>
+              <p className="mt-2 text-sm text-foreground-muted">Duração total: {emRevisao.duracaoTotalSegundos}s</p>
             </div>
           </div>
         )}

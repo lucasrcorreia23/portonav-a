@@ -4,9 +4,9 @@ import { SearchX } from "lucide-react";
 export default function EquipamentoNaoEncontrado() {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center gap-4 px-6 py-20 text-center">
-      <SearchX size={40} className="text-neutral-400" aria-hidden />
-      <h1 className="text-lg font-medium text-neutral-900">Equipamento não encontrado</h1>
-      <p className="text-sm text-neutral-600">
+      <SearchX size={40} className="text-foreground-subtle" aria-hidden />
+      <h1 className="text-lg font-medium text-foreground">Equipamento não encontrado</h1>
+      <p className="text-sm text-foreground-muted">
         Não existe nenhum equipamento cadastrado com essa tag. Ela pode ter sido removida após um reset dos
         dados de demonstração.
       </p>

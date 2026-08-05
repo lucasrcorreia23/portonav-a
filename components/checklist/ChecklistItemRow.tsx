@@ -1,8 +1,12 @@
 "use client";
 
-import { AlertTriangle, Check, X } from "lucide-react";
+import { AlertTriangle, Check, Sparkles, X } from "lucide-react";
 import { PhotoCapture } from "@/components/checklist/PhotoCapture";
+import { BadgeIA } from "@/components/ia/BadgeIA";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
+import { gerarDescricaoNaoConformidade } from "@/lib/data/ia-simulada";
 import type { ItemChecklistDefinicao } from "@/lib/types";
 import type { RespostaRascunho } from "@/app/equipamento/[tag]/checklist/draft-context";
 
@@ -18,11 +22,11 @@ export function ChecklistItemRow({ item, resposta, onMudar }: ChecklistItemRowPr
   const faltaFoto = reprovado && item.exigeFotoAoReprovar && !resposta?.fotoEvidencia;
 
   return (
-    <div className="rounded-card border border-neutral-100 bg-white p-4 shadow-card">
+    <div className="rounded-card border border-border bg-surface p-4 shadow-card">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <p className="font-medium text-neutral-900">{item.titulo}</p>
-          {item.descricaoAjuda && <p className="mt-0.5 text-sm text-neutral-500">{item.descricaoAjuda}</p>}
+          <p className="font-medium text-foreground">{item.titulo}</p>
+          {item.descricaoAjuda && <p className="mt-0.5 text-sm text-foreground-subtle">{item.descricaoAjuda}</p>}
         </div>
         {item.modoTratamento === "bloqueia" && (
           <span className="shrink-0 rounded-pill bg-status-avariado-surface px-2 py-0.5 text-xs font-medium text-status-avariado">
@@ -40,7 +44,7 @@ export function ChecklistItemRow({ item, resposta, onMudar }: ChecklistItemRowPr
             className={`flex h-14 items-center justify-center gap-2 rounded-control border-2 text-base font-medium transition-colors ${
               resposta?.valor === "ok"
                 ? "border-status-disponivel bg-status-disponivel-surface text-status-disponivel"
-                : "border-neutral-200 text-neutral-600 hover:border-neutral-300"
+                : "border-border text-foreground-muted hover:border-foreground-subtle"
             }`}
           >
             <Check size={20} aria-hidden /> OK
@@ -52,7 +56,7 @@ export function ChecklistItemRow({ item, resposta, onMudar }: ChecklistItemRowPr
             className={`flex h-14 items-center justify-center gap-2 rounded-control border-2 text-base font-medium transition-colors ${
               resposta?.valor === "nao_ok"
                 ? "border-status-avariado bg-status-avariado-surface text-status-avariado"
-                : "border-neutral-200 text-neutral-600 hover:border-neutral-300"
+                : "border-border text-foreground-muted hover:border-foreground-subtle"
             }`}
           >
             <X size={20} aria-hidden /> Não OK
@@ -62,23 +66,24 @@ export function ChecklistItemRow({ item, resposta, onMudar }: ChecklistItemRowPr
 
       {item.tipoResposta === "numerico" && (
         <div className="flex items-center gap-2">
-          <input
-            type="number"
-            inputMode="decimal"
-            value={typeof resposta?.valor === "number" ? resposta.valor : ""}
-            onChange={(e) => {
-              const numero = Number(e.target.value);
-              const foraDaFaixa = item.faixaEsperada
-                ? numero < item.faixaEsperada.min || numero > item.faixaEsperada.max
-                : false;
-              onMudar({ valor: numero, reprovado: foraDaFaixa });
-            }}
-            className="h-12 w-32 rounded-control border border-neutral-300 px-3 text-base"
-            aria-label={item.titulo}
-          />
-          {item.unidade && <span className="text-sm text-neutral-500">{item.unidade}</span>}
+          <div className="w-32">
+            <Input
+              type="number"
+              inputMode="decimal"
+              value={typeof resposta?.valor === "number" ? resposta.valor : ""}
+              onChange={(e) => {
+                const numero = Number(e.target.value);
+                const foraDaFaixa = item.faixaEsperada
+                  ? numero < item.faixaEsperada.min || numero > item.faixaEsperada.max
+                  : false;
+                onMudar({ valor: numero, reprovado: foraDaFaixa });
+              }}
+              aria-label={item.titulo}
+            />
+          </div>
+          {item.unidade && <span className="text-sm text-foreground-subtle">{item.unidade}</span>}
           {item.faixaEsperada && (
-            <span className="text-xs text-neutral-400">
+            <span className="text-xs text-foreground-subtle">
               (esperado: {item.faixaEsperada.min}–{item.faixaEsperada.max})
             </span>
           )}
@@ -93,30 +98,58 @@ export function ChecklistItemRow({ item, resposta, onMudar }: ChecklistItemRowPr
         />
       )}
 
+      {/* rounded-card, não rounded-control: --radius-control é pill (9999px), token de
+          botão/campo — num bloco alto ele vira uma elipse gigante em vez de um painel. */}
       {reprovado && (item.exigeObservacaoAoReprovar || item.exigeFotoAoReprovar) && (
-        <div className="mt-3 flex flex-col gap-3 rounded-control bg-status-avariado-surface p-3">
-          {item.exigeObservacaoAoReprovar && (
-            <Textarea
-              rotulo="Observação (obrigatória)"
-              required
-              value={resposta?.observacao ?? ""}
-              onChange={(e) => onMudar({ ...resposta!, observacao: e.target.value })}
-              erro={faltaObservacao ? "Descreva o problema encontrado." : undefined}
-            />
-          )}
+        <div className="mt-3 flex flex-col gap-3 rounded-card border border-status-avariado/20 bg-status-avariado-surface p-3">
           {item.exigeFotoAoReprovar && (
             <div>
-              <p className="mb-1.5 text-sm font-medium text-neutral-800">Foto (obrigatória)</p>
+              {/* Mesma tipografia do rótulo de Input/Textarea — foto e observação são dois
+                  campos do mesmo bloco e precisam ler como irmãos. */}
+              <p className="mb-1.5 text-xs font-semibold text-foreground-muted">
+                Foto <span aria-hidden="true">*</span>
+              </p>
               <PhotoCapture
                 valor={resposta?.fotoEvidencia}
                 onCapturar={(foto) => onMudar({ ...resposta!, fotoEvidencia: foto })}
                 onRemover={() => onMudar({ ...resposta!, fotoEvidencia: undefined })}
               />
               {faltaFoto && (
-                <p className="mt-1.5 inline-flex items-center gap-1 text-sm text-status-avariado">
-                  <AlertTriangle size={14} aria-hidden /> Anexe uma foto do problema.
+                <p className="mt-1.5 inline-flex items-center gap-1 text-xs text-error" role="alert">
+                  <AlertTriangle size={13} aria-hidden /> Anexe uma foto do problema.
                 </p>
               )}
+            </div>
+          )}
+          {item.exigeObservacaoAoReprovar && (
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variante="ia"
+                  tamanho="sm"
+                  iconeEsquerda={<Sparkles size={14} aria-hidden />}
+                  disabled={item.exigeFotoAoReprovar && !resposta?.fotoEvidencia}
+                  onClick={() =>
+                    onMudar({
+                      ...resposta!,
+                      observacao: gerarDescricaoNaoConformidade(item, Boolean(resposta?.fotoEvidencia)),
+                      descricaoGeradaPorIA: true,
+                    })
+                  }
+                >
+                  Gerar descrição com IA
+                </Button>
+                {resposta?.descricaoGeradaPorIA && <BadgeIA />}
+              </div>
+              {/* Sem repetir "anexe uma foto" aqui: quando o botão de IA está desabilitado por
+                  falta de foto, o erro do campo de foto logo acima já está na tela. */}
+              <Textarea
+                rotulo="Observação"
+                required
+                value={resposta?.observacao ?? ""}
+                onChange={(e) => onMudar({ ...resposta!, observacao: e.target.value, descricaoGeradaPorIA: false })}
+                erro={faltaObservacao ? "Descreva o problema encontrado." : undefined}
+              />
             </div>
           )}
         </div>

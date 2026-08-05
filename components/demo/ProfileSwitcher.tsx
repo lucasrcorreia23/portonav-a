@@ -26,7 +26,7 @@ export function ProfileSwitcher() {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">Perfil ativo</span>
+      <span className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">Perfil ativo</span>
       <div className="flex flex-wrap gap-1.5" role="group" aria-label="Trocar perfil">
         {PERFIS.map((perfil) => {
           const Icone = perfil.icone;
@@ -38,7 +38,7 @@ export function ProfileSwitcher() {
               onClick={() => aoEscolherPerfil(perfil.valor, perfil.rota)}
               aria-pressed={ativo}
               className={`inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-sm font-medium transition-colors ${
-                ativo ? "bg-brand-500 text-white" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                ativo ? "bg-brand-500 text-white" : "bg-surface-3 text-foreground-muted hover:bg-surface-3"
               }`}
             >
               <Icone size={14} aria-hidden />
@@ -48,12 +48,12 @@ export function ProfileSwitcher() {
         })}
       </div>
       {demo.perfilAtivo === "operador" && (
-        <label className="flex flex-col gap-1 text-xs text-neutral-600">
+        <label className="flex flex-col gap-1 text-xs text-foreground-muted">
           Simulando como
           <select
             value={demo.operadorAtivoId ?? ""}
             onChange={(evento) => alternarPerfil("operador", evento.target.value || null)}
-            className="rounded-control border border-neutral-300 px-2 py-1.5 text-sm text-neutral-900"
+            className="rounded-control border border-border-strong px-2 py-1.5 text-sm text-foreground"
           >
             {operadores.map((operador) => (
               <option key={operador.id} value={operador.id}>

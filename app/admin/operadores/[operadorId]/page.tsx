@@ -41,8 +41,8 @@ export default function FichaOperadorPage(props: PageProps<"/admin/operadores/[o
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Card densidade="densa">
           <div className="mb-3 flex items-center justify-between gap-2">
-            <h2 className="font-medium text-neutral-900">Habilitações</h2>
-            <span className="text-xs text-neutral-500">Somente leitura — sincronizado do portal</span>
+            <h2 className="font-medium text-foreground">Habilitações</h2>
+            <span className="text-xs text-foreground-subtle">Somente leitura — sincronizado do portal</span>
           </div>
           <ul className="flex flex-col gap-2">
             {operador.habilitacoes.map((h) => {
@@ -52,11 +52,11 @@ export default function FichaOperadorPage(props: PageProps<"/admin/operadores/[o
               return (
                 <li
                   key={h.tipoEquipamento}
-                  className="flex flex-col gap-1 border-b border-neutral-100 pb-2 text-sm last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-1 border-b border-border pb-2 text-sm last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex items-center gap-2">
                     <span>{ROTULO_TIPO_EQUIPAMENTO[h.tipoEquipamento]}</span>
-                    <span className="text-neutral-500">{h.numeroCertificado}</span>
+                    <span className="text-foreground-subtle">{h.numeroCertificado}</span>
                   </div>
                   {h.validoAte ? (
                     <Badge
@@ -69,7 +69,7 @@ export default function FichaOperadorPage(props: PageProps<"/admin/operadores/[o
                       classeCor={
                         vencida || venceEmBreve
                           ? "text-status-avariado bg-status-avariado-surface"
-                          : "text-neutral-600 bg-neutral-100"
+                          : "text-foreground-muted bg-surface-3"
                       }
                       tamanho="sm"
                     />
@@ -87,27 +87,27 @@ export default function FichaOperadorPage(props: PageProps<"/admin/operadores/[o
           </ul>
         </Card>
         <Card densidade="densa">
-          <h2 className="mb-3 font-medium text-neutral-900">Score de confiabilidade</h2>
+          <h2 className="mb-3 font-medium text-foreground">Score de confiabilidade</h2>
           <ReliabilityScoreBadge score={operador.scoreConfiabilidade} />
-          <p className="mt-2 text-sm text-neutral-600">
+          <p className="mt-2 text-sm text-foreground-muted">
             {historicoOperador.filter((c) => c.suspeito).length} checklist(s) suspeito(s) no histórico.
           </p>
         </Card>
       </div>
 
       <Card densidade="densa">
-        <h2 className="mb-3 font-medium text-neutral-900">Histórico de checklists</h2>
+        <h2 className="mb-3 font-medium text-foreground">Histórico de checklists</h2>
         {historicoOperador.length === 0 ? (
-          <p className="text-sm text-neutral-500">Nenhum checklist preenchido ainda.</p>
+          <p className="text-sm text-foreground-subtle">Nenhum checklist preenchido ainda.</p>
         ) : (
-          <ul className="flex flex-col divide-y divide-neutral-100">
+          <ul className="flex flex-col divide-y divide-border">
             {historicoOperador.slice(0, 20).map((c) => {
               const eq = equipamentos.find((e) => e.id === c.equipamentoId);
               return (
                 <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
                   <div>
-                    <p className="text-sm font-medium text-neutral-800">{eq?.tag ?? "—"}</p>
-                    <p className="text-xs text-neutral-500">
+                    <p className="text-sm font-medium text-foreground">{eq?.tag ?? "—"}</p>
+                    <p className="text-xs text-foreground-subtle">
                       {new Date(c.concluidoEm).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
                     </p>
                   </div>

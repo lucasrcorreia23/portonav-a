@@ -53,7 +53,7 @@ export function PhotoCapture({
     return (
       <div className="relative w-fit">
         {/* eslint-disable-next-line @next/next/no-img-element -- data URL local, sem otimização de imagem remota aplicável */}
-        <img src={valor.dataUrl} alt="Evidência fotográfica anexada" className="h-32 w-44 rounded-control object-cover" />
+        <img src={valor.dataUrl} alt="Evidência fotográfica anexada" className="h-32 w-44 rounded-card object-cover" />
         <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1.5 py-0.5 text-[11px] text-white">
           {new Date(valor.timestamp).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
         </span>

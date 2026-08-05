@@ -21,6 +21,13 @@ export interface LiberacaoEquipamento {
   observacao?: string;
 }
 
+export interface AnaliseAdminChamado {
+  texto: string;
+  geradoPorIA: boolean;
+  analisadoPor: { perfil: Perfil; nome: string };
+  analisadoEm: ISODateString;
+}
+
 export interface EventoStatusChamado {
   status: StatusChamado;
   em: ISODateString;
@@ -38,5 +45,6 @@ export interface ChamadoManutencao {
   atribuidoA?: { perfil: Perfil; nome: string };
   registroReparo?: RegistroReparo;
   liberacao?: LiberacaoEquipamento;
+  analiseAdmin?: AnaliseAdminChamado;
   historicoStatus: EventoStatusChamado[];
 }

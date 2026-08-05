@@ -22,11 +22,11 @@ export function NearbyEquipmentList({
           <button
             type="button"
             onClick={() => onEscolher(eq)}
-            className="flex w-full items-center justify-between gap-3 rounded-card border border-neutral-100 bg-white p-4 text-left shadow-card hover:bg-neutral-50"
+            className="flex w-full items-center justify-between gap-3 rounded-card border border-border bg-surface p-4 text-left shadow-card hover:bg-surface-2"
           >
             <div>
-              <p className="font-medium text-neutral-900">{eq.tag}</p>
-              <p className="text-sm text-neutral-600">
+              <p className="font-medium text-foreground">{eq.tag}</p>
+              <p className="text-sm text-foreground-muted">
                 {ROTULO_TIPO[eq.tipo]} · {eq.localizacaoAtual}
               </p>
             </div>

@@ -1,11 +1,14 @@
 import type {
+  AnaliseAdminChamado,
   Apontamento,
   BloqueioAtivo,
   ChamadoManutencao,
   ChecklistPreenchido,
+  DecisaoTarefa,
   Equipamento,
   HistoricoEvento,
   Id,
+  ISODateString,
   LiberacaoEquipamento,
   ModeloChecklist,
   Operador,
@@ -15,6 +18,7 @@ import type {
   SincronizacaoPortal,
   StatusChamado,
   SyncQueueItem,
+  Tarefa,
   TipoEquipamento,
   TipoOperacao,
 } from "@/lib/types";
@@ -87,6 +91,27 @@ export interface ManutencaoRepositorio {
   moverChamado(id: Id, status: StatusChamado): void;
   registrarReparo(id: Id, reparo: RegistroReparo): void;
   liberarChamado(id: Id, liberacao: LiberacaoEquipamento): void;
+  registrarAnaliseAdmin(id: Id, analise: AnaliseAdminChamado): void;
+}
+
+/** Entrada crua vinda da UI — id, status inicial ("pendente") e timestamp são do repositório. */
+export interface NovaTarefa {
+  operadorId: Id;
+  equipamentoId: Id;
+  descricaoDemanda: string;
+}
+
+export interface TarefasRepositorio {
+  listar(): Tarefa[];
+  listarPorOperador(operadorId: Id): Tarefa[];
+  listarPendentes(): Tarefa[];
+  buscarPorId(id: Id): Tarefa | undefined;
+  buscarAprovadaAtiva(operadorId: Id, equipamentoId: Id): Tarefa | undefined;
+  criar(entrada: NovaTarefa): Tarefa;
+  aprovar(id: Id, decisao: DecisaoTarefa): void;
+  rejeitar(id: Id, decisao: DecisaoTarefa): void;
+  concluir(id: Id): void;
+  reagendar(id: Id, agendamentoPara: ISODateString): void;
 }
 
 export interface SessoesRepositorio {
@@ -112,6 +137,7 @@ export interface Repositorio {
   checklists: ChecklistsRepositorio;
   operadores: OperadoresRepositorio;
   manutencao: ManutencaoRepositorio;
+  tarefas: TarefasRepositorio;
   sessoes: SessoesRepositorio;
   historico: HistoricoRepositorio;
   sync: SyncRepositorio;

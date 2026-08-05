@@ -1,18 +1,29 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
-import { QrCode } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ClipboardList, QrCode } from "lucide-react";
 import { OperatorShell } from "@/components/layout/OperatorShell";
+import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { TarefaCard } from "@/components/tarefas/TarefaCard";
 import { TAXONOMIA_RESULTADO_CHECKLIST } from "@/components/status/statusTaxonomy";
-import { alternarPerfil, useChecklistsPreenchidos, useEquipamentos, useEstadoDemo, useOperadores } from "@/lib/data/context";
+import {
+  alternarPerfil,
+  useChecklistsPreenchidos,
+  useEquipamentos,
+  useEstadoDemo,
+  useOperadores,
+  useTarefas,
+} from "@/lib/data/context";
 
 export default function OperadorHomePage() {
+  const router = useRouter();
   const demo = useEstadoDemo();
   const checklists = useChecklistsPreenchidos();
   const equipamentos = useEquipamentos();
   const operadores = useOperadores();
+  const tarefas = useTarefas();
   const operadorAtivoId = demo.operadorAtivoId ?? operadores[0]?.id ?? null;
 
   useEffect(() => {
@@ -27,32 +38,74 @@ export default function OperadorHomePage() {
     .sort((a, b) => b.concluidoEm.localeCompare(a.concluidoEm))
     .slice(0, 5);
 
+  const minhasTarefas = tarefas
+    .filter((t) => t.operadorId === operadorAtivoId && (t.status === "pendente" || t.status === "aprovada"))
+    .sort((a, b) => b.criadaEm.localeCompare(a.criadaEm))
+    .slice(0, 3);
+
   return (
     <OperatorShell>
       <div>
-        <h1 className="text-display-sm text-neutral-900">Olá!</h1>
-        <p className="mt-1 text-sm text-neutral-600">Escaneie o QR do equipamento para iniciar a verificação de pré-operação.</p>
+        <h1 className="text-display-sm text-foreground">Olá!</h1>
+        <p className="mt-1 text-sm text-foreground-muted">
+          Registre a solicitação recebida do seu chefe antes de escanear o equipamento.
+        </p>
       </div>
 
-      <Link
-        href="/entrada"
-        className="flex items-center justify-center gap-2 rounded-card-hero bg-brand-500 px-6 py-8 text-lg font-medium text-white shadow-elevated hover:bg-brand-600"
+      <Button
+        tamanho="touch"
+        larguraTotal
+        iconeEsquerda={<ClipboardList size={22} aria-hidden />}
+        onClick={() => router.push("/operador/tarefas?nova=1")}
       >
-        <QrCode size={24} aria-hidden />
+        Nova solicitação
+      </Button>
+
+      <Button
+        variante="secondary"
+        tamanho="touch"
+        larguraTotal
+        iconeEsquerda={<QrCode size={20} aria-hidden />}
+        onClick={() => router.push("/entrada")}
+      >
         Ler QR do equipamento
-      </Link>
+      </Button>
+
+      {minhasTarefas.length > 0 && (
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="text-sm font-medium text-foreground-muted">Minhas tarefas</h2>
+            <button
+              type="button"
+              onClick={() => router.push("/operador/tarefas")}
+              className="text-sm text-foreground-muted hover:underline"
+            >
+              Ver todas
+            </button>
+          </div>
+          <div className="flex flex-col gap-2">
+            {minhasTarefas.map((tarefa) => (
+              <TarefaCard
+                key={tarefa.id}
+                tarefa={tarefa}
+                equipamento={equipamentos.find((e) => e.id === tarefa.equipamentoId)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {recentes.length > 0 && (
         <div>
-          <h2 className="mb-2 text-sm font-medium text-neutral-700">Suas últimas verificações</h2>
+          <h2 className="mb-2 text-sm font-medium text-foreground-muted">Suas últimas verificações</h2>
           <ul className="flex flex-col gap-2">
             {recentes.map((c) => {
               const eq = equipamentos.find((e) => e.id === c.equipamentoId);
               return (
-                <li key={c.id} className="flex items-center justify-between rounded-card border border-neutral-100 bg-white p-3 text-sm shadow-card">
+                <li key={c.id} className="flex items-center justify-between rounded-card border border-border bg-surface p-3 text-sm shadow-card">
                   <div>
-                    <p className="font-medium text-neutral-800">{eq?.tag ?? "—"}</p>
-                    <p className="text-xs text-neutral-500">
+                    <p className="font-medium text-foreground">{eq?.tag ?? "—"}</p>
+                    <p className="text-xs text-foreground-subtle">
                       {new Date(c.concluidoEm).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
                     </p>
                   </div>

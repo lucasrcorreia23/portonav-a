@@ -90,6 +90,10 @@ export function useChamados() {
   return useEstadoAplicacao().chamados;
 }
 
+export function useTarefas() {
+  return useEstadoAplicacao().tarefas;
+}
+
 export function useSessoes() {
   return useEstadoAplicacao().sessoes;
 }

@@ -55,16 +55,16 @@ export default function ResultadoChecklistPage(props: PageProps<"/equipamento/[t
   return (
     <OperatorShell>
       <div className="flex flex-col gap-5">
-        <div className="flex flex-col items-center gap-3 rounded-card-hero border border-neutral-100 bg-white p-8 text-center shadow-elevated">
+        <div className="flex flex-col items-center gap-3 rounded-card-hero border border-border bg-surface p-8 text-center shadow-elevated">
           <StatusBadge entrada={taxonomia} tamanho="lg" />
-          <h1 className="text-display-sm text-neutral-900">
+          <h1 className="text-display-sm text-foreground">
             {checklist.resultado === "bloqueado"
               ? "Uso bloqueado"
               : checklist.resultado === "liberado_com_apontamento"
                 ? "Liberado com apontamento"
                 : "Equipamento liberado"}
           </h1>
-          <p className="text-sm text-neutral-600">
+          <p className="text-sm text-foreground-muted">
             {totalOk}/{totalItens} itens verificados · {equipamento.tag}
           </p>
           {checklist.preenchidoOffline && (
@@ -74,18 +74,18 @@ export default function ResultadoChecklistPage(props: PageProps<"/equipamento/[t
 
         {itensReprovados.length > 0 && (
           <Card densidade="densa">
-            <h2 className="mb-3 font-medium text-neutral-900">Itens reprovados</h2>
+            <h2 className="mb-3 font-medium text-foreground">Itens reprovados</h2>
             <ul className="flex flex-col gap-3">
               {itensReprovados.map(({ resposta, item }) => (
-                <li key={resposta.itemId} className="flex flex-col gap-1 border-b border-neutral-100 pb-3 last:border-0 last:pb-0">
-                  <p className="text-sm font-medium text-neutral-800">{item?.titulo ?? "Item"}</p>
-                  {resposta.observacao && <p className="text-sm text-neutral-600">{resposta.observacao}</p>}
+                <li key={resposta.itemId} className="flex flex-col gap-1 border-b border-border pb-3 last:border-0 last:pb-0">
+                  <p className="text-sm font-medium text-foreground">{item?.titulo ?? "Item"}</p>
+                  {resposta.observacao && <p className="text-sm text-foreground-muted">{resposta.observacao}</p>}
                   {resposta.fotoEvidencia && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={resposta.fotoEvidencia.dataUrl}
                       alt={`Evidência: ${item?.titulo ?? "item"}`}
-                      className="mt-1 h-28 w-40 rounded-control object-cover"
+                      className="mt-1 h-28 w-40 rounded-card object-cover"
                     />
                   )}
                 </li>
@@ -95,7 +95,7 @@ export default function ResultadoChecklistPage(props: PageProps<"/equipamento/[t
         )}
 
         {chamadoGerado && (
-          <p className="text-center text-sm text-neutral-600">
+          <p className="text-center text-sm text-foreground-muted">
             {checklist.resultado === "bloqueado" ? "Chamado de manutenção aberto automaticamente" : "Manutenção notificada"} — chamado{" "}
             <span className="font-medium">#{chamadoGerado.id.slice(-6).toUpperCase()}</span>
           </p>

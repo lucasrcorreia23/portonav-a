@@ -16,6 +16,7 @@ export interface RespostaRascunho {
   valor: RespostaItemChecklist["valor"];
   reprovado: boolean;
   observacao?: string;
+  descricaoGeradaPorIA?: boolean;
   fotoEvidencia?: FotoEvidencia;
 }
 
@@ -98,6 +99,7 @@ export function DraftChecklistProvider({
         valor: r?.valor ?? "ok",
         reprovado: r?.reprovado ?? false,
         observacao: r?.observacao,
+        descricaoGeradaPorIA: r?.descricaoGeradaPorIA,
         fotoEvidencia: r?.fotoEvidencia,
         respondidoEm: concluidoEm,
       };

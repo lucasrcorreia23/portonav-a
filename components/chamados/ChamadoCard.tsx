@@ -22,19 +22,19 @@ export function ChamadoCard({ chamado, equipamento }: { chamado: ChamadoManutenc
   const horasAberto = Math.round((agoraSimuladoMs - new Date(chamado.abertoEm).getTime()) / 3_600_000);
 
   return (
-    <div className="flex flex-col gap-2 rounded-card border border-neutral-100 bg-white p-3 shadow-card">
+    <div className="flex flex-col gap-2 rounded-card border border-border bg-white p-3 shadow-card">
       <Link href={`/manutencao/chamados/${chamado.id}`} className="hover:text-brand-600">
-        <p className="font-medium text-neutral-900">{equipamento?.tag ?? "—"}</p>
-        <p className="text-xs text-neutral-500">
+        <p className="font-medium text-foreground">{equipamento?.tag ?? "—"}</p>
+        <p className="text-xs text-foreground-subtle">
           {chamado.prioridade === "alta" ? "Prioridade alta" : chamado.prioridade === "media" ? "Prioridade média" : "Prioridade baixa"}
         </p>
       </Link>
-      <p className="text-xs text-neutral-400">aberto há {horasAberto < 24 ? `${horasAberto}h` : `${Math.round(horasAberto / 24)}d`}</p>
+      <p className="text-xs text-foreground-subtle">aberto há {horasAberto < 24 ? `${horasAberto}h` : `${Math.round(horasAberto / 24)}d`}</p>
       {proximo && (
         <button
           type="button"
           onClick={() => repo.manutencao.moverChamado(chamado.id, proximo)}
-          className="mt-1 inline-flex items-center justify-center gap-1 rounded-control bg-neutral-100 px-2 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-200"
+          className="mt-1 inline-flex items-center justify-center gap-1 rounded-control bg-surface-2 px-2 py-1.5 text-xs font-medium text-foreground-muted hover:bg-surface-3"
         >
           Mover para {TAXONOMIA_STATUS_CHAMADO[proximo].label} <ArrowRight size={12} aria-hidden />
         </button>
@@ -42,7 +42,7 @@ export function ChamadoCard({ chamado, equipamento }: { chamado: ChamadoManutenc
       {chamado.status === "em_atendimento" && (
         <Link
           href={`/manutencao/chamados/${chamado.id}`}
-          className="mt-1 inline-flex items-center justify-center gap-1 rounded-control bg-neutral-100 px-2 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-200"
+          className="mt-1 inline-flex items-center justify-center gap-1 rounded-control bg-surface-2 px-2 py-1.5 text-xs font-medium text-foreground-muted hover:bg-surface-3"
         >
           Registrar reparo <ArrowRight size={12} aria-hidden />
         </Link>

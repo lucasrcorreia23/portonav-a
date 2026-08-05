@@ -3,6 +3,7 @@ import { criarEquipamentosRepositorio } from "./equipamentos";
 import { criarChecklistsRepositorio } from "./checklists";
 import { criarOperadoresRepositorio } from "./operadores";
 import { criarManutencaoRepositorio } from "./manutencao";
+import { criarTarefasRepositorio } from "./tarefas";
 import { criarSessoesRepositorio } from "./sessoes";
 import { criarHistoricoRepositorio } from "./historico";
 import { criarSyncRepositorio } from "./sync";
@@ -17,6 +18,7 @@ export function criarRepositorioLocal(): Repositorio {
     checklists: criarChecklistsRepositorio(),
     operadores: criarOperadoresRepositorio(),
     manutencao: criarManutencaoRepositorio(),
+    tarefas: criarTarefasRepositorio(),
     sessoes: criarSessoesRepositorio(),
     historico: criarHistoricoRepositorio(),
     sync: criarSyncRepositorio(),

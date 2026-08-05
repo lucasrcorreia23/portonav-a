@@ -203,9 +203,9 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
                     className="w-48"
                   />
 
-                  <div className="flex flex-col gap-1 text-xs font-medium text-neutral-700">
+                  <div className="flex flex-col gap-1 text-xs font-medium text-foreground-muted">
                     Modo de tratamento
-                    <div className="flex overflow-hidden rounded-control border border-neutral-300">
+                    <div className="flex overflow-hidden rounded-control border border-border-strong">
                       {(["bloqueia", "alerta"] as ModoTratamentoItem[]).map((modo) => (
                         <button
                           key={modo}
@@ -217,7 +217,7 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
                               ? modo === "bloqueia"
                                 ? "bg-status-avariado text-white"
                                 : "bg-status-apontamento text-white"
-                              : "bg-white text-neutral-600 hover:bg-neutral-50"
+                              : "bg-surface text-foreground-muted hover:bg-surface-2"
                           }`}
                         >
                           {modo === "bloqueia" ? "Bloqueia" : "Alerta"}
@@ -226,7 +226,7 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
                     </div>
                   </div>
 
-                  <label className="flex items-center gap-1.5 text-xs font-medium text-neutral-700">
+                  <label className="flex items-center gap-1.5 text-xs font-medium text-foreground-muted">
                     <input
                       type="checkbox"
                       checked={item.exigeFotoAoReprovar}
@@ -235,7 +235,7 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
                     />
                     Exige foto ao reprovar
                   </label>
-                  <label className="flex items-center gap-1.5 text-xs font-medium text-neutral-700">
+                  <label className="flex items-center gap-1.5 text-xs font-medium text-foreground-muted">
                     <input
                       type="checkbox"
                       checked={item.exigeObservacaoAoReprovar}

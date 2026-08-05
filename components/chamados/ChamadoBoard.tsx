@@ -10,14 +10,14 @@ export function ChamadoBoard({ chamados, equipamentos }: { chamados: ChamadoManu
       {COLUNAS.map((status) => {
         const doColuna = chamados.filter((c) => c.status === status).sort((a, b) => a.abertoEm.localeCompare(b.abertoEm));
         return (
-          <div key={status} className="flex flex-col gap-3 rounded-card bg-neutral-50 p-3">
-            <h2 className="flex items-center justify-between text-sm font-medium text-neutral-700">
+          <div key={status} className="flex flex-col gap-3 rounded-card bg-surface-2 p-3">
+            <h2 className="flex items-center justify-between text-sm font-medium text-foreground-muted">
               {TAXONOMIA_STATUS_CHAMADO[status].label}
-              <span className="rounded-pill bg-white px-2 py-0.5 text-xs text-neutral-500">{doColuna.length}</span>
+              <span className="rounded-pill bg-surface px-2 py-0.5 text-xs text-foreground-subtle">{doColuna.length}</span>
             </h2>
             <div className="flex flex-col gap-2">
               {doColuna.length === 0 ? (
-                <p className="text-xs text-neutral-400">Nenhum chamado.</p>
+                <p className="text-xs text-foreground-subtle">Nenhum chamado.</p>
               ) : (
                 doColuna.map((chamado) => (
                   <ChamadoCard

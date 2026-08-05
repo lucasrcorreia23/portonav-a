@@ -15,6 +15,7 @@ import type {
   StatusChamado,
   StatusChecklistPreenchido,
   StatusOperacionalEquipamento,
+  StatusTarefa,
 } from "@/lib/types";
 
 export interface EntradaTaxonomia {
@@ -129,6 +130,33 @@ export const TAXONOMIA_RESULTADO_CHECKLIST: Record<StatusChecklistPreenchido, En
     descricao: "Item crítico reprovado — uso bloqueado.",
     icone: Ban,
     classeCor: "text-status-avariado bg-status-avariado-surface",
+  },
+};
+
+export const TAXONOMIA_STATUS_TAREFA: Record<StatusTarefa, EntradaTaxonomia> = {
+  pendente: {
+    label: "Pendente",
+    descricao: "Aguardando aprovação do supervisor.",
+    icone: Clock,
+    classeCor: "text-status-apontamento bg-status-apontamento-surface",
+  },
+  aprovada: {
+    label: "Aprovada",
+    descricao: "Aprovada — pronta para iniciar quando o equipamento estiver disponível.",
+    icone: ShieldCheck,
+    classeCor: "text-status-em-uso bg-status-em-uso-surface",
+  },
+  rejeitada: {
+    label: "Rejeitada",
+    descricao: "Solicitação rejeitada pelo supervisor.",
+    icone: Ban,
+    classeCor: "text-status-avariado bg-status-avariado-surface",
+  },
+  concluida: {
+    label: "Concluída",
+    descricao: "Tarefa finalizada pelo operador.",
+    icone: CheckCircle2,
+    classeCor: "text-status-disponivel bg-status-disponivel-surface",
   },
 };
 

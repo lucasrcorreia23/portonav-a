@@ -25,7 +25,7 @@ export function FichaGestao({
           chamadoAtivo ? (
             <Link
               href={`/manutencao/chamados/${chamadoAtivo.id}`}
-              className="inline-flex h-11 items-center justify-center rounded-control border border-neutral-300 bg-white px-4 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+              className="inline-flex h-11 items-center justify-center rounded-control border border-border-strong bg-surface px-4 text-sm font-medium text-foreground hover:bg-surface-2"
             >
               Ver chamado de manutenção
             </Link>
@@ -36,7 +36,7 @@ export function FichaGestao({
       <RecurringFailureNotice falhasRecorrentes={falhasRecorrentes} />
 
       <Card densidade="densa">
-        <h2 className="mb-3 font-medium text-neutral-900">Histórico</h2>
+        <h2 className="mb-3 font-medium text-foreground">Histórico</h2>
         <EquipmentHistoryTimeline eventos={historico} />
       </Card>
     </div>

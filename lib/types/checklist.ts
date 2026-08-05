@@ -52,6 +52,9 @@ export interface RespostaItemChecklist {
   valor: "ok" | "nao_ok" | number | string;
   reprovado: boolean;
   observacao?: string;
+  /** true enquanto `observacao` for exatamente a sugestão gerada pelo simulador de IA
+   * — zera na primeira edição manual (ver gerarDescricaoNaoConformidade). */
+  descricaoGeradaPorIA?: boolean;
   fotoEvidencia?: FotoEvidencia;
   respondidoEm: ISODateString;
 }

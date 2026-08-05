@@ -1,6 +1,6 @@
-import type { Id, LiberacaoEquipamento, RegistroReparo, StatusChamado } from "@/lib/types";
+import type { AnaliseAdminChamado, Id, LiberacaoEquipamento, RegistroReparo, StatusChamado } from "@/lib/types";
 import type { ManutencaoRepositorio } from "../repository";
-import { REGRA_LIBERACAO_PADRAO } from "../regras";
+import { REGRA_ANALISE_ADMIN_PADRAO, REGRA_LIBERACAO_PADRAO } from "../regras";
 import { agora, getStore, mutar } from "../store";
 import { adicionarEventoHistorico } from "./historico";
 import { liberarEquipamentoParaUso, marcarEquipamentoEmManutencao } from "./equipamentos";
@@ -84,6 +84,23 @@ export function criarManutencaoRepositorio(): ManutencaoRepositorio {
           equipamentoId: chamado.equipamentoId,
           refs: { chamadoId: chamado.id },
           resumo: `Chamado concluído — equipamento liberado por ${liberacao.liberadoPor.nome}.`,
+        });
+      });
+    },
+    registrarAnaliseAdmin(id: Id, analise: AnaliseAdminChamado) {
+      if (!REGRA_ANALISE_ADMIN_PADRAO.perfisPermitidos.includes(analise.analisadoPor.perfil)) {
+        throw new Error(`Perfil "${analise.analisadoPor.perfil}" não tem permissão para registrar análise administrativa.`);
+      }
+      mutar((rascunho) => {
+        const chamado = rascunho.chamados.find((c) => c.id === id);
+        if (!chamado) return;
+        chamado.analiseAdmin = analise;
+        adicionarEventoHistorico(rascunho, {
+          tipo: "chamado_analise_admin_registrada",
+          em: analise.analisadoEm,
+          equipamentoId: chamado.equipamentoId,
+          refs: { chamadoId: chamado.id },
+          resumo: `Análise administrativa registrada${analise.geradoPorIA ? " (com sugestão de IA)" : ""}.`,
         });
       });
     },

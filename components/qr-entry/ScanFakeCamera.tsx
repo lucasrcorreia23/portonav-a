@@ -21,7 +21,7 @@ export function ScanFakeCamera({ tagAlvo, onDetectado }: { tagAlvo: string; onDe
 
   return (
     <div className="relative flex aspect-[3/4] w-full flex-col items-center justify-center overflow-hidden rounded-card bg-neutral-900 text-white">
-      <div className="absolute inset-8 rounded-control border-2 border-white/30">
+      <div className="absolute inset-8 rounded-card-hero border-2 border-white/30">
         <div className="absolute left-0 top-0 h-6 w-6 border-l-4 border-t-4 border-white" />
         <div className="absolute right-0 top-0 h-6 w-6 border-r-4 border-t-4 border-white" />
         <div className="absolute bottom-0 left-0 h-6 w-6 border-b-4 border-l-4 border-white" />

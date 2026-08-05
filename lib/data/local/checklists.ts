@@ -124,6 +124,7 @@ export function criarChecklistsRepositorio(): ChecklistsRepositorio {
             modoTratamento: def.modoTratamento,
             criticidade: def.modoTratamento === "bloqueia" ? "critica" : "nao_critica",
             descricao: resposta.observacao ?? `${def.titulo} reprovado durante checklist de pré-operação.`,
+            descricaoOrigemIA: resposta.descricaoGeradaPorIA ?? false,
             fotoEvidencia: resposta.fotoEvidencia,
             status: "aberto",
             chamadoId: null,

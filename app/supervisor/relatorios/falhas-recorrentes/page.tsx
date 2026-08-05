@@ -67,22 +67,22 @@ export default function FalhasRecorrentesPage() {
       <PageHeader titulo="Falhas mais recorrentes" subtitulo="Itens de checklist reprovados no histórico de 45 dias." />
 
       <Card densidade="densa">
-        <h2 className="mb-4 font-medium text-neutral-900">Reprovações por tipo de equipamento</h2>
+        <h2 className="mb-4 font-medium text-foreground">Reprovações por tipo de equipamento</h2>
         <BarChart dados={dadosPorTipo} />
       </Card>
 
       <Card densidade="densa">
-        <h2 className="mb-4 font-medium text-neutral-900">Itens mais reprovados</h2>
+        <h2 className="mb-4 font-medium text-foreground">Itens mais reprovados</h2>
         {dadosPorItem.length === 0 ? (
-          <p className="text-sm text-neutral-500">Nenhuma reprovação registrada ainda.</p>
+          <p className="text-sm text-foreground-subtle">Nenhuma reprovação registrada ainda.</p>
         ) : (
           <BarChart dados={dadosPorItem} />
         )}
       </Card>
 
       <Card densidade="densa">
-        <h2 className="mb-1 font-medium text-neutral-900">Falha recorrente por equipamento</h2>
-        <p className="mb-4 text-sm text-neutral-600">O mesmo item reprovado 2 vezes ou mais no mesmo equipamento.</p>
+        <h2 className="mb-1 font-medium text-foreground">Falha recorrente por equipamento</h2>
+        <p className="mb-4 text-sm text-foreground-muted">O mesmo item reprovado 2 vezes ou mais no mesmo equipamento.</p>
         <DataTable
           colunas={colunasRecorrencia}
           linhas={falhasRecorrentes}

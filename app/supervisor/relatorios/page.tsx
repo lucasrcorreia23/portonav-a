@@ -45,8 +45,8 @@ export default function RelatoriosHubPage() {
                   <Icone size={20} aria-hidden />
                 </div>
                 <div>
-                  <h2 className="mb-1 font-medium text-neutral-900">{r.titulo}</h2>
-                  <p className="text-sm text-neutral-600">{r.descricao}</p>
+                  <h2 className="mb-1 font-medium text-foreground">{r.titulo}</h2>
+                  <p className="text-sm text-foreground-muted">{r.descricao}</p>
                 </div>
               </Card>
             </Link>

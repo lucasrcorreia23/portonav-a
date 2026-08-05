@@ -32,19 +32,19 @@ export function QRDisplay({ tag, tamanho = 220 }: QRDisplayProps) {
     <div className="flex flex-col items-center gap-3">
       {svg ? (
         <div
-          className="flex items-center justify-center rounded-card border border-neutral-100 bg-white p-4"
+          className="flex items-center justify-center rounded-card border border-border bg-surface p-4"
           style={{ width: tamanho + 32, height: tamanho + 32 }}
           dangerouslySetInnerHTML={{ __html: svg }}
         />
       ) : (
         <div
-          className="flex items-center justify-center rounded-card border border-neutral-100 bg-white p-4"
+          className="flex items-center justify-center rounded-card border border-border bg-surface p-4"
           style={{ width: tamanho + 32, height: tamanho + 32 }}
         >
-          <span className="text-sm text-neutral-400">Gerando QR…</span>
+          <span className="text-sm text-foreground-subtle">Gerando QR…</span>
         </div>
       )}
-      <p className="max-w-[240px] break-all text-center text-xs text-neutral-500">{destino}</p>
+      <p className="max-w-[240px] break-all text-center text-xs text-foreground-subtle">{destino}</p>
       <Button variante="secondary" tamanho="sm" iconeEsquerda={<Printer size={14} aria-hidden />} onClick={() => window.print()}>
         Baixar / imprimir ficha
       </Button>

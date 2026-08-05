@@ -32,7 +32,7 @@ export default function DisponibilidadePage() {
       />
       <Card densidade="densa">
         {pontos.length === 0 ? (
-          <p className="text-sm text-neutral-500">Sem dados suficientes ainda.</p>
+          <p className="text-sm text-foreground-subtle">Sem dados suficientes ainda.</p>
         ) : (
           <LineChart pontos={pontos} sufixo="%" />
         )}

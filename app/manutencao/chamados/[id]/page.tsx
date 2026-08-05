@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TAXONOMIA_STATUS_CHAMADO } from "@/components/status/statusTaxonomy";
 import { RegistrarReparoForm } from "@/components/chamados/RegistrarReparoForm";
+import { BadgeIA } from "@/components/ia/BadgeIA";
 import { useApontamentos, useChamados, useEquipamentos, useEstadoDemo } from "@/lib/data/context";
 
 export default function ChamadoDetailPage(props: PageProps<"/manutencao/chamados/[id]">) {
@@ -39,17 +40,20 @@ export default function ChamadoDetailPage(props: PageProps<"/manutencao/chamados
 
       {apontamentosDoChamado.length > 0 && (
         <Card densidade="densa">
-          <h2 className="mb-3 font-medium text-neutral-900">Apontamentos</h2>
+          <h2 className="mb-3 font-medium text-foreground">Apontamentos</h2>
           <ul className="flex flex-col gap-3">
             {apontamentosDoChamado.map((ap) => (
-              <li key={ap.id} className="flex flex-col gap-1 border-b border-neutral-100 pb-3 last:border-0 last:pb-0">
-                <p className="text-sm font-medium text-neutral-800">
+              <li key={ap.id} className="flex flex-col gap-1 border-b border-border pb-3 last:border-0 last:pb-0">
+                <p className="text-sm font-medium text-foreground">
                   {ap.origem.itemTitulo} ({ap.criticidade === "critica" ? "crítico" : "não crítico"})
                 </p>
-                <p className="text-sm text-neutral-600">{ap.descricao}</p>
+                <p className="inline-flex items-center gap-1.5 text-sm text-foreground-muted">
+                  {ap.descricao}
+                  {ap.descricaoOrigemIA && <BadgeIA />}
+                </p>
                 {ap.fotoEvidencia && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={ap.fotoEvidencia.dataUrl} alt={ap.origem.itemTitulo} className="mt-1 h-28 w-40 rounded-control object-cover" />
+                  <img src={ap.fotoEvidencia.dataUrl} alt={ap.origem.itemTitulo} className="mt-1 h-28 w-40 rounded-card object-cover" />
                 )}
               </li>
             ))}
@@ -57,27 +61,41 @@ export default function ChamadoDetailPage(props: PageProps<"/manutencao/chamados
         </Card>
       )}
 
+      {chamado.analiseAdmin && (
+        <Card densidade="densa">
+          <div className="mb-2 flex items-center gap-2">
+            <h2 className="font-medium text-foreground">Análise do administrador</h2>
+            {chamado.analiseAdmin.geradoPorIA && <BadgeIA />}
+          </div>
+          <p className="whitespace-pre-line text-sm text-foreground-muted">{chamado.analiseAdmin.texto}</p>
+          <p className="mt-2 text-xs text-foreground-subtle">
+            {chamado.analiseAdmin.analisadoPor.nome} em{" "}
+            {new Date(chamado.analiseAdmin.analisadoEm).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+          </p>
+        </Card>
+      )}
+
       {chamado.registroReparo && (
         <Card densidade="densa">
-          <h2 className="mb-2 font-medium text-neutral-900">Reparo registrado</h2>
-          <p className="text-sm text-neutral-700">{chamado.registroReparo.descricao}</p>
+          <h2 className="mb-2 font-medium text-foreground">Reparo registrado</h2>
+          <p className="text-sm text-foreground-muted">{chamado.registroReparo.descricao}</p>
           {chamado.registroReparo.pecasTrocadas.length > 0 && (
-            <p className="mt-1 text-sm text-neutral-500">Peças: {chamado.registroReparo.pecasTrocadas.join(", ")}</p>
+            <p className="mt-1 text-sm text-foreground-subtle">Peças: {chamado.registroReparo.pecasTrocadas.join(", ")}</p>
           )}
         </Card>
       )}
 
       {(chamado.status === "aberto" || chamado.status === "em_atendimento") && !chamado.registroReparo && (
         <Card densidade="densa">
-          <h2 className="mb-3 font-medium text-neutral-900">Registrar reparo</h2>
+          <h2 className="mb-3 font-medium text-foreground">Registrar reparo</h2>
           <RegistrarReparoForm chamadoId={chamado.id} perfilAtivo={demo.perfilAtivo} />
         </Card>
       )}
 
       {chamado.status === "aguardando_liberacao" && (
         <Card densidade="densa">
-          <h2 className="mb-2 font-medium text-neutral-900">Aguardando aprovação do supervisor</h2>
-          <p className="text-sm text-neutral-600">
+          <h2 className="mb-2 font-medium text-foreground">Aguardando aprovação do supervisor</h2>
+          <p className="text-sm text-foreground-muted">
             Reparo registrado — a liberação do equipamento exige aprovação de supervisor (ou admin) em{" "}
             <Link href="/supervisor/liberacoes" className="font-medium text-brand-600 hover:underline">
               Supervisor → Liberações
@@ -88,7 +106,7 @@ export default function ChamadoDetailPage(props: PageProps<"/manutencao/chamados
       )}
 
       {chamado.status === "concluido" && chamado.liberacao && (
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm text-foreground-muted">
           Liberado por {chamado.liberacao.liberadoPor.nome} em{" "}
           {new Date(chamado.liberacao.liberadoEm).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}.
         </p>

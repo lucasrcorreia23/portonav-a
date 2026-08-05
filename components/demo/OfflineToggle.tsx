@@ -7,7 +7,7 @@ export function OfflineToggle() {
 
   return (
     <label className="flex items-center justify-between gap-3">
-      <span className="text-sm font-medium text-neutral-800">Modo offline</span>
+      <span className="text-sm font-medium text-foreground">Modo offline</span>
       <button
         type="button"
         role="switch"
@@ -18,7 +18,7 @@ export function OfflineToggle() {
         }`}
       >
         <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
+          className={`absolute top-0.5 h-5 w-5 rounded-full bg-surface transition-transform ${
             demo.offline ? "translate-x-5" : "translate-x-0.5"
           }`}
         />

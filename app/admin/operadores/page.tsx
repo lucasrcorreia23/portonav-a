@@ -42,7 +42,7 @@ export default function AdminOperadoresPage() {
       renderizar: (o) => (
         <div className="flex flex-wrap gap-1">
           {o.habilitacoes.map((h) => (
-            <Badge key={h.tipoEquipamento} texto={ROTULO_TIPO[h.tipoEquipamento]} classeCor="text-neutral-700 bg-neutral-100" tamanho="sm" />
+            <Badge key={h.tipoEquipamento} texto={ROTULO_TIPO[h.tipoEquipamento]} classeCor="text-foreground-muted bg-surface-3" tamanho="sm" />
           ))}
         </div>
       ),
@@ -54,18 +54,18 @@ export default function AdminOperadoresPage() {
     <div>
       <PageHeader titulo="Operadores" subtitulo={`${operadores.length} operadores sincronizados do portal corporativo via SSO/API.`} />
 
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-card border border-neutral-100 bg-neutral-50 p-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-card border border-border bg-surface-2 p-4">
         <div className="flex-1">
-          <p className="text-sm font-medium text-neutral-800">Sincronizado do portal corporativo via SSO/API</p>
-          <p className="text-sm text-neutral-600">
+          <p className="text-sm font-medium text-foreground">Sincronizado do portal corporativo via SSO/API</p>
+          <p className="text-sm text-foreground-muted">
             {sincronizando
               ? "Sincronizando…"
               : sincronizacao.ultimaSincronizacaoEm
                 ? `Última sincronização: ${new Date(sincronizacao.ultimaSincronizacaoEm).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}`
                 : "Nunca sincronizado"}
           </p>
-          {sincronizacao.ultimoResumo && !sincronizando && <p className="text-xs text-neutral-500">{sincronizacao.ultimoResumo}</p>}
-          <p className="mt-1 text-xs text-neutral-500">
+          {sincronizacao.ultimoResumo && !sincronizando && <p className="text-xs text-foreground-subtle">{sincronizacao.ultimoResumo}</p>}
+          <p className="mt-1 text-xs text-foreground-subtle">
             Status: {sincronizando ? "sincronizando" : sincronizacao.status.replace(/_/g, " ")}. Pessoas e habilitações são somente
             leitura aqui — o cadastro vive no portal corporativo.
           </p>

@@ -12,6 +12,8 @@ export interface Apontamento {
   modoTratamento: ModoTratamentoItem;
   criticidade: CriticidadeApontamento;
   descricao: string;
+  /** Copiado de RespostaItemChecklist.descricaoGeradaPorIA no momento da criação. */
+  descricaoOrigemIA?: boolean;
   fotoEvidencia?: FotoEvidencia;
   status: StatusApontamento;
   chamadoId: Id | null;

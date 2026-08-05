@@ -35,8 +35,8 @@ export function AprovarLiberacaoCard({
     <Card densidade="densa" className="flex flex-col gap-3">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-medium text-neutral-900">{equipamento?.tag ?? "—"}</p>
-          {chamado.registroReparo && <p className="text-sm text-neutral-600">{chamado.registroReparo.descricao}</p>}
+          <p className="font-medium text-foreground">{equipamento?.tag ?? "—"}</p>
+          {chamado.registroReparo && <p className="text-sm text-foreground-muted">{chamado.registroReparo.descricao}</p>}
         </div>
         {equipamento && (
           <Link href={`/equipamento/${equipamento.tag}`} className="shrink-0 text-sm text-brand-600 hover:underline">

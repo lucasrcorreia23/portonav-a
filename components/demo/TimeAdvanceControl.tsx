@@ -25,8 +25,8 @@ export function TimeAdvanceControl() {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">Avançar o tempo</span>
-      <p className="text-sm text-neutral-700">
+      <span className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">Avançar o tempo</span>
+      <p className="text-sm text-foreground-muted">
         Data simulada:{" "}
         <span className="font-medium">
           {agoraSimulado.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
@@ -38,7 +38,7 @@ export function TimeAdvanceControl() {
             key={opcao.label}
             type="button"
             onClick={() => avancarTempo(opcao.incrementoMs)}
-            className="rounded-control bg-neutral-100 px-2.5 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-200"
+            className="rounded-control bg-surface-3 px-2.5 py-1.5 text-sm font-medium text-foreground-muted hover:bg-surface-3"
           >
             {opcao.label}
           </button>

@@ -5,9 +5,12 @@ import { Card } from "@/components/ui/Card";
 
 const JORNADAS: { href: string; titulo: string; descricao: string; icone: LucideIcon }[] = [
   {
-    href: "/entrada",
+    // Entra pelo início da jornada (registrar a solicitação), não pelo scanner:
+    // a solicitação aprovada é pré-requisito do gate em FluxoOperador.
+    href: "/operador",
     titulo: "Operador",
-    descricao: "Ler o QR do equipamento, preencher o checklist de pré-operação e iniciar a operação.",
+    descricao:
+      "Registrar a solicitação recebida do chefe, ler o QR do equipamento, preencher o checklist de pré-operação e iniciar a operação.",
     icone: HardHat,
   },
   {
@@ -35,8 +38,8 @@ export default function Home() {
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
       <div className="flex flex-col gap-3 text-center">
         <p className="text-sm font-medium uppercase tracking-wide text-brand-600">Portonave</p>
-        <h1 className="text-display-lg text-neutral-900">Checklist de pré-operação de equipamentos</h1>
-        <p className="mx-auto max-w-xl text-neutral-600">
+        <h1 className="text-display-lg text-foreground">Checklist de pré-operação de equipamentos</h1>
+        <p className="mx-auto max-w-xl text-foreground-muted">
           Protótipo de demonstração. Escolha uma jornada abaixo — use o painel &ldquo;Modo demonstração&rdquo; no
           canto da tela para trocar de perfil, simular modo offline ou avançar o tempo.
         </p>
@@ -52,8 +55,8 @@ export default function Home() {
                   <Icone size={22} aria-hidden />
                 </div>
                 <div>
-                  <h2 className="mb-1 text-lg font-medium text-neutral-900">{jornada.titulo}</h2>
-                  <p className="text-sm text-neutral-600">{jornada.descricao}</p>
+                  <h2 className="mb-1 text-lg font-medium text-foreground">{jornada.titulo}</h2>
+                  <p className="text-sm text-foreground-muted">{jornada.descricao}</p>
                 </div>
               </Card>
             </Link>

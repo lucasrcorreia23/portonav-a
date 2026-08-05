@@ -10,6 +10,7 @@ import type {
   SessaoOperacao,
   SincronizacaoPortal,
   SyncQueueItem,
+  Tarefa,
 } from "@/lib/types";
 import { gerarSeed, SEED_VERSION } from "./seed/seed";
 
@@ -21,6 +22,7 @@ export interface EstadoAplicacao {
   checklistsPreenchidos: ChecklistPreenchido[];
   apontamentos: Apontamento[];
   chamados: ChamadoManutencao[];
+  tarefas: Tarefa[];
   sessoes: SessaoOperacao[];
   historico: HistoricoEvento[];
   filaSincronizacao: SyncQueueItem[];

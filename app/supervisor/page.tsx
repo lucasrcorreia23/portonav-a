@@ -49,19 +49,19 @@ export default function SupervisorPainelPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card densidade="densa">
-          <h2 className="mb-3 font-medium text-neutral-900">Equipamentos bloqueados ou em manutenção</h2>
+          <h2 className="mb-3 font-medium text-foreground">Equipamentos bloqueados ou em manutenção</h2>
           {bloqueados.length === 0 ? (
-            <p className="text-sm text-neutral-500">Nenhum equipamento bloqueado ou em manutenção.</p>
+            <p className="text-sm text-foreground-subtle">Nenhum equipamento bloqueado ou em manutenção.</p>
           ) : (
-            <ul className="flex flex-col divide-y divide-neutral-100">
+            <ul className="flex flex-col divide-y divide-border">
               {bloqueados.map((eq) => (
                 <li key={eq.id} className="py-2.5">
-                  <Link href={`/equipamento/${eq.tag}`} className="flex items-center justify-between gap-2 hover:text-brand-600">
+                  <Link href={`/equipamento/${eq.tag}`} className="flex items-center justify-between gap-2 hover:text-info">
                     <div>
                       <p className="text-sm font-medium">{eq.tag}</p>
-                      <p className="text-xs text-neutral-500">{eq.bloqueio?.motivo ?? eq.previsaoManutencao?.descricao}</p>
+                      <p className="text-xs text-foreground-subtle">{eq.bloqueio?.motivo ?? eq.previsaoManutencao?.descricao}</p>
                     </div>
-                    <span className="text-xs text-neutral-400">
+                    <span className="text-xs text-foreground-subtle">
                       {eq.bloqueio && new Date(eq.bloqueio.bloqueadoEm).toLocaleDateString("pt-BR")}
                     </span>
                   </Link>
@@ -72,21 +72,21 @@ export default function SupervisorPainelPage() {
         </Card>
 
         <Card densidade="densa">
-          <h2 className="mb-3 font-medium text-neutral-900">Apontamentos abertos</h2>
+          <h2 className="mb-3 font-medium text-foreground">Apontamentos abertos</h2>
           {apontamentosAbertos.length === 0 ? (
-            <p className="text-sm text-neutral-500">Nenhum apontamento em aberto.</p>
+            <p className="text-sm text-foreground-subtle">Nenhum apontamento em aberto.</p>
           ) : (
-            <ul className="flex flex-col divide-y divide-neutral-100">
+            <ul className="flex flex-col divide-y divide-border">
               {apontamentosAbertos.slice(0, 8).map((ap) => {
                 const eq = equipamentos.find((e) => e.id === ap.equipamentoId);
                 return (
                   <li key={ap.id} className="py-2.5">
-                    <Link href={`/equipamento/${eq?.tag}`} className="flex items-center justify-between gap-2 hover:text-brand-600">
+                    <Link href={`/equipamento/${eq?.tag}`} className="flex items-center justify-between gap-2 hover:text-info">
                       <div>
                         <p className="text-sm font-medium">{eq?.tag}</p>
-                        <p className="text-xs text-neutral-500">{ap.origem.itemTitulo}</p>
+                        <p className="text-xs text-foreground-subtle">{ap.origem.itemTitulo}</p>
                       </div>
-                      <span className="text-xs text-neutral-400">{new Date(ap.criadoEm).toLocaleDateString("pt-BR")}</span>
+                      <span className="text-xs text-foreground-subtle">{new Date(ap.criadoEm).toLocaleDateString("pt-BR")}</span>
                     </Link>
                   </li>
                 );
@@ -97,12 +97,12 @@ export default function SupervisorPainelPage() {
       </div>
 
       <Card densidade="densa">
-        <h2 className="mb-3 font-medium text-neutral-900">Checklists em revisão</h2>
+        <h2 className="mb-3 font-medium text-foreground">Checklists em revisão</h2>
         <SuspiciousChecklistTable checklists={suspeitos} />
       </Card>
 
       <Card densidade="densa">
-        <h2 className="mb-3 font-medium text-neutral-900">Distribuição de status da frota</h2>
+        <h2 className="mb-3 font-medium text-foreground">Distribuição de status da frota</h2>
         <FleetStatusDistribution equipamentos={equipamentos} />
       </Card>
     </div>

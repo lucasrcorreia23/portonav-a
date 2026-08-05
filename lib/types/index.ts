@@ -5,6 +5,7 @@ export * from "./operador";
 export * from "./operacao";
 export * from "./apontamento";
 export * from "./chamado";
+export * from "./tarefa";
 export * from "./historico";
 export * from "./sync";
 export * from "./demo";

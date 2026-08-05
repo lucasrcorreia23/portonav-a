@@ -4,8 +4,9 @@ import { gerarModelosChecklist } from "./seed-checklists";
 import { gerarEquipamentos } from "./seed-equipamentos";
 import { gerarOperadores } from "./seed-operadores";
 import { gerarHistorico } from "./seed-historico";
+import { gerarTarefas } from "./seed-tarefas";
 
-export const SEED_VERSION = 3;
+export const SEED_VERSION = 4;
 
 /** Seed mestre fixa — a mesma sequência de "aleatoriedade" sempre, nunca Math.random(). */
 const SEED_MESTRE = 20260101;
@@ -30,6 +31,7 @@ export function gerarSeed(agoraBaseMs: number): EstadoAplicacao {
     operadores,
     modelosChecklist,
   );
+  const tarefas = gerarTarefas(agoraBaseMs, rng, equipamentos, operadores);
 
   return {
     versaoSeed: SEED_VERSION,
@@ -39,6 +41,7 @@ export function gerarSeed(agoraBaseMs: number): EstadoAplicacao {
     checklistsPreenchidos,
     apontamentos,
     chamados,
+    tarefas,
     sessoes: [],
     historico,
     filaSincronizacao: [],

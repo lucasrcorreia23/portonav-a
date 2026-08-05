@@ -41,12 +41,12 @@ export default function AdminHomePage() {
           return (
             <Link key={card.href} href={card.href} className="group">
               <Card densidade="densa" className="flex h-full items-start gap-4 transition-shadow group-hover:shadow-elevated">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control bg-brand-50 text-brand-600">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-card bg-surface-3 text-foreground-muted">
                   <Icone size={20} aria-hidden />
                 </div>
                 <div>
-                  <h2 className="mb-1 font-medium text-neutral-900">{card.titulo}</h2>
-                  <p className="text-sm text-neutral-600">{card.descricao}</p>
+                  <h2 className="mb-1 font-semibold text-foreground">{card.titulo}</h2>
+                  <p className="text-sm text-foreground-muted">{card.descricao}</p>
                 </div>
               </Card>
             </Link>

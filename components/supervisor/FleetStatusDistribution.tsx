@@ -36,7 +36,7 @@ export function FleetStatusDistribution({ equipamentos }: { equipamentos: Equipa
         {contagens.map(({ status, quantidade }) => {
           const Icone = TAXONOMIA_STATUS_EQUIPAMENTO[status].icone;
           return (
-            <li key={status} className="inline-flex items-center gap-1.5 text-sm text-neutral-700">
+            <li key={status} className="inline-flex items-center gap-1.5 text-sm text-foreground-muted">
               <Icone size={14} className={COR_BARRA[status].replace("bg-", "text-")} aria-hidden />
               {TAXONOMIA_STATUS_EQUIPAMENTO[status].label} <span className="font-medium">{quantidade}</span>
             </li>

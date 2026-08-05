@@ -32,7 +32,7 @@ export default function AdminChecklistsPage() {
       renderizar: (m) => (
         <Badge
           texto={m.ativo ? "Ativo" : "Inativo"}
-          classeCor={m.ativo ? "text-status-disponivel bg-status-disponivel-surface" : "text-neutral-500 bg-neutral-100"}
+          classeCor={m.ativo ? "text-status-disponivel bg-status-disponivel-surface" : "text-foreground-subtle bg-surface-3"}
         />
       ),
     },

@@ -11,7 +11,7 @@ interface StatCardProps {
 }
 
 const CLASSES_TOM: Record<NonNullable<StatCardProps["tom"]>, string> = {
-  neutro: "bg-neutral-100 text-neutral-700",
+  neutro: "bg-surface-3 text-foreground-muted",
   avariado: "bg-status-avariado-surface text-status-avariado",
   apontamento: "bg-status-apontamento-surface text-status-apontamento",
   disponivel: "bg-status-disponivel-surface text-status-disponivel",
@@ -24,8 +24,8 @@ export function StatCard({ titulo, valor, icone: Icone, href, tom = "neutro" }: 
         <Icone size={18} aria-hidden />
       </div>
       <div>
-        <p className="text-2xl font-medium text-neutral-900">{valor}</p>
-        <p className="text-sm text-neutral-600">{titulo}</p>
+        <p className="text-2xl font-medium text-foreground">{valor}</p>
+        <p className="text-sm text-foreground-muted">{titulo}</p>
       </div>
     </Card>
   );

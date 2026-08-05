@@ -50,13 +50,13 @@ export default function EntradaPage() {
   return (
     <OperatorShell>
       <div>
-        <h1 className="text-display-sm text-neutral-900">Entrada por QR</h1>
-        <p className="mt-1 text-sm text-neutral-600">
+        <h1 className="text-display-sm text-foreground">Entrada por QR</h1>
+        <p className="mt-1 text-sm text-foreground-muted">
           Simule a leitura do QR fixado no equipamento — na operação real, basta escanear.
         </p>
       </div>
 
-      <div className="flex rounded-control border border-neutral-200 p-1" role="tablist">
+      <div className="flex rounded-control border border-border p-1" role="tablist">
         {ABAS.map((item) => {
           const Icone = item.icone;
           const ativo = aba === item.valor;
@@ -68,7 +68,7 @@ export default function EntradaPage() {
               aria-selected={ativo}
               onClick={() => setAba(item.valor)}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded-control py-2.5 text-sm font-medium transition-colors ${
-                ativo ? "bg-brand-500 text-white" : "text-neutral-600 hover:bg-neutral-100"
+                ativo ? "bg-brand-500 text-white" : "text-foreground-muted hover:bg-surface-2"
               }`}
             >
               <Icone size={15} aria-hidden />

@@ -7,6 +7,7 @@ import { FichaGestao } from "@/components/equipamento/FichaGestao";
 import { FluxoOperador } from "@/components/equipamento/FluxoOperador";
 import { OperatorShell } from "@/components/layout/OperatorShell";
 import {
+  useApontamentos,
   useChamados,
   useChecklistsPreenchidos,
   useEquipamentos,
@@ -24,6 +25,7 @@ export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag
   const operadores = useOperadores();
   const historicoCompleto = useHistoricoCompleto();
   const chamados = useChamados();
+  const apontamentos = useApontamentos();
   const modelos = useModelosChecklist();
   const checklists = useChecklistsPreenchidos();
   // Real, capturado uma única vez — somado ao deslocamento do "avançar o tempo" para
@@ -49,6 +51,8 @@ export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag
       equipamento.previsaoManutencao &&
         agoraRealMs + demo.deslocamentoTempoMs > new Date(equipamento.previsaoManutencao.previsaoConclusaoEm).getTime(),
     );
+    const chamadoAtivo = equipamento.chamadoAtivoId ? chamados.find((c) => c.id === equipamento.chamadoAtivoId) : undefined;
+    const apontamentosDoChamado = chamadoAtivo ? apontamentos.filter((a) => chamadoAtivo.apontamentoIds.includes(a.id)) : [];
     return (
       <FichaAdmin
         equipamento={equipamento}
@@ -56,6 +60,8 @@ export default function FichaEquipamentoPage(props: PageProps<"/equipamento/[tag
         modeloChecklist={modeloChecklist}
         previsaoAtrasada={previsaoAtrasada}
         falhasRecorrentes={falhasRecorrentes}
+        chamadoAtivo={chamadoAtivo}
+        apontamentosDoChamado={apontamentosDoChamado}
       />
     );
   }

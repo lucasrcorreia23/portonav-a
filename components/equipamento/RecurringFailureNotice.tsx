@@ -11,7 +11,7 @@ export function RecurringFailureNotice({ falhasRecorrentes }: { falhasRecorrente
       <h2 className="mb-2 inline-flex items-center gap-1.5 font-medium text-status-apontamento">
         <History size={16} aria-hidden /> Falha recorrente
       </h2>
-      <ul className="flex flex-col gap-1 text-sm text-neutral-800">
+      <ul className="flex flex-col gap-1 text-sm text-foreground">
         {falhasRecorrentes.map((f) => (
           <li key={f.itemId}>
             {f.itemTitulo} — reprovado {f.ocorrencias}x (última em {new Date(f.ultimaOcorrenciaEm).toLocaleDateString("pt-BR")})
