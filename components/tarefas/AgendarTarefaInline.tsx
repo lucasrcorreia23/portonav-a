@@ -26,7 +26,7 @@ export function AgendarTarefaInline({
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface-2 p-3">
       <DatePicker rotulo="Nova data de uso" valor={data} aoAlterar={setData} placeholder="Selecionar data" />
-      <Button tamanho="sm" disabled={!data} onClick={confirmar}>
+      <Button variante="secondary" tamanho="sm" disabled={!data} onClick={confirmar}>
         Confirmar agendamento
       </Button>
     </div>

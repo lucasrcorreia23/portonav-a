@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ROTULO_TIPO_EQUIPAMENTO } from "@/components/equipamento/rotulos";
-import { TAXONOMIA_STATUS_EQUIPAMENTO } from "@/components/status/statusTaxonomy";
 import { useEquipamentos, useRepositorio, useTarefas } from "@/lib/data/context";
 import type { Id } from "@/lib/types";
 
@@ -46,7 +45,7 @@ export function TarefaForm({
 
   const opcoes = selecionaveis.map((e) => ({
     valor: e.id,
-    rotulo: `${e.tag} — ${ROTULO_TIPO_EQUIPAMENTO[e.tipo]} (${TAXONOMIA_STATUS_EQUIPAMENTO[e.status].label})`,
+    rotulo: `${e.tag} — ${ROTULO_TIPO_EQUIPAMENTO[e.tipo]}`,
   }));
 
   function aoEnviar() {

@@ -1,7 +1,4 @@
 @import "tailwindcss";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
 
 /* ============================================================
    Atomsix Design System — tokens (docs/design-system/DESIGN.md)
@@ -44,6 +41,32 @@
     var(--brand-magenta) 50%,
     var(--brand-orange) 100%
   );
+  /* O mesmo degradê rebaixado a véu, varrendo a foto e o campo enquanto o texto
+     é gerado (.ia-veu). No botão de IA ele continua preenchido. */
+  /* Sobre superfície clara (o campo) só o pigmento da marca carrega o véu. */
+  --gradient-brand-veu: linear-gradient(
+    100deg,
+    transparent 34%,
+    color-mix(in srgb, var(--brand-indigo) 16%, transparent) 44%,
+    color-mix(in srgb, var(--brand-purple) 19%, transparent) 50%,
+    color-mix(in srgb, var(--brand-magenta) 15%, transparent) 56%,
+    transparent 66%
+  );
+  /* Sobre a foto o pigmento se perde em imagem colorida — o miolo claro é que
+     lê como reflexo passando. */
+  --gradient-brand-veu-foto: linear-gradient(
+    100deg,
+    transparent 32%,
+    color-mix(in srgb, var(--brand-cyan) 24%, transparent) 42%,
+    rgb(255 255 255 / 0.32) 50%,
+    color-mix(in srgb, var(--brand-magenta) 22%, transparent) 58%,
+    transparent 68%
+  );
+
+  /* ---------- Ambiência de boas-vindas ----------
+     Areia quente do frame "Whitelabel" (Figma). Decorativa e só em fundo — nunca
+     em texto, ícone ou ação, e sem relação com a taxonomia de status. */
+  --brand-sand: #eed68c;
 
   /* ---------- Ação primária (UI) — preto/foreground sólido, sem gradiente ---------- */
   --primary: #0c0d10;
@@ -100,27 +123,36 @@
   /* ---------- Raio — denso, mas por-componente (ver componentes reais do DS,
      não a prosa geral do DESIGN.md: card = rounded-lg, popover = rounded-lg,
      modal/drawer/confirm-dialog = rounded-xl, trigger de select = 10px fixo,
-     chip/badge/menu-item = rounded-sm/[4px], botão = pill). ---------- */
-  --radius-sm: 0.25rem;   /* 4px — chips, badges, menu items */
+     menu-item = rounded-sm/[4px], botão/chip/badge = pill). ---------- */
+  --radius-sm: 0.25rem;   /* 4px — menu items */
   --radius-md: 0.5rem;    /* 8px — elementos pequenos (tooltip, drawer close) */
   --radius-lg: 0.75rem;   /* 12px — cards, popovers/dropdowns */
   --radius-xl: 1rem;      /* 16px — modal, drawer, confirm-dialog */
   --radius-2xl: 1.25rem;  /* 20px */
-  --radius-full: 9999px;  /* pill — botões */
+  --radius-full: 9999px;  /* pill — botões, chips, badges */
 
   --radius-control: var(--radius-full);
   --radius-card: var(--radius-lg);
   --radius-card-hero: var(--radius-xl);
   --radius-pill: var(--radius-full);
 
-  /* ---------- Sombras (light clean — quase imperceptíveis) ---------- */
-  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
-  --shadow-md: 0 2px 8px rgba(16, 24, 40, 0.06);
-  --shadow-lg: 0 8px 24px rgba(16, 24, 40, 0.08);
-  --shadow-glow: 0 0 0 1px var(--border), 0 4px 16px rgba(10, 138, 214, 0.06);
-  /* Nomes legados (ainda referenciados em vários componentes) apontando pro novo sistema. */
-  --shadow-elevated: var(--shadow-lg);
-  --shadow-card: var(--shadow-sm);
+  /* ---------- Sombras: DESLIGADAS ----------
+     Decisão de produto: nenhuma superfície usa sombra, em nenhum fluxo. Elevação e
+     separação vêm de borda (--border) e de superfície (--surface-2/3). Os tokens
+     continuam existindo só para que `shadow-*` residual seja no-op em vez de erro —
+     não os reative sem mudar a decisão. */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-glow: 0 0 0 1px var(--border);
+  --shadow-elevated: none;
+  --shadow-card: none;
+
+  /* Única exceção sancionada à decisão acima: os cards da jornada do operador,
+     conforme o Figma "Operador Flow" (nodes 4113:550 / 4119:2536), levam 1px a 4%
+     de opacidade. Não é elevação — é o fio que separa o card do fundo branco quando
+     a borda de 0.8px some no reflexo do sol. Não usar fora da jornada do operador. */
+  --shadow-card-operador: 0 1px 1px rgb(16 24 40 / 0.04);
 
   /* ---------- Foco (anti-halo): borda neutra, nunca azul ---------- */
   --focus-ring: 0 0 0 1px var(--foreground);
@@ -206,12 +238,15 @@
   --sidebar-item-active-bg: #e4e5e9;
   --sidebar-item-active-text: #0c0d10;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.6);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.55);
-  --shadow-glow: 0 0 0 1px var(--border), 0 8px 30px rgba(10, 156, 243, 0.1);
-  --shadow-elevated: var(--shadow-lg);
-  --shadow-card: var(--shadow-sm);
+  /* Sem sombra também no dark — mesma decisão do tema claro. */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-glow: 0 0 0 1px var(--border);
+  --shadow-elevated: none;
+  --shadow-card: none;
+  /* No dark o card já se separa por superfície — o fio de 4% seria invisível. */
+  --shadow-card-operador: none;
 }
 
 /* ============================================================
@@ -290,6 +325,7 @@
   --color-brand-purple: var(--brand-purple);
   --color-brand-magenta: var(--brand-magenta);
   --color-brand-orange: var(--brand-orange);
+  --color-brand-sand: var(--brand-sand);
 
   --color-status-disponivel: var(--color-status-disponivel);
   --color-status-disponivel-surface: var(--color-status-disponivel-surface);
@@ -310,6 +346,7 @@
   --shadow-glow: var(--shadow-glow);
   --shadow-elevated: var(--shadow-elevated);
   --shadow-card: var(--shadow-card);
+  --shadow-card-operador: var(--shadow-card-operador);
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
@@ -500,6 +537,106 @@ thead th {
   }
   to {
     background-position: -125% 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   IA (ver docs/design-system/DESIGN.md §8 e o desvio registrado em AGENTS.md).
+   Único uso do gradiente-assinatura fora da marca — e sempre rebaixado, nunca
+   preenchendo. Consumido por components/ia/.
+   --------------------------------------------------------------------------- */
+
+/* Ação de IA: degradê-assinatura preenchido + texto branco — única exceção ao
+   "sem gradiente em botão" (DESIGN.md §8). */
+.botao-ia {
+  background-image: var(--gradient-brand);
+}
+
+.botao-ia:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* Enquanto a IA trabalha o botão só troca de estado: rótulo vira "Pensando…" e o
+   degradê recua um passo. Sem spinner e sem véu aqui — o movimento acontece na
+   foto e no campo, que é onde o texto vai nascer. */
+.botao-ia-pensando,
+.botao-ia-pensando:hover {
+  filter: none;
+  opacity: 0.8;
+}
+
+/* O botão fica `disabled` durante a geração só para bloquear novo clique — não
+   deve herdar o esmaecimento de indisponível. */
+.botao-ia-pensando:disabled {
+  opacity: 0.8;
+}
+
+/* Véu — o único movimento da IA. Deriva do .skeleton-shimmer (mesma varredura,
+   mesmo easing), só que no pigmento da marca e mais lento. Vai sobre a foto e
+   sobre o campo, simultaneamente: os dois montam juntos, então varrem em fase. */
+.ia-veu {
+  background-image: var(--gradient-brand-veu);
+  background-size: 220% 100%;
+  animation: ia-veu-desliza 2.4s ease-in-out infinite;
+}
+
+.ia-veu-foto {
+  background-image: var(--gradient-brand-veu-foto);
+}
+
+@keyframes ia-veu-desliza {
+  from {
+    background-position: 110% 0;
+  }
+  to {
+    background-position: -110% 0;
+  }
+}
+
+/* Revelação do texto gerado: sobe com fade e a borda pulsa no degradê da marca. */
+.ia-revelar {
+  animation:
+    ia-fade-up 320ms ease-out,
+    ia-pulso-borda 900ms ease-out;
+}
+
+@keyframes ia-fade-up {
+  from {
+    opacity: 0.35;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Só border-color: o halo em box-shadow foi removido junto com as sombras do produto. */
+@keyframes ia-pulso-borda {
+  0% {
+    border-color: var(--brand-indigo);
+  }
+  55% {
+    border-color: var(--brand-magenta);
+  }
+  100% {
+    border-color: var(--color-border);
+  }
+}
+
+/* Movimento decorativo é suprimido com reduced-motion — o fluxo continua idêntico:
+   o botão em "Pensando…" e as etapas anunciadas via aria-live é que comunicam
+   "em andamento", sem depender de animação nenhuma. */
+@media (prefers-reduced-motion: reduce) {
+  .ia-revelar,
+  .skeleton-shimmer {
+    animation: none;
+  }
+
+  /* Véu parado no centro: foto e campo continuam se distinguindo do repouso. */
+  .ia-veu {
+    animation: none;
+    background-position: 50% 0;
   }
 }
 

@@ -21,8 +21,12 @@ export function StatusBadge({ entrada, tamanho = "md", comDescricao = false }: S
   const Icone = entrada.icone;
   const classes = CLASSES_TAMANHO[tamanho];
   return (
-    <div className="inline-flex flex-col items-start gap-1">
-      <span className={`inline-flex items-center rounded-sm font-semibold ${entrada.classeCor} ${classes.pill}`}>
+    // shrink-0 + whitespace-nowrap: o selo é rótulo curto e indivisível — sem isso ele
+    // quebra "Em uso" em duas linhas quando divide a linha com um título comprido.
+    <div className="inline-flex shrink-0 flex-col items-start gap-1">
+      <span
+        className={`inline-flex items-center whitespace-nowrap rounded-pill font-semibold ${entrada.classeCor} ${classes.pill}`}
+      >
         <Icone size={classes.icone} aria-hidden />
         {entrada.label}
       </span>

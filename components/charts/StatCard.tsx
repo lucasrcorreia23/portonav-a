@@ -19,7 +19,7 @@ const CLASSES_TOM: Record<NonNullable<StatCardProps["tom"]>, string> = {
 
 export function StatCard({ titulo, valor, icone: Icone, href, tom = "neutro" }: StatCardProps) {
   const conteudo = (
-    <Card densidade="densa" className="flex h-full flex-col gap-3 transition-shadow hover:shadow-elevated">
+    <Card densidade="densa" className="flex h-full flex-col gap-3">
       <div className={`inline-flex h-9 w-9 items-center justify-center rounded-control ${CLASSES_TOM[tom]}`}>
         <Icone size={18} aria-hidden />
       </div>

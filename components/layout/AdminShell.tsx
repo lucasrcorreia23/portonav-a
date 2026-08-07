@@ -21,6 +21,17 @@ interface AdminShellProps {
 export function AdminShell({ titulo, itensNav, children }: AdminShellProps) {
   const pathname = usePathname();
 
+  // Só o item mais específico fica ativo. Sem isso, o item índice da seção
+  // (href "/admin") casaria com todas as rotas filhas e ficaria aceso junto
+  // com o item realmente navegado.
+  const hrefAtivo = itensNav
+    .filter((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))
+    .reduce<string | null>(
+      (maisEspecifico, item) =>
+        maisEspecifico === null || item.href.length > maisEspecifico.length ? item.href : maisEspecifico,
+      null,
+    );
+
   return (
     <div className="flex h-full w-full">
       <aside className="hidden h-full w-72 shrink-0 overflow-y-auto border-r border-sidebar-border bg-sidebar-bg px-3 py-6 md:block">
@@ -28,7 +39,7 @@ export function AdminShell({ titulo, itensNav, children }: AdminShellProps) {
         <nav aria-label={titulo}>
           <ul className="flex flex-col gap-1">
             {itensNav.map((item) => {
-              const ativo = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const ativo = item.href === hrefAtivo;
               const Icone = item.icone;
               return (
                 <li key={item.href}>

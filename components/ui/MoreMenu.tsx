@@ -65,7 +65,7 @@ export function MoreMenu({
         )}
 
         {aberto && (
-          <div className="absolute top-full right-0 z-[var(--z-dropdown)] mt-1 min-w-[10rem] rounded-lg border border-border bg-surface p-1 shadow-md">
+          <div className="absolute top-full right-0 z-[var(--z-dropdown)] mt-1 min-w-[10rem] rounded-lg border border-border bg-surface p-1">
             {onDuplicar && (
               <button
                 type="button"

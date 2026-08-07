@@ -70,7 +70,7 @@ export function Modal({ aberto, titulo, onFechar, children, largura = "md" }: Mo
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-titulo"
-        className={`w-full ${CLASSES_LARGURA[largura]} rounded-card-hero border border-border bg-surface p-6 shadow-lg`}
+        className={`w-full ${CLASSES_LARGURA[largura]} rounded-card-hero border border-border bg-surface p-6`}
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           <h2 id="modal-titulo" className="text-lg font-bold text-foreground">

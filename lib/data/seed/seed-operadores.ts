@@ -51,6 +51,9 @@ export function gerarOperadores(agoraBaseMs: number, rng: RNG): Operador[] {
       scoreConfiabilidade: entrada.scoreConfiabilidade,
       ativo: true,
       admissaoEm,
+      // Retratos sintéticos (gerados por GAN — nenhuma pessoa real) em
+      // public/avatars/, nomeados pela matrícula. Ver public/avatars/README.md.
+      fotoUrl: `/avatars/${entrada.matricula.toLowerCase()}.jpg`,
     };
     return operador;
   });

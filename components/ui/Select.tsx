@@ -177,7 +177,7 @@ export function Select({
 
       {aberto && (
         <div
-          className="absolute top-full z-[var(--z-dropdown)] mt-1 w-full min-w-max rounded-lg border border-border bg-surface p-1 shadow-md"
+          className="absolute top-full z-[var(--z-dropdown)] mt-1 w-full min-w-max rounded-lg border border-border bg-surface p-1"
           role="listbox"
           aria-label={rotulo ?? ariaLabel}
         >

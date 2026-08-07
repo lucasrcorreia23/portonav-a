@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { agora, useRepositorio, useEstadoDemo } from "@/lib/data/context";
 import { mulberry32, embaralhar } from "@/lib/data/seed/rng";
@@ -60,6 +60,32 @@ function criarEstadoInicial(modelo: ModeloChecklist): EstadoRascunho {
   };
 }
 
+/**
+ * O rascunho vive fora do React porque um F5 no meio do checklist perdia todas as
+ * respostas E re-embaralhava os itens — gerando uma nova seed de auditoria para o
+ * mesmo preenchimento. `sessionStorage` (não `localStorage`): o rascunho pertence a
+ * esta sessão de preenchimento e não deve reaparecer numa aba nova.
+ */
+function chaveRascunho(equipamentoId: string, modeloId: string) {
+  return `portonave-demo:rascunho:${equipamentoId}:${modeloId}`;
+}
+
+function lerRascunhoSalvo(chave: string, modelo: ModeloChecklist): EstadoRascunho | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const bruto = window.sessionStorage.getItem(chave);
+    if (!bruto) return null;
+    const salvo = JSON.parse(bruto) as EstadoRascunho;
+    // Se o modelo mudou desde que o rascunho foi salvo, a ordem não bate mais — descarta.
+    const cobreTodasAsSecoes = modelo.secoes.every(
+      (s) => salvo.itensPorSecao?.[s.id]?.length === s.itens.length,
+    );
+    return cobreTodasAsSecoes ? salvo : null;
+  } catch {
+    return null;
+  }
+}
+
 export function DraftChecklistProvider({
   equipamento,
   operador,
@@ -75,6 +101,29 @@ export function DraftChecklistProvider({
   const repo = useRepositorio();
   const demo = useEstadoDemo();
   const router = useRouter();
+
+  const chave = chaveRascunho(equipamento.id, modelo.id);
+  // Só persiste depois de tentar restaurar — senão o estado recém-criado sobrescreveria
+  // o rascunho salvo. A restauração é client-only para não divergir da hidratação.
+  const [restaurado, setRestaurado] = useState(false);
+  // Guarda só o modelo inicial: ele não muda no meio de um preenchimento (trocar de
+  // modelo remonta o layout do checklist), e assim o efeito não depende da identidade dele.
+  const modeloRef = useRef(modelo);
+
+  useEffect(() => {
+    const salvo = lerRascunhoSalvo(chave, modeloRef.current);
+    if (salvo) setRascunho(salvo);
+    setRestaurado(true);
+  }, [chave]);
+
+  useEffect(() => {
+    if (!restaurado) return;
+    try {
+      window.sessionStorage.setItem(chave, JSON.stringify(rascunho));
+    } catch {
+      // Cota cheia (fotos em data URL são grandes) — segue sem persistir, nunca quebra o fluxo.
+    }
+  }, [restaurado, chave, rascunho]);
 
   function responder(itemId: string, resposta: RespostaRascunho) {
     setRascunho((atual) => ({ ...atual, respostas: { ...atual.respostas, [itemId]: resposta } }));
@@ -119,6 +168,14 @@ export function DraftChecklistProvider({
       duracaoPorSecaoSegundos: novaDuracao,
       preenchidoOffline: demo.offline,
     });
+
+    // O rascunho virou registro — manter em sessionStorage faria a próxima verificação
+    // deste equipamento nascer com as respostas antigas.
+    try {
+      window.sessionStorage.removeItem(chave);
+    } catch {
+      // sessionStorage indisponível — nada a limpar.
+    }
 
     router.push(`/equipamento/${equipamento.tag}/resultado`);
   }

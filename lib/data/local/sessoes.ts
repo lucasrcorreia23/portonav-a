@@ -38,7 +38,7 @@ export function criarSessoesRepositorio(): SessoesRepositorio {
           equipamentoId: sessao.equipamentoId,
           operadorId: sessao.operadorId,
           refs: { sessaoOperacaoId: sessao.id },
-          resumo: "Operação encerrada e equipamento liberado.",
+          resumo: "Equipamento devolvido pelo operador e liberado.",
         });
 
         enfileirarSeOffline(rascunho, {

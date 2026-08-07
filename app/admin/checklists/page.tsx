@@ -44,7 +44,7 @@ export default function AdminChecklistsPage() {
         titulo="Modelos de checklist"
         subtitulo={`${modelos.length} modelos cadastrados.`}
         acoes={
-          <Button iconeEsquerda={<Plus size={16} aria-hidden />} onClick={() => router.push("/admin/checklists/novo")}>
+          <Button iconeEsquerda={<Plus size={16} aria-hidden />} larguraTotal={false} onClick={() => router.push("/admin/checklists/novo")}>
             Novo modelo
           </Button>
         }

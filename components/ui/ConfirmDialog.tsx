@@ -56,14 +56,14 @@ export function ConfirmDialog({
       aria-label={titulo}
     >
       <div className="absolute inset-0 bg-black/40" onClick={onCancelar} />
-      <div className="relative w-full max-w-sm rounded-card-hero border border-border bg-surface p-6 shadow-lg">
+      <div className="relative w-full max-w-sm rounded-card-hero border border-border bg-surface p-6">
         <h3 className="text-base font-semibold text-foreground">{titulo}</h3>
         {descricao != null && <div className="mt-2 text-sm text-foreground-muted">{descricao}</div>}
-        <div className="mt-5 flex justify-end gap-2">
-          <Button variante="ghost" tamanho="sm" onClick={onCancelar}>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <Button variante="ghost" onClick={onCancelar}>
             {textoCancelar}
           </Button>
-          <Button variante={varianteConfirmar} tamanho="sm" carregando={carregando} onClick={onConfirmar}>
+          <Button variante={varianteConfirmar} carregando={carregando} onClick={onConfirmar}>
             {textoConfirmar}
           </Button>
         </div>

@@ -1,8 +1,6 @@
 import type { Equipamento, Operador, Tarefa } from "@/lib/types";
 import { criarIdSeed, type RNG } from "./rng";
-import { HORA_MS } from "../regras";
-
-const NOME_SUPERVISOR_SEED = { perfil: "supervisor" as const, nome: "Ana Beatriz Monteiro" };
+import { HORA_MS, SUPERVISOR_PADRAO } from "../regras";
 
 interface TarefaSeedInput {
   matriculaOperador: string;
@@ -119,7 +117,7 @@ export function gerarTarefas(agoraBaseMs: number, rng: RNG, equipamentos: Equipa
 
     if (entrada.status !== "pendente" && entrada.decididaHorasAtras !== undefined) {
       tarefa.decisao = {
-        decididoPor: NOME_SUPERVISOR_SEED,
+        decididoPor: SUPERVISOR_PADRAO,
         decisao: entrada.status,
         decididoEm: new Date(agoraBaseMs - entrada.decididaHorasAtras * HORA_MS).toISOString(),
         observacao: entrada.observacaoDecisao,

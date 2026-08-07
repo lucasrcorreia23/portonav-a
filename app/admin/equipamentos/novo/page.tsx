@@ -73,12 +73,12 @@ export default function NovoEquipamentoPage() {
           onChange={(e) => setLocalizacaoAtual(e.target.value)}
           required
         />
-        <div className="flex justify-end gap-2">
-          <Button variante="secondary" onClick={() => router.push("/admin/equipamentos")}>
-            Cancelar
-          </Button>
+        <div className="flex flex-col gap-2">
           <Button onClick={aoSalvar} disabled={!valido}>
             Cadastrar equipamento
+          </Button>
+          <Button variante="secondary" onClick={() => router.push("/admin/equipamentos")}>
+            Cancelar
           </Button>
         </div>
       </Card>

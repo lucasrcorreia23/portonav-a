@@ -8,9 +8,11 @@ export function OfflineIndicator() {
   const estado = useEstadoAplicacao();
   const pendentes = estado.filaSincronizacao.filter((item) => item.status === "pendente").length;
 
+  // Online: 32px de altura, a mesma da faixa offline abaixo — a barra não pula de
+  // tamanho ao alternar o modo.
   if (!estado.demo.offline) {
     return (
-      <div className="flex items-center gap-1.5 px-4 py-1 text-xs text-foreground-subtle">
+      <div className="flex items-center gap-1.5 px-4 py-2 text-xs text-foreground-subtle">
         <Wifi size={13} aria-hidden />
         <span>Conectado</span>
       </div>

@@ -60,7 +60,7 @@ export function SortMenu({
       </button>
 
       {aberto && (
-        <div className="absolute top-full right-0 z-[var(--z-dropdown)] mt-1 min-w-[12rem] rounded-lg border border-border bg-surface p-1 shadow-md" role="menu">
+        <div className="absolute top-full right-0 z-[var(--z-dropdown)] mt-1 min-w-[12rem] rounded-lg border border-border bg-surface p-1" role="menu">
           {opcoes.map((opcao) => {
             const ativo = opcao.valor === campo;
             return (
@@ -153,7 +153,7 @@ export function MultiSelectFilter({
       </button>
 
       {aberto && (
-        <div className="absolute top-full right-0 z-[var(--z-dropdown)] mt-1 min-w-[12rem] rounded-lg border border-border bg-surface p-1 shadow-md" role="menu">
+        <div className="absolute top-full right-0 z-[var(--z-dropdown)] mt-1 min-w-[12rem] rounded-lg border border-border bg-surface p-1" role="menu">
           {opcoes.map((opcao) => {
             const ativo = selecionados.includes(opcao.valor);
             return (
@@ -232,7 +232,7 @@ export function BulkBar({
 }) {
   if (quantidade === 0) return null;
   return createPortal(
-    <div className="fixed bottom-4 left-1/2 z-[var(--z-sticky)] flex w-max min-w-[24rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-3 rounded-full border border-border bg-surface px-5 py-2.5 shadow-lg">
+    <div className="fixed bottom-4 left-1/2 z-[var(--z-sticky)] flex w-max min-w-[24rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-3 rounded-full border border-border bg-surface px-5 py-2.5">
       <div className="flex items-center gap-2">
         <span className="text-sm font-semibold text-foreground">
           {quantidade} selecionado{quantidade !== 1 ? "s" : ""}

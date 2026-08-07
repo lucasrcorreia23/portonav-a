@@ -22,7 +22,7 @@ export function ChamadoCard({ chamado, equipamento }: { chamado: ChamadoManutenc
   const horasAberto = Math.round((agoraSimuladoMs - new Date(chamado.abertoEm).getTime()) / 3_600_000);
 
   return (
-    <div className="flex flex-col gap-2 rounded-card border border-border bg-white p-3 shadow-card">
+    <div className="flex flex-col gap-2 rounded-card border border-border bg-white p-3">
       <Link href={`/manutencao/chamados/${chamado.id}`} className="hover:text-brand-600">
         <p className="font-medium text-foreground">{equipamento?.tag ?? "—"}</p>
         <p className="text-xs text-foreground-subtle">

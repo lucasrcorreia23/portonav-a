@@ -16,6 +16,8 @@ export interface Operador {
   scoreConfiabilidade: number;
   ativo: boolean;
   admissaoEm: ISODateString;
+  /** Retrato do operador. Ausente → o Avatar cai nas iniciais. */
+  fotoUrl?: string;
 }
 
 export interface SincronizacaoPortal {

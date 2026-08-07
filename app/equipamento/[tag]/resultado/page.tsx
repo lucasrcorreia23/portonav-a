@@ -3,10 +3,10 @@
 import { use } from "react";
 import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
+import { EquipmentIdentityCard } from "@/components/equipamento/EquipmentIdentityCard";
 import { OperatorShell } from "@/components/layout/OperatorShell";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TAXONOMIA_RESULTADO_CHECKLIST } from "@/components/status/statusTaxonomy";
 import {
   useApontamentos,
@@ -51,26 +51,47 @@ export default function ResultadoChecklistPage(props: PageProps<"/equipamento/[t
   const sessao = sessoes.find((s) => s.checklistPreenchidoId === checklist.id);
 
   const taxonomia = TAXONOMIA_RESULTADO_CHECKLIST[checklist.resultado];
+  // A sessão de uso já foi aberta pela conclusão do checklist — não existe passo de
+  // "iniciar operação", e nada é cronometrado. Aqui a tela só comunica a liberação; o
+  // equipamento aparece como "em uso" na home do operador até ele devolver.
+  const liberadoParaUso = checklist.resultado !== "bloqueado" && Boolean(sessao);
+  // Sem reprovações nem chamado, o card é a tela inteira: estica até o rodapé como na
+  // confirmação, em vez de flutuar com espaço branco embaixo. Havendo conteúdo depois
+  // dele, volta à altura natural para não empurrar o resto para fora da dobra.
+  const cardOcupaTela = itensReprovados.length === 0 && !chamadoGerado;
 
   return (
     <OperatorShell>
-      <div className="flex flex-col gap-5">
-        <div className="flex flex-col items-center gap-3 rounded-card-hero border border-border bg-surface p-8 text-center shadow-elevated">
-          <StatusBadge entrada={taxonomia} tamanho="lg" />
-          <h1 className="text-display-sm text-foreground">
-            {checklist.resultado === "bloqueado"
-              ? "Uso bloqueado"
-              : checklist.resultado === "liberado_com_apontamento"
-                ? "Liberado com apontamento"
-                : "Equipamento liberado"}
-          </h1>
-          <p className="text-sm text-foreground-muted">
-            {totalOk}/{totalItens} itens verificados · {equipamento.tag}
-          </p>
-          {checklist.preenchidoOffline && (
-            <p className="text-xs text-status-apontamento">Calculado com base no último status conhecido (offline).</p>
-          )}
-        </div>
+      <div className={`flex flex-col gap-5 ${cardOcupaTela ? "flex-1" : ""}`}>
+        {/* Mesma peça da tela de confirmação — o operador reconhece o equipamento
+            que acabou de verificar; o que muda é o status e a ação. */}
+        <EquipmentIdentityCard
+          equipamento={equipamento}
+          status={taxonomia}
+          preencherAltura={cardOcupaTela}
+          tom={checklist.resultado === "bloqueado" ? "negativo" : "neutro"}
+          acoes={
+            <Button tamanho="touch" larguraTotal onClick={() => router.push("/operador")}>
+              {liberadoParaUso ? "Ótimo" : "Voltar ao início"}
+            </Button>
+          }
+        >
+          <div className="flex flex-col gap-1">
+            {liberadoParaUso && (
+              <p className="text-sm text-foreground">
+                Você está liberado para iniciar suas tarefas com este equipamento.
+              </p>
+            )}
+            <p className="text-sm text-foreground-muted">
+              {totalOk}/{totalItens} itens verificados
+            </p>
+            {checklist.preenchidoOffline && (
+              <p className="text-xs text-status-apontamento">
+                Calculado com base no último status conhecido (offline).
+              </p>
+            )}
+          </div>
+        </EquipmentIdentityCard>
 
         {itensReprovados.length > 0 && (
           <Card densidade="densa">
@@ -101,17 +122,6 @@ export default function ResultadoChecklistPage(props: PageProps<"/equipamento/[t
           </p>
         )}
 
-        <div className="flex flex-col gap-2">
-          {checklist.resultado !== "bloqueado" && sessao ? (
-            <Button tamanho="touch" larguraTotal onClick={() => router.push(`/equipamento/${equipamento.tag}/sessao`)}>
-              Iniciar operação
-            </Button>
-          ) : (
-            <Button tamanho="touch" larguraTotal onClick={() => router.push("/operador")}>
-              Voltar ao início
-            </Button>
-          )}
-        </div>
       </div>
     </OperatorShell>
   );

@@ -54,8 +54,8 @@ export default function AdminOperadoresPage() {
     <div>
       <PageHeader titulo="Operadores" subtitulo={`${operadores.length} operadores sincronizados do portal corporativo via SSO/API.`} />
 
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-card border border-border bg-surface-2 p-4">
-        <div className="flex-1">
+      <div className="mb-4 flex flex-col gap-3 rounded-card border border-border bg-surface-2 p-4 sm:flex-row sm:items-center">
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-medium text-foreground">Sincronizado do portal corporativo via SSO/API</p>
           <p className="text-sm text-foreground-muted">
             {sincronizando
@@ -75,6 +75,7 @@ export default function AdminOperadoresPage() {
           iconeEsquerda={<RefreshCw size={14} className={sincronizando ? "animate-spin" : ""} aria-hidden />}
           onClick={aoSincronizar}
           disabled={sincronizando}
+          className="sm:w-auto sm:shrink-0"
         >
           {sincronizando ? "Sincronizando…" : "Sincronizar com o portal"}
         </Button>

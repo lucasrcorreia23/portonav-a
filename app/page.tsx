@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { ClipboardCheck, HardHat, ShieldCheck, Wrench } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { LogoTil } from "@/components/brand/LogoTil";
 import { Card } from "@/components/ui/Card";
 
 const JORNADAS: { href: string; titulo: string; descricao: string; icone: LucideIcon }[] = [
   {
-    // Entra pelo início da jornada (registrar a solicitação), não pelo scanner:
-    // a solicitação aprovada é pré-requisito do gate em FluxoOperador.
-    href: "/operador",
+    // Entra pelo onboarding e daí para a home (registrar a solicitação), nunca
+    // pelo scanner: a solicitação aprovada é pré-requisito do gate em FluxoOperador.
+    href: "/operador/bem-vindo",
     titulo: "Operador",
     descricao:
       "Registrar a solicitação recebida do chefe, ler o QR do equipamento, preencher o checklist de pré-operação e iniciar a operação.",
@@ -36,8 +37,8 @@ const JORNADAS: { href: string; titulo: string; descricao: string; icone: Lucide
 export default function Home() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
-      <div className="flex flex-col gap-3 text-center">
-        <p className="text-sm font-medium uppercase tracking-wide text-brand-600">Portonave</p>
+      <div className="flex flex-col items-center gap-3 text-center">
+        <LogoTil tamanho="md" className="text-foreground" />
         <h1 className="text-display-lg text-foreground">Checklist de pré-operação de equipamentos</h1>
         <p className="mx-auto max-w-xl text-foreground-muted">
           Protótipo de demonstração. Escolha uma jornada abaixo — use o painel &ldquo;Modo demonstração&rdquo; no
@@ -50,7 +51,7 @@ export default function Home() {
           const Icone = jornada.icone;
           return (
             <Link key={jornada.href} href={jornada.href} className="group">
-              <Card className="flex h-full items-start gap-4 transition-shadow group-hover:shadow-elevated">
+              <Card className="flex h-full items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-brand-50 text-brand-600">
                   <Icone size={22} aria-hidden />
                 </div>

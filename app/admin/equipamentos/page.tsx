@@ -47,7 +47,7 @@ export default function AdminEquipamentosPage() {
         titulo="Equipamentos"
         subtitulo={`${equipamentos.length} equipamentos cadastrados.`}
         acoes={
-          <Button iconeEsquerda={<Plus size={16} aria-hidden />} onClick={() => router.push("/admin/equipamentos/novo")}>
+          <Button iconeEsquerda={<Plus size={16} aria-hidden />} larguraTotal={false} onClick={() => router.push("/admin/equipamentos/novo")}>
             Novo equipamento
           </Button>
         }

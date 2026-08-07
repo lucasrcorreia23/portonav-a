@@ -2,10 +2,30 @@ import type { Apontamento, ItemChecklistDefinicao } from "@/lib/types";
 
 /**
  * Simulador determinístico de "IA" — nenhuma chamada real a modelo de linguagem
- * (protótipo 100% client-side, sem backend). Mesmo espírito de ScanFakeCamera e do
- * fallback "Usar foto de exemplo" de PhotoCapture: uma capacidade simulada,
- * apresentada de forma direta na UI real, nunca uma chamada de rede.
+ * (protótipo 100% client-side, sem backend). Mesmo espírito de ScanFakeCamera:
+ * uma capacidade simulada, apresentada de forma direta na UI real, nunca uma
+ * chamada de rede.
  */
+/**
+ * Duração encenada do "processamento" — puramente cenográfica, para a geração ter
+ * o peso de uma operação real na UI. Não existe chamada de rede por trás.
+ */
+export const DURACAO_IA_SIMULADA_MS = 3000;
+
+/** Roteiro exibido pelo loader enquanto a descrição de não-conformidade é gerada. */
+export const ETAPAS_DESCRICAO = [
+  "Lendo a imagem…",
+  "Identificando o componente…",
+  "Redigindo a não conformidade…",
+] as const;
+
+/** Roteiro exibido pelo loader enquanto a solução sugerida do chamado é gerada. */
+export const ETAPAS_SOLUCAO = [
+  "Lendo os apontamentos…",
+  "Cruzando com o histórico do equipamento…",
+  "Redigindo a solução sugerida…",
+] as const;
+
 interface CategoriaSimulada {
   padrao: RegExp;
   descricao: (titulo: string) => string;
@@ -81,13 +101,13 @@ function resolverCategoria(titulo: string): CategoriaSimulada | undefined {
 
 /** Gera uma descrição plausível de não-conformidade para um item reprovado no checklist. */
 export function gerarDescricaoNaoConformidade(
-  item: Pick<ItemChecklistDefinicao, "titulo" | "modoTratamento" | "exigeFotoAoReprovar">,
+  item: Pick<ItemChecklistDefinicao, "titulo" | "modoTratamento">,
   temFoto: boolean,
 ): string {
   const categoria = resolverCategoria(item.titulo);
   const corpo = categoria?.descricao(item.titulo) ?? `Item "${item.titulo}" não atende à condição esperada durante a inspeção de pré-operação.`;
   const prefixo = item.modoTratamento === "bloqueia" ? "Condição crítica de segurança: " : "Não conformidade identificada: ";
-  const sufixo = item.exigeFotoAoReprovar && temFoto ? " Evidência fotográfica anexada ao registro." : "";
+  const sufixo = temFoto ? " Evidência fotográfica anexada ao registro." : "";
   return `${prefixo}${corpo}${sufixo}`;
 }
 

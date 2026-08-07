@@ -52,9 +52,10 @@ Não há backend, banco de dados ou autenticação real:
 | `/entrada` | Entrada por QR (câmera simulada, lista de próximos, digitar tag) |
 | `/operador` | Início da jornada do operador |
 | `/equipamento/[tag]` | Ficha do equipamento — **porta única**: o conteúdo muda conforme o perfil ativo (admin vê a ficha completa; supervisor/manutenção veem status e chamado; operador vê o card de status, negações e o CTA para iniciar o checklist) |
+| `/equipamento/[tag]/iniciar` | Retirada — leitura do QR antes da verificação de disponibilidade (só quem chega pelo card da tarefa; quem vem de `/entrada` já escaneou) |
 | `/equipamento/[tag]/checklist/[secaoOrdem]` | Preenchimento do checklist, uma seção por vez |
 | `/equipamento/[tag]/resultado` | Resultado: liberado / liberado com apontamento / bloqueado |
-| `/equipamento/[tag]/sessao` | Sessão de operação aberta (tempo decorrido, encerrar) |
+| `/equipamento/[tag]/sessao` | Devolução — releitura do QR, confirmação e conclusão da tarefa (a sessão registra a posse, não o tempo: não há cronômetro) |
 | `/supervisor` | Painel do supervisor (bloqueados/em manutenção, apontamentos abertos, aguardando aprovação, disponibilidade) |
 | `/supervisor/checklists-suspeitos` | Checklists marcados pelo sistema antifraude |
 | `/supervisor/liberacoes` | Reparos registrados pela manutenção aguardando aprovação do supervisor (ou admin) para liberar o equipamento |
@@ -66,6 +67,38 @@ Não há backend, banco de dados ou autenticação real:
 | `/admin/checklists` / `/admin/checklists/novo` / `/admin/checklists/[modeloId]` | Construtor de modelos de checklist, com escopo por tipo de equipamento e tipo de operação |
 | `/admin/operadores` / `/admin/operadores/[operadorId]` | Lista e ficha de operadores (sincronizados via SSO/API do portal corporativo) — habilitações somente leitura, com aviso de vencimento |
 | `/admin/regras` | Modos de tratamento do checklist e regra de liberação vigente (somente leitura) |
+
+## Caminho feliz do operador (3 minutos)
+
+O ciclo completo num perfil só, sem trocar para supervisor. Depende da chave
+**"Aprovação automática"** (ligada por padrão nos controles de demo): com ela, a
+solicitação do operador já nasce aprovada, assinada por Ana Beatriz Monteiro.
+
+O operador padrão do seed é **Carlos Eduardo Silva (PN-4521)**, que já tem tarefas
+aprovadas para EMP-01..04 e TP-01 — e `TarefaForm` esconde equipamento com solicitação
+ativa. Para uma solicitação nova, use **`TP-02`** (transpaleteira, disponível, dentro das
+habilitações dele). Para a empilhadeira do storyboard (`EMP-04`, checklist de 13 itens),
+troque "Simulando como" para **Débora Cristina Ramos (PN-4530)**, que não tem tarefa de seed.
+
+1. **`/operador` → "Nova Solicitação"** — escolha o equipamento, descreva a demanda e crie.
+   O card volta **sem selo**: já está aprovada. (`/supervisor/tarefas` não recebeu nada.)
+2. **"Iniciar"** — abre a leitura do QR do equipamento; a retirada só vale com o operador
+   ao lado da máquina.
+3. Lido o QR, cai na **verificação de disponibilidade** (status, habilitação, sessão de
+   outro operador) e no CTA **"Iniciar verificação"**.
+4. **Preencha o checklist inteiro em OK** — a ordem dos itens muda a cada tentativa. Não
+   corra: abaixo de 10 s por seção ou 25 s no total, o preenchimento é marcado como
+   suspeito (o resultado continua "liberado", mas o supervisor vê o alerta).
+5. **Resultado "Liberado"** — a sessão abre e o equipamento passa a **Em uso**.
+6. Voltando ao início, o card do equipamento agora tem selo **Em uso** e CTA **Devolver**.
+7. **"Devolver"** → releitura do QR → "Confirmar devolução": o equipamento volta a
+   disponível e a **tarefa é concluída no mesmo gesto**.
+8. Troque para Supervisor e abra a ficha do equipamento: o histórico mostra a corrida
+   inteira — `tarefa_criada` → `tarefa_aprovada` → `checklist_preenchido` →
+   `equipamento_liberado_uso` → `sessao_operacao_encerrada` → `tarefa_concluida`.
+
+Desligue "Aprovação automática" para demonstrar o caminho com o supervisor no meio: a
+solicitação volta a nascer pendente e a decisão acontece em `/supervisor/tarefas`.
 
 ## Roteiro de demonstração (12 minutos)
 
@@ -90,7 +123,7 @@ Não há backend, banco de dados ou autenticação real:
    crítico (ex. freio) para mostrar a exigência de foto + observação, e conclua —
    chegando à tela de **bloqueado** com o chamado aberto automaticamente.
 7. Repita rapidamente em outro equipamento aprovando tudo, para mostrar a tela de
-   **liberado** e a sessão aberta com o tempo decorrido.
+   **liberado** e o equipamento passando a "Em uso" com a devolução como próxima ação.
 8. **Ligue o modo offline** nos controles de demo — mostre a nota "último status
    conhecido" na ficha do equipamento — preencha mais um checklist e mostre o
    contador de pendentes na fila. Desligue o offline e mostre a sincronização

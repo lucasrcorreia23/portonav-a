@@ -52,6 +52,7 @@ function Secao({ titulo, children }: { titulo: string; children: React.ReactNode
 export default function DesignSystemPage() {
   const [modalAberto, setModalAberto] = useState(false);
   const [drawerAberto, setDrawerAberto] = useState(false);
+  const [drawerVoltarAberto, setDrawerVoltarAberto] = useState(false);
   const [confirmAberto, setConfirmAberto] = useState(false);
   const [selecao, setSelecao] = useState("empilhadeira");
   const [combo, setCombo] = useState("");
@@ -89,21 +90,35 @@ export default function DesignSystemPage() {
 
       <Secao titulo="Botões">
         <div className="flex flex-wrap items-center gap-3">
-          <Button variante="primary">Novo equipamento</Button>
-          <Button variante="secondary">Cancelar</Button>
-          <Button variante="danger" iconeEsquerda={<Trash2 size={14} aria-hidden />}>
+          <Button variante="primary" larguraTotal={false}>
+            Novo equipamento
+          </Button>
+          <Button variante="secondary" larguraTotal={false}>
+            Cancelar
+          </Button>
+          <Button variante="danger" larguraTotal={false} iconeEsquerda={<Trash2 size={14} aria-hidden />}>
             Excluir
           </Button>
-          <Button variante="ghost">Ghost</Button>
-          <Button variante="primary" carregando>
+          <Button variante="ghost" larguraTotal={false}>
+            Ghost
+          </Button>
+          <Button variante="primary" larguraTotal={false} carregando>
             Salvando
           </Button>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Button tamanho="sm">Small (32px)</Button>
-          <Button tamanho="md">Medium (40px)</Button>
-          <Button tamanho="lg">Large (44px)</Button>
-          <Button tamanho="touch">Touch (56px — operador)</Button>
+          <Button tamanho="sm" larguraTotal={false}>
+            Small (32px)
+          </Button>
+          <Button tamanho="md" larguraTotal={false}>
+            Medium (40px)
+          </Button>
+          <Button tamanho="lg" larguraTotal={false}>
+            Large (44px)
+          </Button>
+          <Button tamanho="touch" larguraTotal={false}>
+            Touch (56px — operador)
+          </Button>
         </div>
       </Secao>
 
@@ -190,17 +205,20 @@ export default function DesignSystemPage() {
 
       <Secao titulo="Overlays">
         <div className="flex flex-wrap items-center gap-3">
-          <Button variante="secondary" onClick={() => setModalAberto(true)}>
+          <Button variante="secondary" larguraTotal={false} onClick={() => setModalAberto(true)}>
             Abrir Modal
           </Button>
-          <Button variante="secondary" onClick={() => setDrawerAberto(true)}>
+          <Button variante="secondary" larguraTotal={false} onClick={() => setDrawerAberto(true)}>
             Abrir Drawer
           </Button>
-          <Button variante="danger" onClick={() => setConfirmAberto(true)}>
+          <Button variante="secondary" larguraTotal={false} onClick={() => setDrawerVoltarAberto(true)}>
+            Abrir Drawer (voltar)
+          </Button>
+          <Button variante="danger" larguraTotal={false} onClick={() => setConfirmAberto(true)}>
             Abrir ConfirmDialog
           </Button>
           <Tooltip rotulo="Tooltip custom">
-            <Button variante="ghost" iconeEsquerda={<Sparkles size={14} aria-hidden />}>
+            <Button variante="ghost" larguraTotal={false} iconeEsquerda={<Sparkles size={14} aria-hidden />}>
               Hover pra ver tooltip
             </Button>
           </Tooltip>
@@ -212,6 +230,18 @@ export default function DesignSystemPage() {
 
         <Drawer aberto={drawerAberto} onFechar={() => setDrawerAberto(false)} titulo="Criar/editar registro">
           <p className="text-sm text-foreground-muted">Drawer lateral — padrão para criação/edição de entidade.</p>
+        </Drawer>
+
+        <Drawer
+          aberto={drawerVoltarAberto}
+          onFechar={() => setDrawerVoltarAberto(false)}
+          titulo="Nova solicitação"
+          navegacao="voltar"
+        >
+          <p className="text-sm text-foreground-muted">
+            Variante da jornada de operador: o &quot;×&quot; dá lugar ao botão circular de voltar à esquerda do título,
+            porque no celular a folha ocupa a tela toda e se comporta como uma tela a mais.
+          </p>
         </Drawer>
 
         <ConfirmDialog

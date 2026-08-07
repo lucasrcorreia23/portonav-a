@@ -22,7 +22,7 @@ const CLASSES_TAMANHO = {
  */
 export function Badge({ texto, icone, classeCor, tamanho = "md" }: BadgeProps) {
   return (
-    <span className={`inline-flex items-center rounded-sm font-semibold ${classeCor} ${CLASSES_TAMANHO[tamanho]}`}>
+    <span className={`inline-flex items-center rounded-pill font-semibold ${classeCor} ${CLASSES_TAMANHO[tamanho]}`}>
       {icone}
       {texto}
     </span>

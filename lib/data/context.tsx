@@ -139,6 +139,12 @@ export function alternarOffline(): void {
   }
 }
 
+export function alternarAprovacaoAutomatica(): void {
+  mutar((rascunho) => {
+    rascunho.demo.aprovacaoAutomatica = !rascunho.demo.aprovacaoAutomatica;
+  });
+}
+
 export function avancarTempo(incrementoMs: number): void {
   mutar((rascunho) => {
     rascunho.demo.deslocamentoTempoMs += incrementoMs;

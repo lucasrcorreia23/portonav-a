@@ -4,17 +4,20 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Camera, Keyboard, MapPin } from "lucide-react";
 import { OperatorShell } from "@/components/layout/OperatorShell";
+import { OperatorPageHeader } from "@/components/layout/OperatorPageHeader";
 import { ScanFakeCamera } from "@/components/qr-entry/ScanFakeCamera";
 import { NearbyEquipmentList } from "@/components/qr-entry/NearbyEquipmentList";
 import { ManualTagEntry } from "@/components/qr-entry/ManualTagEntry";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import type { OpcaoSegmento } from "@/components/ui/SegmentedControl";
 import { alternarPerfil, useEquipamentos, useEstadoDemo, useOperadores, useRepositorio } from "@/lib/data/context";
 
 type Aba = "camera" | "proximos" | "digitar";
 
-const ABAS: { valor: Aba; label: string; icone: typeof Camera }[] = [
-  { valor: "camera", label: "Câmera", icone: Camera },
-  { valor: "proximos", label: "Próximos", icone: MapPin },
-  { valor: "digitar", label: "Digitar tag", icone: Keyboard },
+const ABAS: OpcaoSegmento<Aba>[] = [
+  { valor: "camera", rotulo: "Câmera", icone: Camera },
+  { valor: "proximos", rotulo: "Próximos", icone: MapPin },
+  { valor: "digitar", rotulo: "Digitar tag", icone: Keyboard },
 ];
 
 export default function EntradaPage() {
@@ -49,34 +52,14 @@ export default function EntradaPage() {
 
   return (
     <OperatorShell>
-      <div>
-        <h1 className="text-display-sm text-foreground">Entrada por QR</h1>
-        <p className="mt-1 text-sm text-foreground-muted">
-          Simule a leitura do QR fixado no equipamento — na operação real, basta escanear.
-        </p>
-      </div>
+      <OperatorPageHeader
+        titulo="Entrada por QR"
+        descricao="Simule a leitura do QR fixado no equipamento — na operação real, basta escanear."
+        aoVoltar={() => router.push("/operador")}
+        rotuloVoltar="Voltar ao início"
+      />
 
-      <div className="flex rounded-control border border-border p-1" role="tablist">
-        {ABAS.map((item) => {
-          const Icone = item.icone;
-          const ativo = aba === item.valor;
-          return (
-            <button
-              key={item.valor}
-              type="button"
-              role="tab"
-              aria-selected={ativo}
-              onClick={() => setAba(item.valor)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-control py-2.5 text-sm font-medium transition-colors ${
-                ativo ? "bg-brand-500 text-white" : "text-foreground-muted hover:bg-surface-2"
-              }`}
-            >
-              <Icone size={15} aria-hidden />
-              {item.label}
-            </button>
-          );
-        })}
-      </div>
+      <SegmentedControl opcoes={ABAS} valor={aba} aoAlterar={setAba} aria-label="Forma de entrada" />
 
       {aba === "camera" && equipamentoAlvoCamera && (
         <ScanFakeCamera

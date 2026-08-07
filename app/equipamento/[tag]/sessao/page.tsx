@@ -3,24 +3,31 @@
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
-import { CalendarClock, CheckCircle2, Square } from "lucide-react";
+import { CheckCircle2, ClipboardList } from "lucide-react";
+import { EquipmentIdentityCard } from "@/components/equipamento/EquipmentIdentityCard";
+import { OperatorPageHeader } from "@/components/layout/OperatorPageHeader";
 import { OperatorShell } from "@/components/layout/OperatorShell";
-import { AgendarTarefaInline } from "@/components/tarefas/AgendarTarefaInline";
+import { ScanFakeCamera } from "@/components/qr-entry/ScanFakeCamera";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { TAXONOMIA_STATUS_EQUIPAMENTO } from "@/components/status/statusTaxonomy";
 import { useEquipamentos, useOperadores, useRepositorio, useSessoes, useTarefas } from "@/lib/data/context";
 import type { Id } from "@/lib/types";
 
-function formatarDuracao(ms: number): string {
-  const totalSegundos = Math.max(0, Math.floor(ms / 1000));
-  const h = Math.floor(totalSegundos / 3600);
-  const m = Math.floor((totalSegundos % 3600) / 60);
-  const s = totalSegundos % 60;
-  return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
-}
-
-export default function SessaoAbertaPage(props: PageProps<"/equipamento/[tag]/sessao">) {
+/**
+ * Tela de devolução do equipamento. A "sessão" existe só para registrar quem está com
+ * o equipamento — nada aqui é cronometrado, então não há relógio nem duração: o operador
+ * chega por esta tela quando termina e confirma a devolução.
+ *
+ * Devolver a máquina encerra a tarefa junto: para o operador é o mesmo gesto ("terminei"),
+ * e cobrar um segundo toque para dizer que a demanda acabou só adiciona atrito. Se ela não
+ * acabou, a saída é uma solicitação nova — não reabrir a que foi concluída.
+ *
+ * A devolução começa por uma nova leitura do QR: assim como a retirada, ela só vale
+ * com o operador de volta ao lado da máquina. O scan é sempre exigido porque nem todo
+ * caminho até aqui passou por uma leitura ("Devolver" no card da tarefa, por exemplo,
+ * pode ser tocado de qualquer lugar do pátio).
+ */
+export default function DevolucaoPage(props: PageProps<"/equipamento/[tag]/sessao">) {
   const { tag } = use(props.params);
   const equipamentos = useEquipamentos();
   const operadores = useOperadores();
@@ -28,88 +35,73 @@ export default function SessaoAbertaPage(props: PageProps<"/equipamento/[tag]/se
   const tarefas = useTarefas();
   const repo = useRepositorio();
   const router = useRouter();
-  const [encerrada, setEncerrada] = useState<{ duracaoMs: number; tarefaId?: Id } | null>(null);
-  const [agoraMs, setAgoraMs] = useState(() => Date.now());
-  const [tarefaFinalizada, setTarefaFinalizada] = useState(false);
-  const [mostrarAgendamento, setMostrarAgendamento] = useState(false);
-  const [agendamentoConfirmado, setAgendamentoConfirmado] = useState(false);
+  const [qrLido, setQrLido] = useState(false);
+  const [devolvido, setDevolvido] = useState<{ tarefaId?: Id } | null>(null);
 
   const equipamento = equipamentos.find((e) => e.tag.toLowerCase() === tag.toLowerCase());
   if (!equipamento) notFound();
 
   const sessao = sessoes.find((s) => s.equipamentoId === equipamento.id && s.status === "em_andamento");
   const operador = sessao ? operadores.find((o) => o.id === sessao.operadorId) : undefined;
+  const tarefaDaSessao = sessao
+    ? tarefas.find(
+        (t) => t.operadorId === sessao.operadorId && t.equipamentoId === sessao.equipamentoId && t.status === "aprovada",
+      )
+    : undefined;
 
+  // Depois de devolver, a própria sessão deixa de aparecer como "em_andamento" (efeito
+  // esperado da devolução) — só redireciona se isso acontecer por qualquer OUTRO motivo.
   useEffect(() => {
-    if (!sessao || encerrada) return;
-    const intervalo = setInterval(() => setAgoraMs(Date.now()), 1000);
-    return () => clearInterval(intervalo);
-  }, [sessao, encerrada]);
-
-  // Depois de encerrar, a própria sessão deixa de aparecer como "em_andamento" (efeito
-  // esperado do encerramento) — só redireciona se isso acontecer por qualquer OUTRO motivo.
-  useEffect(() => {
-    if (!sessao && !encerrada) {
+    if (!sessao && !devolvido) {
       router.replace(`/equipamento/${equipamento.tag}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessao, encerrada]);
+  }, [sessao, devolvido]);
 
-  if (encerrada) {
-    const tarefaEncerramento = encerrada.tarefaId ? tarefas.find((t) => t.id === encerrada.tarefaId) : undefined;
-    const podeDecidirTarefa = tarefaEncerramento?.status === "aprovada" && !tarefaFinalizada && !agendamentoConfirmado;
+  if (devolvido) {
+    const tarefaEncerramento = devolvido.tarefaId ? tarefas.find((t) => t.id === devolvido.tarefaId) : undefined;
 
     return (
       <OperatorShell>
-        <Card densidade="densa" className="flex flex-col items-center gap-3 py-10 text-center">
-          <h1 className="text-lg font-medium text-foreground">Operação encerrada</h1>
-          <p className="text-sm text-foreground-muted">
-            Duração: {formatarDuracao(encerrada.duracaoMs)} · registrado no histórico do equipamento.
-          </p>
-
-          {podeDecidirTarefa && (
-            <div className="flex w-full flex-col gap-2">
-              <p className="text-sm font-medium text-foreground">Como você devolve o equipamento?</p>
-              <Button
-                tamanho="touch"
-                larguraTotal
-                onClick={() => {
-                  repo.tarefas.concluir(tarefaEncerramento!.id);
-                  setTarefaFinalizada(true);
-                }}
-              >
-                Finalizar tarefa
-              </Button>
-              {mostrarAgendamento ? (
-                <AgendarTarefaInline tarefaId={tarefaEncerramento!.id} onAgendado={() => setAgendamentoConfirmado(true)} />
-              ) : (
+        <div className="flex flex-1 flex-col gap-4">
+          {/* Mesma peça da tela anterior: o operador reconhece a máquina que acabou de
+              devolver, e o veredito é o próprio status — "Disponível" (ou "Com apontamento",
+              se sobrou chamado ativo) diz o que a prosa dizia antes. */}
+          <EquipmentIdentityCard
+            equipamento={equipamento}
+            status={TAXONOMIA_STATUS_EQUIPAMENTO[equipamento.status]}
+            preencherAltura
+            acoes={
+              <>
+                <Button tamanho="touch" larguraTotal onClick={() => router.push("/operador")}>
+                  Voltar ao início
+                </Button>
+                {/* A demanda pode não ter acabado com a devolução. Em vez de reagendar a tarefa
+                    que acabou de ser concluída (reagendar() só age em tarefa aprovada, então
+                    seria um no-op silencioso), abre uma solicitação nova para o mesmo
+                    equipamento — o mesmo contrato ?nova=1&tag= usado pelo gate da ficha. */}
                 <Button
-                  variante="secondary"
+                  variante="ghost"
                   tamanho="touch"
                   larguraTotal
-                  iconeEsquerda={<CalendarClock size={18} aria-hidden />}
-                  onClick={() => setMostrarAgendamento(true)}
+                  iconeEsquerda={<ClipboardList size={18} aria-hidden />}
+                  onClick={() => router.push(`/operador?nova=1&tag=${equipamento.tag}`)}
                 >
-                  Fazer outro agendamento
+                  Nova solicitação para {equipamento.tag}
                 </Button>
+              </>
+            }
+          >
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-sm text-foreground">Devolvido e registrado no histórico do equipamento.</p>
+              {tarefaEncerramento?.status === "concluida" && (
+                <p className="inline-flex items-center gap-1.5 text-sm font-medium text-status-disponivel">
+                  <CheckCircle2 size={16} aria-hidden /> Tarefa concluída.
+                </p>
               )}
             </div>
-          )}
-          {tarefaFinalizada && (
-            <p className="inline-flex items-center gap-1.5 text-sm font-medium text-status-disponivel">
-              <CheckCircle2 size={16} aria-hidden /> Tarefa concluída.
-            </p>
-          )}
-          {agendamentoConfirmado && (
-            <p className="inline-flex items-center gap-1.5 text-sm font-medium text-status-disponivel">
-              <CheckCircle2 size={16} aria-hidden /> Próxima tentativa agendada.
-            </p>
-          )}
-
-          <Button variante="secondary" tamanho="touch" onClick={() => router.push("/operador")}>
-            Voltar ao início
-          </Button>
-        </Card>
+          </EquipmentIdentityCard>
+        </div>
       </OperatorShell>
     );
   }
@@ -118,34 +110,63 @@ export default function SessaoAbertaPage(props: PageProps<"/equipamento/[tag]/se
     return null;
   }
 
-  const duracaoAtualMs = agoraMs - new Date(sessao.iniciadoEm).getTime();
-
-  function aoEncerrar() {
-    if (!sessao) return;
-    const duracaoMs = Date.now() - new Date(sessao.iniciadoEm).getTime();
-    const tarefaDaSessao = tarefas.find(
-      (t) => t.operadorId === sessao.operadorId && t.equipamentoId === sessao.equipamentoId && t.status === "aprovada",
+  // Etapa 1: releitura do QR fixado no equipamento. Sem o cabeçalho do shell — é uma
+  // tela de foco: só o título com o voltar, e o visor ocupando todo o resto da altura.
+  if (!qrLido) {
+    return (
+      <OperatorShell>
+        <div className="flex flex-1 flex-col gap-4">
+          <OperatorPageHeader
+            titulo={`Devolver ${equipamento.tag}`}
+            descricao="Escaneie de novo o QR do equipamento para registrar a devolução no lugar onde ele ficou."
+            aoVoltar={() => router.push("/operador")}
+            rotuloVoltar="Voltar ao início"
+          />
+          <ScanFakeCamera tagAlvo={equipamento.tag} onDetectado={() => setQrLido(true)} preencherAltura />
+          <Button variante="ghost" tamanho="touch" larguraTotal onClick={() => router.push("/operador")}>
+            Ainda estou usando
+          </Button>
+        </div>
+      </OperatorShell>
     );
+  }
+
+  function aoDevolver() {
+    if (!sessao) return;
+    // Nesta ordem: encerrar devolve o equipamento ao repouso (disponível, ou com
+    // apontamento se sobrou chamado ativo), concluir fecha a demanda. Devolver a máquina e
+    // encerrar a tarefa são o mesmo gesto para o operador — não vale um toque a mais.
     repo.sessoes.encerrar(sessao.id);
-    setEncerrada({ duracaoMs, tarefaId: tarefaDaSessao?.id });
+    if (tarefaDaSessao) {
+      repo.tarefas.concluir(tarefaDaSessao.id);
+    }
+    setDevolvido({ tarefaId: tarefaDaSessao?.id });
   }
 
   return (
     <OperatorShell>
-      <div className="flex flex-col items-center gap-4 rounded-card-hero border border-border bg-surface p-8 text-center shadow-elevated">
-        <p className="text-sm text-foreground-subtle">Operação em andamento</p>
-        <h1 className="text-display-md text-foreground">{equipamento.tag}</h1>
-        <p className="text-sm text-foreground-muted">
-          {operador.nome} · turno {operador.turnoPadrao}
-        </p>
-        <p className="font-mono text-4xl font-medium tabular-nums text-foreground">{formatarDuracao(duracaoAtualMs)}</p>
-        {equipamento.chamadoAtivoId && (
-          <Badge texto="Apontamento pendente" classeCor="text-status-apontamento bg-status-apontamento-surface" />
-        )}
+      <div className="flex flex-1 flex-col gap-4">
+        <EquipmentIdentityCard
+          equipamento={equipamento}
+          status={TAXONOMIA_STATUS_EQUIPAMENTO.em_uso}
+          preencherAltura
+          acoes={
+            <>
+              <Button tamanho="touch" larguraTotal onClick={aoDevolver}>
+                Confirmar devolução
+              </Button>
+              <Button variante="ghost" tamanho="touch" larguraTotal onClick={() => router.push("/operador")}>
+                Ainda estou usando
+              </Button>
+            </>
+          }
+        >
+          {/* Uma linha só. O QR acabou de ser lido, o operador está ao lado da máquina:
+              repetir a tag, a demanda e o apontamento aqui só empilha texto sobre a única
+              decisão da tela — devolver ou não. */}
+          <p className="text-sm text-foreground">Este equipamento está com você, {operador.nome.split(" ")[0]}.</p>
+        </EquipmentIdentityCard>
       </div>
-      <Button variante="danger" tamanho="touch" larguraTotal iconeEsquerda={<Square size={16} aria-hidden />} onClick={aoEncerrar}>
-        Encerrar operação
-      </Button>
     </OperatorShell>
   );
 }

@@ -107,7 +107,7 @@ export function DatePicker({ valor, aoAlterar, rotulo, placeholder = "Selecionar
         createPortal(
           <div
             ref={dropRef}
-            className="fixed z-[99999] w-64 rounded-lg border border-border bg-surface p-3 shadow-lg"
+            className="fixed z-[99999] w-64 rounded-lg border border-border bg-surface p-3"
             style={{ top: posicao.top, left: posicao.left }}
           >
             <div className="mb-2 flex items-center justify-between">

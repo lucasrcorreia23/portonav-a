@@ -85,7 +85,7 @@ export function Tooltip({ children, rotulo, lado = "top", className = "" }: Tool
             ref={tipRef}
             role="tooltip"
             style={estilo}
-            className="pointer-events-none rounded-md bg-foreground px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-background shadow-md"
+            className="pointer-events-none rounded-md bg-foreground px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-background"
           >
             {rotulo}
           </div>,
@@ -199,7 +199,7 @@ export function TooltipLayer() {
       ref={tipRef}
       role="tooltip"
       style={estilo}
-      className="pointer-events-none rounded-md bg-foreground px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-background shadow-md"
+      className="pointer-events-none rounded-md bg-foreground px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-background"
     >
       {ancora.texto}
     </div>,

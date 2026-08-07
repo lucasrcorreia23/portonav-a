@@ -6,7 +6,10 @@ import { gerarOperadores } from "./seed-operadores";
 import { gerarHistorico } from "./seed-historico";
 import { gerarTarefas } from "./seed-tarefas";
 
-export const SEED_VERSION = 4;
+// 5: operadores ganharam fotoUrl (retratos em public/avatars/).
+// 6: EstadoDemo ganhou aprovacaoAutomatica — sem o bump, quem já tem estado salvo ficaria
+//    com o campo undefined (falsy) e a chave nasceria desligada.
+export const SEED_VERSION = 6;
 
 /** Seed mestre fixa — a mesma sequência de "aleatoriedade" sempre, nunca Math.random(). */
 const SEED_MESTRE = 20260101;
@@ -55,6 +58,7 @@ export function gerarSeed(agoraBaseMs: number): EstadoAplicacao {
       operadorAtivoId: operadores[0]?.id ?? null,
       offline: false,
       deslocamentoTempoMs: 0,
+      aprovacaoAutomatica: true,
     },
   };
 }

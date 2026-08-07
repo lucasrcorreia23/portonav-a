@@ -40,7 +40,7 @@ export default function RelatoriosHubPage() {
           const Icone = r.icone;
           return (
             <Link key={r.href} href={r.href} className="group">
-              <Card densidade="densa" className="flex h-full items-start gap-4 transition-shadow group-hover:shadow-elevated">
+              <Card densidade="densa" className="flex h-full items-start gap-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control bg-brand-50 text-brand-600">
                   <Icone size={20} aria-hidden />
                 </div>

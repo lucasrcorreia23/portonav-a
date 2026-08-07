@@ -165,6 +165,7 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
             <Button
               variante="ghost"
               tamanho="sm"
+              larguraTotal={false}
               onClick={() => removerSecao(secao.id)}
               disabled={modelo.secoes.length === 1}
               aria-label="Remover seção"
@@ -187,6 +188,7 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
                   <Button
                     variante="ghost"
                     tamanho="sm"
+                    larguraTotal={false}
                     onClick={() => removerItem(secao.id, item.id)}
                     disabled={secao.itens.length === 1}
                     aria-label="Remover item"
@@ -254,7 +256,7 @@ export function ChecklistModelBuilder({ modeloInicial }: { modeloInicial?: Model
         </Card>
       ))}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <Button variante="secondary" iconeEsquerda={<Plus size={16} aria-hidden />} onClick={adicionarSecao}>
           Adicionar seção
         </Button>

@@ -84,7 +84,7 @@ function SeletorTamanhoPagina({ valor, aoAlterar }: { valor: number; aoAlterar: 
         </svg>
       </button>
       {aberto && (
-        <div className="absolute bottom-full left-0 z-[var(--z-dropdown)] mb-1 min-w-[3.5rem] rounded-lg border border-border bg-surface p-1 shadow-md">
+        <div className="absolute bottom-full left-0 z-[var(--z-dropdown)] mb-1 min-w-[3.5rem] rounded-lg border border-border bg-surface p-1">
           {OPCOES_TAMANHO_PAGINA.map((tamanho) => (
             <button
               key={tamanho}

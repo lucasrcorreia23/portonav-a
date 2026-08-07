@@ -24,6 +24,13 @@ export const REGRA_APROVACAO_TAREFA_PADRAO: { perfisPermitidos: Perfil[] } = {
   perfisPermitidos: ["supervisor", "admin"],
 };
 
+/**
+ * Supervisora que assina as decisões de tarefa. Este protótipo não tem login, então o
+ * decisor é sempre o mesmo nome — em um lugar só, para que o seed, a aprovação manual e a
+ * aprovação automática não mostrem três aprovadores diferentes no mesmo histórico.
+ */
+export const SUPERVISOR_PADRAO = { perfil: "supervisor" as const, nome: "Ana Beatriz Monteiro" };
+
 /** Só admin registra a análise administrativa (com apoio de IA simulada) de um chamado. */
 export const REGRA_ANALISE_ADMIN_PADRAO: { perfisPermitidos: Perfil[] } = {
   perfisPermitidos: ["admin"],

@@ -3,10 +3,14 @@ import { ProvedorDados } from "@/lib/data/context";
 import { OfflineIndicator } from "@/components/demo/OfflineIndicator";
 import { DemoControlBar } from "@/components/demo/DemoControlBar";
 import { TooltipLayer } from "@/components/ui/Tooltip";
+/* Inter via JS: Tailwind v4 PostCSS não resolve @import de node_modules em globals.css */
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Portonave — Checklist de Pré-Operação",
+  title: "TiL — Checklist de Pré-Operação",
   description: "Protótipo de demonstração do sistema de checklist de pré-operação de equipamentos.",
 };
 

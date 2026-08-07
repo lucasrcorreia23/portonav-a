@@ -1,6 +1,6 @@
 import type { DecisaoTarefa, Id, ISODateString, Tarefa } from "@/lib/types";
 import type { NovaTarefa, TarefasRepositorio } from "../repository";
-import { REGRA_APROVACAO_TAREFA_PADRAO } from "../regras";
+import { REGRA_APROVACAO_TAREFA_PADRAO, SEGUNDO_MS, SUPERVISOR_PADRAO } from "../regras";
 import { agora, getStore, mutar } from "../store";
 import { criarId } from "../id";
 import { adicionarEventoHistorico } from "./historico";
@@ -42,13 +42,36 @@ export function criarTarefasRepositorio(): TarefasRepositorio {
         throw new Error("Já existe uma solicitação pendente ou aprovada para este equipamento.");
       }
 
+      // Com a chave de demo ligada, a solicitação já nasce decidida. A aprovação NÃO passa
+      // por aprovar(): aquele caminho valida o perfil de quem decide contra
+      // REGRA_APROVACAO_TAREFA_PADRAO, e quem está criando aqui é o operador — lançaria.
+      // O status vai direto no rascunho, na mesma transação, como as demais operações
+      // compostas deste repositório.
+      const automatica = store.demo.aprovacaoAutomatica;
+
+      const criadaEmMs = agora().getTime();
+      const criadaEm = new Date(criadaEmMs).toISOString();
+      // Um segundo à frente, não o mesmo instante: o histórico do equipamento ordena por
+      // `em` decrescente com sort estável, então dois eventos empatados sairiam na ordem de
+      // inserção — a aprovação apareceria abaixo da criação, lendo como se tivesse vindo antes.
+      const decididaEm = new Date(criadaEmMs + SEGUNDO_MS).toISOString();
+
       const tarefa: Tarefa = {
         id: criarId("tarefa"),
         operadorId: entrada.operadorId,
         equipamentoId: entrada.equipamentoId,
         descricaoDemanda: entrada.descricaoDemanda,
-        status: "pendente",
-        criadaEm: agora().toISOString(),
+        status: automatica ? "aprovada" : "pendente",
+        criadaEm,
+        ...(automatica
+          ? {
+              decisao: {
+                decididoPor: SUPERVISOR_PADRAO,
+                decisao: "aprovada" as const,
+                decididoEm: decididaEm,
+              },
+            }
+          : {}),
       };
 
       mutar((rascunho) => {
@@ -61,6 +84,18 @@ export function criarTarefasRepositorio(): TarefasRepositorio {
           refs: { tarefaId: tarefa.id },
           resumo: `Solicitação criada: "${tarefa.descricaoDemanda}"`,
         });
+        // Os dois eventos, não só o de criação: quem lê o histórico do equipamento depois
+        // precisa ver que a tarefa foi aprovada e por quem, igual ao caminho manual.
+        if (automatica) {
+          adicionarEventoHistorico(rascunho, {
+            tipo: "tarefa_aprovada",
+            em: decididaEm,
+            equipamentoId: tarefa.equipamentoId,
+            operadorId: tarefa.operadorId,
+            refs: { tarefaId: tarefa.id },
+            resumo: `Solicitação aprovada por ${SUPERVISOR_PADRAO.nome}.`,
+          });
+        }
       });
 
       return tarefa;

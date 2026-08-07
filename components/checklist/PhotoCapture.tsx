@@ -1,34 +1,55 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Camera, ImageDown, X } from "lucide-react";
+import type { ReactNode } from "react";
+import { Camera, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { agora } from "@/lib/data/context";
 import type { FotoEvidencia } from "@/lib/types";
 
-const EXEMPLOS_SVG = [
-  '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240"><rect width="320" height="240" fill="%23dd1337"/><text x="160" y="128" font-size="20" fill="white" text-anchor="middle" font-family="sans-serif">Farol quebrado (exemplo)</text></svg>',
-  '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240"><rect width="320" height="240" fill="%236d28d9"/><text x="160" y="128" font-size="20" fill="white" text-anchor="middle" font-family="sans-serif">Vazamento visível (exemplo)</text></svg>',
-  '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240"><rect width="320" height="240" fill="%2392400e"/><text x="160" y="128" font-size="20" fill="white" text-anchor="middle" font-family="sans-serif">Desgaste visível (exemplo)</text></svg>',
-];
-
-function fotoDeExemplo(): FotoEvidencia {
-  const svg = EXEMPLOS_SVG[Math.floor(Math.random() * EXEMPLOS_SVG.length)];
-  return {
-    dataUrl: `data:image/svg+xml,${svg}`,
-    timestamp: agora().toISOString(),
-    origemSimulada: true,
-  };
+/** Miniatura com timestamp e remoção — usada acima do botão de IA no fluxo Não OK. */
+export function PhotoThumbnail({
+  valor,
+  onRemover,
+  sobreposicao,
+  travada = false,
+}: {
+  valor: FotoEvidencia;
+  onRemover: () => void;
+  /** Camada sobre a foto — usada pelo loader de IA enquanto a descrição é gerada. */
+  sobreposicao?: ReactNode;
+  /** Esconde a remoção enquanto a foto está sendo analisada. */
+  travada?: boolean;
+}) {
+  return (
+    <div className="relative w-fit">
+      {/* eslint-disable-next-line @next/next/no-img-element -- data URL local, sem otimização de imagem remota aplicável */}
+      <img src={valor.dataUrl} alt="Evidência fotográfica anexada" className="h-32 w-44 rounded-card object-cover" />
+      <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1.5 py-0.5 text-[11px] text-white">
+        {new Date(valor.timestamp).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+      </span>
+      {!travada && (
+        <button
+          type="button"
+          onClick={onRemover}
+          aria-label="Remover foto"
+          className="absolute -right-2 -top-2 rounded-pill bg-neutral-900 p-1 text-white outline-none focus-visible:outline-none"
+        >
+          <X size={12} aria-hidden />
+        </button>
+      )}
+      {sobreposicao}
+    </div>
+  );
 }
 
+/** Captura de evidência fotográfica via câmera/arquivo do dispositivo. */
 export function PhotoCapture({
-  valor,
   onCapturar,
-  onRemover,
+  desabilitado = false,
 }: {
-  valor?: FotoEvidencia;
   onCapturar: (foto: FotoEvidencia) => void;
-  onRemover: () => void;
+  desabilitado?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [carregando, setCarregando] = useState(false);
@@ -47,30 +68,11 @@ export function PhotoCapture({
       setCarregando(false);
     };
     leitor.readAsDataURL(arquivo);
-  }
-
-  if (valor) {
-    return (
-      <div className="relative w-fit">
-        {/* eslint-disable-next-line @next/next/no-img-element -- data URL local, sem otimização de imagem remota aplicável */}
-        <img src={valor.dataUrl} alt="Evidência fotográfica anexada" className="h-32 w-44 rounded-card object-cover" />
-        <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1.5 py-0.5 text-[11px] text-white">
-          {new Date(valor.timestamp).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
-        </span>
-        <button
-          type="button"
-          onClick={onRemover}
-          aria-label="Remover foto"
-          className="absolute -right-2 -top-2 rounded-pill bg-neutral-900 p-1 text-white"
-        >
-          <X size={12} aria-hidden />
-        </button>
-      </div>
-    );
+    evento.target.value = "";
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div>
       <input
         ref={inputRef}
         type="file"
@@ -78,24 +80,17 @@ export function PhotoCapture({
         capture="environment"
         onChange={aoSelecionarArquivo}
         className="sr-only"
-        id="photo-capture-input"
       />
       <Button
         variante="secondary"
-        tamanho="sm"
-        iconeEsquerda={<Camera size={14} aria-hidden />}
+        tamanho="md"
+        larguraTotal
+        iconeEsquerda={<Camera size={16} aria-hidden />}
         onClick={() => inputRef.current?.click()}
-        disabled={carregando}
+        carregando={carregando}
+        disabled={desabilitado}
       >
-        {carregando ? "Carregando…" : "Tirar foto"}
-      </Button>
-      <Button
-        variante="ghost"
-        tamanho="sm"
-        iconeEsquerda={<ImageDown size={14} aria-hidden />}
-        onClick={() => onCapturar(fotoDeExemplo())}
-      >
-        Usar foto de exemplo
+        Tirar foto
       </Button>
     </div>
   );

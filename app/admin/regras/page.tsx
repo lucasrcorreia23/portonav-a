@@ -2,15 +2,8 @@ import { AlertTriangle, Ban, ClipboardCheck, ShieldCheck } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { ROTULO_PERFIL } from "@/components/perfil/rotulos";
 import { REGRA_APROVACAO_TAREFA_PADRAO, REGRA_LIBERACAO_PADRAO } from "@/lib/data/regras";
-import type { Perfil } from "@/lib/types";
-
-const ROTULO_PERFIL: Record<Perfil, string> = {
-  operador: "Operador",
-  supervisor: "Supervisor",
-  manutencao: "Manutenção",
-  admin: "Admin",
-};
 
 export default function RegrasPage() {
   return (

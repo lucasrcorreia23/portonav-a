@@ -261,7 +261,7 @@ export function Combobox({
 
       {aberto && (
         <div
-          className={`absolute top-full z-[var(--z-dropdown)] mt-1 w-max max-w-[18rem] min-w-full rounded-lg border border-border bg-surface p-1 shadow-md ${
+          className={`absolute top-full z-[var(--z-dropdown)] mt-1 w-max max-w-[18rem] min-w-full rounded-lg border border-border bg-surface p-1 ${
             alinhar === "direita" ? "right-0" : "left-0"
           }`}
           role="listbox"

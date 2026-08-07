@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { AlertTriangle, Check, Sparkles, X } from "lucide-react";
-import { PhotoCapture } from "@/components/checklist/PhotoCapture";
-import { BadgeIA } from "@/components/ia/BadgeIA";
+import { PhotoCapture, PhotoThumbnail } from "@/components/checklist/PhotoCapture";
+import { CampoGerandoIA } from "@/components/ia/CampoGerandoIA";
+import { IaVeuFoto } from "@/components/ia/IaVeu";
+import { useGeracaoIA } from "@/components/ia/useGeracaoIA";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { gerarDescricaoNaoConformidade } from "@/lib/data/ia-simulada";
+import { ETAPAS_DESCRICAO, gerarDescricaoNaoConformidade } from "@/lib/data/ia-simulada";
 import type { ItemChecklistDefinicao } from "@/lib/types";
 import type { RespostaRascunho } from "@/app/equipamento/[tag]/checklist/draft-context";
 
@@ -18,48 +21,83 @@ interface ChecklistItemRowProps {
 
 export function ChecklistItemRow({ item, resposta, onMudar }: ChecklistItemRowProps) {
   const reprovado = resposta?.reprovado ?? false;
+  const okSelecionado = resposta?.valor === "ok";
+  const naoOkSelecionado = resposta?.valor === "nao_ok";
+  const foto = resposta?.fotoEvidencia;
+
+  // Erros só depois de interação — não ao marcar Não OK.
+  const [tocouFoto, setTocouFoto] = useState(false);
+  const [tocouObservacao, setTocouObservacao] = useState(false);
+
+  const { gerando, revelando, etapaAtual, gerar } = useGeracaoIA(ETAPAS_DESCRICAO);
+
   const faltaObservacao = reprovado && item.exigeObservacaoAoReprovar && !resposta?.observacao?.trim();
-  const faltaFoto = reprovado && item.exigeFotoAoReprovar && !resposta?.fotoEvidencia;
+  const faltaFoto = reprovado && item.exigeFotoAoReprovar && !foto;
+  const mostrarErroFoto = tocouFoto && faltaFoto;
+  const mostrarErroObservacao = tocouObservacao && faltaObservacao;
+
+  const textoInstrucao =
+    item.exigeFotoAoReprovar && item.exigeObservacaoAoReprovar
+      ? "Anexe uma foto e descreva o problema encontrado."
+      : item.exigeFotoAoReprovar
+        ? "Anexe uma foto do problema encontrado."
+        : item.exigeObservacaoAoReprovar
+          ? "Descreva o problema encontrado. A foto ajuda a manutenção."
+          : "Anexe uma foto e/ou descreva o problema encontrado.";
+
+  function aoEscolherOk() {
+    setTocouFoto(false);
+    setTocouObservacao(false);
+    onMudar({ valor: "ok", reprovado: false });
+  }
+
+  function aoEscolherNaoOk() {
+    setTocouFoto(false);
+    setTocouObservacao(false);
+    onMudar({ valor: "nao_ok", reprovado: true });
+  }
 
   return (
-    <div className="rounded-card border border-border bg-surface p-4 shadow-card">
+    <div className="rounded-card border-[0.8px] border-border bg-surface p-4 shadow-card-operador">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <p className="font-medium text-foreground">{item.titulo}</p>
+          <p className="text-foreground">{item.titulo}</p>
           {item.descricaoAjuda && <p className="mt-0.5 text-sm text-foreground-subtle">{item.descricaoAjuda}</p>}
         </div>
         {item.modoTratamento === "bloqueia" && (
-          <span className="shrink-0 rounded-pill bg-status-avariado-surface px-2 py-0.5 text-xs font-medium text-status-avariado">
+          <span className="shrink-0 rounded-pill bg-status-avariado-surface px-2.5 py-0.5 text-xs font-medium text-status-avariado">
             Crítico
           </span>
         )}
       </div>
 
       {item.tipoResposta === "ok_nao_ok" && (
-        <div className="grid grid-cols-2 gap-3">
+        // Em repouso os dois botões são neutros (Figma node 4171:5697/5730): a cor de status
+        // só entra na resposta escolhida, junto de ícone e texto — nunca cor sozinha.
+        <div className="flex items-stretch gap-3">
           <button
             type="button"
-            onClick={() => onMudar({ valor: "ok", reprovado: false })}
-            aria-pressed={resposta?.valor === "ok"}
-            className={`flex h-14 items-center justify-center gap-2 rounded-control border-2 text-base font-medium transition-colors ${
-              resposta?.valor === "ok"
-                ? "border-status-disponivel bg-status-disponivel-surface text-status-disponivel"
-                : "border-border text-foreground-muted hover:border-foreground-subtle"
+            onClick={aoEscolherOk}
+            aria-pressed={okSelecionado}
+            className={`flex h-14 min-w-px flex-1 items-center justify-center gap-2 rounded-control border-[1.6px] text-base transition-colors outline-none focus-visible:outline-none ${
+              okSelecionado
+                ? "border-transparent bg-status-disponivel-surface text-status-disponivel"
+                : "border-border bg-background text-foreground-muted"
             }`}
           >
             <Check size={20} aria-hidden /> OK
           </button>
           <button
             type="button"
-            onClick={() => onMudar({ valor: "nao_ok", reprovado: true })}
-            aria-pressed={resposta?.valor === "nao_ok"}
-            className={`flex h-14 items-center justify-center gap-2 rounded-control border-2 text-base font-medium transition-colors ${
-              resposta?.valor === "nao_ok"
-                ? "border-status-avariado bg-status-avariado-surface text-status-avariado"
-                : "border-border text-foreground-muted hover:border-foreground-subtle"
+            onClick={aoEscolherNaoOk}
+            aria-pressed={naoOkSelecionado}
+            className={`flex h-14 min-w-px flex-1 items-center justify-center gap-2 rounded-control border-[1.6px] text-base transition-colors outline-none focus-visible:outline-none ${
+              naoOkSelecionado
+                ? "border-transparent bg-status-avariado-surface text-status-avariado"
+                : "border-border bg-background text-foreground-muted"
             }`}
           >
-            <X size={20} aria-hidden /> Não OK
+            <X size={20} aria-hidden /> Com falha
           </button>
         </div>
       )}
@@ -98,59 +136,80 @@ export function ChecklistItemRow({ item, resposta, onMudar }: ChecklistItemRowPr
         />
       )}
 
-      {/* rounded-card, não rounded-control: --radius-control é pill (9999px), token de
-          botão/campo — num bloco alto ele vira uma elipse gigante em vez de um painel. */}
-      {reprovado && (item.exigeObservacaoAoReprovar || item.exigeFotoAoReprovar) && (
-        <div className="mt-3 flex flex-col gap-3 rounded-card border border-status-avariado/20 bg-status-avariado-surface p-3">
-          {item.exigeFotoAoReprovar && (
+      {/* Todo item reprovado oferece foto + observação — obrigatórias só quando o modelo exige.
+          Ordem do print: miniatura → Gerar IA → Tirar foto → Observação.
+          Sem foto ainda: Tirar foto sobe para antes da IA. */}
+      {reprovado && (
+        <div className="mt-4 flex flex-col gap-3">
+          <p className="text-sm text-foreground">{textoInstrucao}</p>
+
+          {foto && (
+            <PhotoThumbnail
+              valor={foto}
+              travada={gerando}
+              sobreposicao={gerando ? <IaVeuFoto /> : null}
+              onRemover={() => {
+                setTocouFoto(true);
+                onMudar({ ...resposta!, fotoEvidencia: undefined });
+              }}
+            />
+          )}
+
+          {!foto && (
             <div>
-              {/* Mesma tipografia do rótulo de Input/Textarea — foto e observação são dois
-                  campos do mesmo bloco e precisam ler como irmãos. */}
-              <p className="mb-1.5 text-xs font-semibold text-foreground-muted">
-                Foto <span aria-hidden="true">*</span>
-              </p>
-              <PhotoCapture
-                valor={resposta?.fotoEvidencia}
-                onCapturar={(foto) => onMudar({ ...resposta!, fotoEvidencia: foto })}
-                onRemover={() => onMudar({ ...resposta!, fotoEvidencia: undefined })}
-              />
-              {faltaFoto && (
+              <PhotoCapture onCapturar={(nova) => onMudar({ ...resposta!, fotoEvidencia: nova })} />
+              {mostrarErroFoto && (
                 <p className="mt-1.5 inline-flex items-center gap-1 text-xs text-error" role="alert">
                   <AlertTriangle size={13} aria-hidden /> Anexe uma foto do problema.
                 </p>
               )}
             </div>
           )}
-          {item.exigeObservacaoAoReprovar && (
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  variante="ia"
-                  tamanho="sm"
-                  iconeEsquerda={<Sparkles size={14} aria-hidden />}
-                  disabled={item.exigeFotoAoReprovar && !resposta?.fotoEvidencia}
-                  onClick={() =>
-                    onMudar({
-                      ...resposta!,
-                      observacao: gerarDescricaoNaoConformidade(item, Boolean(resposta?.fotoEvidencia)),
-                      descricaoGeradaPorIA: true,
-                    })
-                  }
-                >
-                  Gerar descrição com IA
-                </Button>
-                {resposta?.descricaoGeradaPorIA && <BadgeIA />}
-              </div>
-              {/* Sem repetir "anexe uma foto" aqui: quando o botão de IA está desabilitado por
-                  falta de foto, o erro do campo de foto logo acima já está na tela. */}
-              <Textarea
-                rotulo="Observação"
-                required
-                value={resposta?.observacao ?? ""}
-                onChange={(e) => onMudar({ ...resposta!, observacao: e.target.value, descricaoGeradaPorIA: false })}
-                erro={faltaObservacao ? "Descreva o problema encontrado." : undefined}
-              />
-            </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Button
+              variante="ia"
+              tamanho="md"
+              larguraTotal
+              iconeEsquerda={<Sparkles size={16} aria-hidden />}
+              disabled={!foto}
+              carregando={gerando}
+              onClick={() =>
+                gerar(
+                  () => gerarDescricaoNaoConformidade(item, true),
+                  (texto) => onMudar({ ...resposta!, observacao: texto, descricaoGeradaPorIA: true }),
+                )
+              }
+            >
+              {gerando ? "Pensando…" : "Gerar descrição"}
+            </Button>
+            {!foto && !gerando && (
+              <p className="text-xs text-foreground-subtle">Anexe uma foto para a IA analisar e descrever o problema.</p>
+            )}
+          </div>
+
+          {foto && (
+            <PhotoCapture
+              desabilitado={gerando}
+              onCapturar={(nova) => onMudar({ ...resposta!, fotoEvidencia: nova })}
+            />
+          )}
+
+          {gerando ? (
+            <CampoGerandoIA rotulo="Observação" etapa={ETAPAS_DESCRICAO[etapaAtual]} />
+          ) : (
+            <Textarea
+              rotulo="Observação"
+              required={item.exigeObservacaoAoReprovar}
+              className={revelando ? "ia-revelar" : ""}
+              value={resposta?.observacao ?? ""}
+              onChange={(e) => onMudar({ ...resposta!, observacao: e.target.value, descricaoGeradaPorIA: false })}
+              onBlur={() => {
+                setTocouObservacao(true);
+                if (item.exigeFotoAoReprovar && !foto) setTocouFoto(true);
+              }}
+              erro={mostrarErroObservacao ? "Descreva o problema encontrado." : undefined}
+            />
           )}
         </div>
       )}
